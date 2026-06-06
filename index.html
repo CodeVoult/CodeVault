@@ -504,7 +504,7 @@ class Particle {
     const fade = p < 0.1 ? p/0.1 : p > 0.8 ? 1-(p-0.8)/0.2 : 1;
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.r, 0, Math.PI*2);
-    ctx.fillStyle = `rgba(255,255,255,${this.alpha * fade})`;
+    ctx.fillStyle = 'rgba(255,255,255,' + (this.alpha * fade) + ')';
     ctx.fill();
   }
 }
@@ -521,20 +521,20 @@ const particles = Array.from({length:130}, () => new Particle());
         ctx.beginPath();
         ctx.moveTo(particles[i].x,particles[i].y);
         ctx.lineTo(particles[j].x,particles[j].y);
-        ctx.strokeStyle=`rgba(255,255,255,${(1-d/100)*0.04})`;
+        ctx.strokeStyle='rgba(255,255,255,'+(1-d/100)*0.04+')';
         ctx.lineWidth=0.5; ctx.stroke();
       }
     }
   }
-  particles.forEach(p=>{p.update();p.draw();});
+  particles.forEach(function(p){ p.update(); p.draw(); });
   requestAnimationFrame(animate);
 })();
 
 /* ── LINE COUNT ── */
 const codeEl = document.getElementById('code');
-codeEl.addEventListener('input', () => {
+codeEl.addEventListener('input', function() {
   const n = codeEl.value.split('\n').length;
-  document.getElementById('lineCount').textContent = `${n} line${n===1?'':'s'}`;
+  document.getElementById('lineCount').textContent = n + ' line' + (n===1?'':'s');
 });
 
 /* ── TOAST ── */
@@ -542,97 +542,97 @@ function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'), 2200);
+  setTimeout(function(){ t.classList.remove('show'); }, 2200);
 }
 
-/* ── COPY HELPERS ── */
-function animateCopyBtn(btn, originalHTML) {
+/* ── COPY BUTTON ANIMATION ── */
+function animateCopyBtn(btn, orig) {
   btn.classList.add('copied');
-  btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg> Copied!`;
-  setTimeout(()=>{ btn.innerHTML = originalHTML; btn.classList.remove('copied'); }, 2000);
+  btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg> Copied!';
+  setTimeout(function(){ btn.innerHTML = orig; btn.classList.remove('copied'); }, 2000);
 }
 
 /* ── SAVE ── */
 async function saveScript() {
   const code = codeEl.value.trim();
-  if (!code) { showToast('⚠ Paste a script first'); return; }
+  if (!code) { showToast('Paste a script first'); return; }
 
   const btn = document.querySelector('.btn-primary');
-  btn.innerHTML = 'Saving...';
+  btn.textContent = 'Saving...';
   btn.disabled = true;
 
   try {
     const res = await fetch('https://codevault-gvyn.onrender.com/save', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ code })
+      body: JSON.stringify({ code: code })
     });
 
-    if (!res.ok) throw new Error();
+    if (!res.ok) throw new Error('save failed');
 
     const data = await res.json();
-    const id = data.id;
+    const id   = data.id;
 
     const viewUrl = 'https://leeh10.github.io/CodeVault/view.html?id=' + id;
     const rawUrl  = 'https://codevault-gvyn.onrender.com/raw/' + id;
-    const ls      = `loadstring(game:HttpGet("${rawUrl}"))()`;
+    const ls      = 'loadstring(game:HttpGet("' + rawUrl + '"))()';
 
-    document.getElementById('rawUrlText').textContent     = rawUrl;
-    document.getElementById('loadstringText').textContent = ls;
-    document.getElementById('viewUrlText').textContent    = viewUrl;
-    document.getElementById('scriptIdLabel').textContent  = '#' + id;
-    document.getElementById('viewLink').href              = viewUrl;
+    document.getElementById('rawUrlText').textContent      = rawUrl;
+    document.getElementById('loadstringText').textContent  = ls;
+    document.getElementById('viewUrlText').textContent     = viewUrl;
+    document.getElementById('scriptIdLabel').textContent   = '#' + id;
+    document.getElementById('viewLink').href               = viewUrl;
 
     document.getElementById('result').style.display = 'block';
     document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    showToast('✓ Script saved!');
+    showToast('Script saved!');
 
-  } catch {
-    showToast('⚠ Error saving script');
+  } catch(e) {
+    showToast('Error saving script');
   } finally {
-    btn.innerHTML = \`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17,21 17,13 7,13 7,21"/><polyline points="7,3 7,8 15,8"/></svg> Save Script\`;
+    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17,21 17,13 7,13 7,21"/><polyline points="7,3 7,8 15,8"/></svg> Save Script';
     btn.disabled = false;
   }
 }
 
 /* ── COPY RAW URL ── */
 function copyRawUrl() {
-  const url = document.getElementById('rawUrlText').textContent;
-  const btn = document.getElementById('copyUrlBtn');
+  const url  = document.getElementById('rawUrlText').textContent;
+  const btn  = document.getElementById('copyUrlBtn');
   const orig = btn.innerHTML;
-  navigator.clipboard.writeText(url).then(()=>{
+  navigator.clipboard.writeText(url).then(function(){
     animateCopyBtn(btn, orig);
-    showToast('✓ Raw URL copied');
+    showToast('Raw URL copied');
   });
 }
 
 /* ── COPY VIEW URL ── */
 function copyViewUrl() {
-  const url = document.getElementById('viewUrlText').textContent;
-  const btn = document.getElementById('copyViewBtn');
+  const url  = document.getElementById('viewUrlText').textContent;
+  const btn  = document.getElementById('copyViewBtn');
   const orig = btn.innerHTML;
-  navigator.clipboard.writeText(url).then(()=>{
+  navigator.clipboard.writeText(url).then(function(){
     animateCopyBtn(btn, orig);
-    showToast('✓ View URL copied');
+    showToast('View URL copied');
   });
 }
 
 /* ── COPY LOADSTRING ── */
 function copyLoadstring() {
-  const ls  = document.getElementById('loadstringText').textContent;
-  const btn = document.getElementById('copyLsBtn');
+  const ls   = document.getElementById('loadstringText').textContent;
+  const btn  = document.getElementById('copyLsBtn');
   const orig = btn.innerHTML;
-  navigator.clipboard.writeText(ls).then(()=>{
+  navigator.clipboard.writeText(ls).then(function(){
     animateCopyBtn(btn, orig);
-    showToast('✓ Loadstring copied');
+    showToast('Loadstring copied');
   });
 }
 
 /* ── COPY CODE ── */
 function copyCode() {
   const code = codeEl.value;
-  if (!code.trim()) { showToast('⚠ Nothing to copy'); return; }
-  navigator.clipboard.writeText(code).then(()=>showToast('✓ Code copied'));
+  if (!code.trim()) { showToast('Nothing to copy'); return; }
+  navigator.clipboard.writeText(code).then(function(){ showToast('Code copied'); });
 }
 
 /* ── CLEAR ── */
