@@ -558,7 +558,7 @@ async function saveScript() {
   if (!code) { showToast('⚠ Paste a script first'); return; }
 
   const btn = document.querySelector('.btn-primary');
-  btn.textContent = 'Saving...';
+  btn.innerHTML = 'Saving...';
   btn.disabled = true;
 
   try {
@@ -573,24 +573,24 @@ async function saveScript() {
     const data = await res.json();
     const id = data.id;
 
-    // Real URLs from the actual backend
-    const rawUrl  = `https://codevault-gvyn.onrender.com/raw/${id}`;
-    const viewUrl = `https://leeh10.github.io/view.html?id=${id}`;
+    const viewUrl = 'https://leeh10.github.io/CodeVault/view.html?id=' + id;
+    const rawUrl  = 'https://codevault-gvyn.onrender.com/raw/' + id;
     const ls      = `loadstring(game:HttpGet("${rawUrl}"))()`;
 
-    document.getElementById('rawUrlText').textContent    = rawUrl;
+    document.getElementById('rawUrlText').textContent     = rawUrl;
     document.getElementById('loadstringText').textContent = ls;
-    document.getElementById('scriptIdLabel').textContent  = `#${id}`;
-    document.getElementById('viewLink').href = viewUrl;
-    document.getElementById('viewUrlText').textContent = viewUrl;
+    document.getElementById('viewUrlText').textContent    = viewUrl;
+    document.getElementById('scriptIdLabel').textContent  = '#' + id;
+    document.getElementById('viewLink').href              = viewUrl;
 
     document.getElementById('result').style.display = 'block';
-    showToast('✓ Script saved');
+    document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    showToast('✓ Script saved!');
 
   } catch {
     showToast('⚠ Error saving script');
   } finally {
-    btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17,21 17,13 7,13 7,21"/><polyline points="7,3 7,8 15,8"/></svg> Save Script`;
+    btn.innerHTML = \`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17,21 17,13 7,13 7,21"/><polyline points="7,3 7,8 15,8"/></svg> Save Script\`;
     btn.disabled = false;
   }
 }
