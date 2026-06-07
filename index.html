@@ -575,9 +575,9 @@ async function saveScript() {
     // Guardado automático del ID en el LocalStorage local
     localStorage.setItem('idUsuario', id);
 
-    // Ajuste de Enlaces Limpios (Sin espacios en blanco de formato)
+    // Ajuste de Enlaces Limpios apuntando directo a Render para executors
     const viewUrl = 'https://leeh10.github.io/CodeVault/view.html?id=' + id;
-    const rawUrlForExecutor = 'https://codevault-vlv1.onrender.com/raw/' + scriptId;
+    const rawUrl  = 'https://codevault-vlv1.onrender.com/raw/' + id;
     const ls      = 'loadstring(game:HttpGet("' + rawUrl + '"))()';
 
     document.getElementById('rawUrlText').textContent      = rawUrl;
@@ -637,7 +637,7 @@ function copyCode() {
 function clearEditor() {
   codeEl.value = '';
   document.getElementById('lineCount').textContent = '0 lines';
-  document.getElementById('result').style.display = 'none'; // Corregido .style redundante
+  document.getElementById('result').style.display = 'none';
   showToast('Editor cleared');
 }
 </script>
