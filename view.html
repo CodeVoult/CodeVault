@@ -629,8 +629,7 @@ function updateLineCount(val) {
 
 /* ── LOAD ── */
 async function loadScript() {
-  // Buscamos el ID en la URL o en la memoria local
-  scriptId = new URLSearchParams(window.location.search).get('id') || localStorage.getItem('idUsuario');
+  scriptId = getId();
   
   if (!scriptId) { 
     setStatus('error', 'No script ID found in device'); 
@@ -641,16 +640,15 @@ async function loadScript() {
 
   document.getElementById('scriptIdLabel').textContent = `#${scriptId.toUpperCase()}`;
 
-  // URLs usando tu dominio confiable de GitHub
-  const viewUrl = 'https://leeh10.github.io/CodeVault/view.html?id=' + scriptId;
-  const rawUrl = 'https://leeh10.github.io/CodeVault/view.html?id=' + scriptId + '&raw=true';
-  const ls = 'loadstring(game:HttpGet("' + rawUrl + '"))()';
+  // CORRECCIÓN: Armar el loadstring apuntando al espejo de GitHub Pages
+  const rawUrlForExecutor = 'https://leeh10.github.io/CodeVault/view.html?id=' + scriptId + '&raw=true';
+  const ls = 'loadstring(game:HttpGet("' + rawUrlForExecutor + '"))()';
   
   document.getElementById('lsCode').textContent = ls;
   document.getElementById('lsSection').style.display = 'block';
 
   try {
-    // La interfaz web sigue consultando al backend para rellenar el cuadro de texto
+    // Para la interfaz web seguimos consultando a tu API de Render directo
     const res = await fetch('https://codevault-gvyn.onrender.com/raw/' + scriptId);
     if (!res.ok) throw new Error();
     const code = await res.text();
