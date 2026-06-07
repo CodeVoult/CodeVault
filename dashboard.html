@@ -39,7 +39,7 @@ body::before {
 
 .container { position: relative; z-index: 2; max-width: 1100px; margin: 0 auto; padding: 40px 24px; }
 
-/* HEADER */
+/* HEADER SIMPLIFICADO AL ESTILO PASTEBIN PREMIUM */
 header {
   display: flex; justify-content: space-between; align-items: center;
   margin-bottom: 40px; animation: fadeUp 0.6s cubic-bezier(.16,1,.3,1) both;
@@ -54,25 +54,26 @@ header {
 .logo { font-family: 'JetBrains Mono', monospace; font-size: 24px; font-weight: 700; letter-spacing: -1px; }
 .logo span { color: var(--muted); }
 
-/* AUTH BOXES */
-.auth-box {
-  max-width: 420px; margin: 100px auto; background: var(--surface);
-  border: 1px solid var(--border); border-radius: 16px; padding: 40px 32px;
-  box-shadow: 0 30px 60px rgba(0,0,0,0.6);
-  animation: fadeUp 0.7s cubic-bezier(.16,1,.3,1) both;
+/* BARRA DE BÚSQUEDA INTERNA */
+.search-box-container {
+  position: relative;
+  width: 250px;
 }
-.auth-box h2 { font-family: 'JetBrains Mono', monospace; font-size: 20px; font-weight: 600; margin-bottom: 24px; letter-spacing: -0.5px; }
-.auth-box input {
-  width: 100%; padding: 14px 16px; margin-bottom: 16px; background: var(--surface2);
-  border: 1px solid var(--border); border-radius: 8px; color: white;
-  font-family: 'JetBrains Mono', monospace; font-size: 13px; transition: all 0.2s;
+.search-box-container input {
+  width: 100%; background: var(--surface2); border: 1px solid var(--border); padding: 8px 12px 8px 32px;
+  border-radius: 8px; color: #fff; font-size: 13px; font-family: 'Space Grotesk';
 }
-.auth-box input:focus { border-color: var(--border2); background: #161616; outline: none; }
-.auth-link { color: var(--muted); font-size: 13px; cursor: pointer; text-decoration: none; margin-top: 18px; display: inline-block; transition: color 0.2s; }
-.auth-link:hover { color: var(--text); text-decoration: underline; }
+.search-box-container::before { content: '🔍'; position: absolute; left: 10px; top: 8px; font-size: 12px; opacity: 0.5; }
+
+.header-right { display: flex; gap: 12px; align-items: center; }
+.user-avatar-btn {
+  width: 36px; height: 36px; border-radius: 50%; object-fit: cover;
+  background: var(--surface2); border: 1px solid var(--border2); cursor: pointer; transition: transform 0.2s;
+}
+.user-avatar-btn:hover { transform: scale(1.05); }
 
 /* LAYOUT DASHBOARD */
-.dashboard-layout { display: none; grid-template-columns: 280px 1fr; gap: 24px; animation: fadeUp 0.7s 0.1s cubic-bezier(.16,1,.3,1) both; }
+.dashboard-layout { display: grid; grid-template-columns: 280px 1fr; gap: 24px; animation: fadeUp 0.7s 0.1s cubic-bezier(.16,1,.3,1) both; }
 
 @media (max-width: 768px) {
   .dashboard-layout { grid-template-columns: 1fr; }
@@ -96,7 +97,24 @@ header {
 
 .main-content { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 32px; min-height: 500px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
 .content-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; border-bottom: 1px solid var(--border); padding-bottom: 20px; }
-.script-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 16px; }
+.script-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+
+/* MENÚ HAMBURGUESA LATERAL (IMAGEN 234194) */
+.hamburger-sidebar {
+  position: fixed; top: 0; right: -320px; width: 300px; height: 100vh;
+  background: var(--surface); border-left: 1px solid var(--border); z-index: 999;
+  padding: 40px 24px; display: flex; flex-direction: column; gap: 14px;
+  transition: right 0.35s cubic-bezier(.16,1,.3,1); box-shadow: -15px 0 45px rgba(0,0,0,0.7);
+}
+.hamburger-sidebar.open { right: 0; }
+.close-menu-btn { align-self: flex-end; background: transparent; border: none; color: var(--muted); font-size: 22px; cursor: pointer; margin-bottom: 10px; }
+
+.menu-link-item {
+  width: 100%; text-align: left; background: transparent; border: none; color: var(--text);
+  padding: 12px 14px; font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 500;
+  cursor: pointer; border-radius: 8px; display: flex; align-items: center; gap: 12px; transition: background 0.2s;
+}
+.menu-link-item:hover { background: var(--surface2); }
 
 /* CARDS DE SCRIPTS */
 .script-card {
@@ -108,21 +126,21 @@ header {
 .script-card p { font-family: 'JetBrains Mono', monospace; color: var(--muted); font-size: 11px; margin-top: 4px; }
 .card-actions { display: flex; gap: 8px; margin-top: auto; }
 
-/* MULTI-ACCOUNT SIDEBAR */
+/* MULTI-ACCOUNT SIDEBAR DENTRO DEL MENÚ DESPLEGABLE */
 .account-section {
   border-top: 1px solid var(--border);
   padding-top: 15px;
-  margin-top: 10px;
+  margin-top: 15px;
 }
 .account-item-btn {
   width: 100%; text-align: left; background: transparent; border: 1px solid transparent;
-  color: var(--muted); font-family: 'Space Grotesk', sans-serif; font-size: 13.5px;
+  color: var(--muted); font-family: 'Space Grotesk', sans-serif; font-size: 13px;
   padding: 10px 12px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 10px;
-  transition: all 0.2s;
+  transition: all 0.2s; margin-bottom: 4px;
 }
 .account-item-btn:hover { background: var(--surface2); color: var(--text); }
 .account-item-btn.active-acc { border-color: var(--border2); background: rgba(255,255,255,0.02); color: #fff; font-weight: 500; }
-.account-badge-current { font-size: 10px; background: #fff; color: #000; padding: 2px 6px; border-radius: 4px; font-weight: bold; margin-left: auto; font-family: 'JetBrains Mono'; }
+.account-badge-current { font-size: 9px; background: #fff; color: #000; padding: 2px 5px; border-radius: 4px; font-weight: bold; margin-left: auto; font-family: 'JetBrains Mono'; }
 
 /* MODAL LOADER CYBERPUNK */
 .loader-overlay {
@@ -147,28 +165,16 @@ header {
 .btn-danger { background: transparent; color: var(--muted); border: 1px solid var(--border); }
 .btn-danger:hover { color: var(--danger); border-color: rgba(239, 68, 68, 0.2); background: var(--danger-bg); }
 
-/* PREMIUM EDITOR BUTTON */
-#btnEditorGlobal {
-  background: var(--surface2); border: 1px solid var(--border2); color: #fff;
-  padding: 9px 16px; font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.4); border-radius: 8px; text-decoration: none;
-}
-#btnEditorGlobal:hover { background: #1c1c1c; border-color: #444; transform: scale(1.02); }
-
-.logout-btn { background: transparent; color: var(--muted); border: 1px solid var(--border); padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
-.logout-btn:hover { color: var(--danger); border-color: rgba(239, 68, 68, 0.2); }
-
-/* TOAST */
+.menu-trigger-btn { background: transparent; border: none; color: var(--text); font-size: 22px; cursor: pointer; display: flex; align-items: center; padding: 4px; }
 .toast {
   position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(20px);
   background: var(--text); color: #040404; font-family: 'Space Grotesk', sans-serif;
   font-size: 13px; font-weight: 600; padding: 12px 22px; border-radius: 8px;
-  pointer-events: none; opacity: 0; transition: all 0.3s cubic-bezier(.16,1,.3,1); z-index: 100;
+  pointer-events: none; opacity: 0; transition: all 0.3s cubic-bezier(.16,1,.3,1); z-index: 1000;
   box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
 
-/* ANIMATIONS */
 @keyframes fadeUp { from { opacity:0; transform: translateY(15px); } to { opacity:1; transform: translateY(0); } }
 @keyframes spin { to { transform: rotate(360deg); } }
 </style>
@@ -189,41 +195,21 @@ header {
       <div class="logo">Code<span>Vault</span></div>
     </a>
     
-    <div style="display: flex; gap: 10px; align-items: center;">
-      <a href="index.html?from=dashboard" class="btn" id="btnEditorGlobal" style="display: none;">
-        <span>⚡</span> OPEN PIPELINE EDITOR
-      </a>
-      <button id="logoutBtn" class="logout-btn" style="display:none;" onclick="logout()">Logout</button>
+    <div class="search-box-container">
+      <input type="text" id="dashboardSearch" placeholder="Search scripts..." oninput="renderScripts()">
+    </div>
+    
+    <div class="header-right">
+      <img id="headerUserAvatar" class="user-avatar-btn" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23666'%3E%3Cpath d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5-3.33-8-3.33z'/%3E%3C/svg%3E" onclick="toggleHamburgerMenu(true)">
+      <button class="menu-trigger-btn" onclick="toggleHamburgerMenu(true)">☰</button>
     </div>
   </header>
 
-  <div id="screenLogin" class="auth-box">
-    <h2>Device Login</h2>
-    <input type="text" id="loginUser" placeholder="Username">
-    <input type="password" id="loginPass" placeholder="Password">
-    <button class="btn btn-primary" style="width: 100%; margin-top: 5px;" onclick="login()">Unlock Vault</button>
-    <span class="auth-link" onclick="showScreen('Register')">Create a new account profile</span>
-  </div>
-
-  <div id="screenRegister" class="auth-box" style="display: none;">
-    <h2>Create Profile</h2>
-    <input type="text" id="regUser" placeholder="Choose Username">
-    <input type="password" id="regPass" placeholder="Choose Password">
-    <button class="btn btn-primary" style="width: 100%; margin-top: 5px;" onclick="register()">Sign Up</button>
-    <span class="auth-link" onclick="showScreen('Login')">Back to Login</span>
-  </div>
-
-  <div id="screenDashboard" class="dashboard-layout">
+  <div class="dashboard-layout">
     <div class="sidebar">
       <h3>📂 Folders</h3>
       <ul id="folderList" class="folder-list"></ul>
-      <button class="btn btn-ghost" style="width: 100%; margin-bottom: 15px;" onclick="createNewFolder()">+ New Folder</button>
-      
-      <div class="account-section">
-        <h3>👤 Linked Vault Profiles</h3>
-        <div id="accountProfilesList"></div>
-        <button class="btn btn-ghost" style="width:100%; font-size:11px; margin-top:10px; padding:6px 12px;" onclick="addAlternativeAccount()">+ Link Another Profile</button>
-      </div>
+      <button class="btn btn-ghost" style="width: 100%; margin-bottom: 5px;" onclick="createNewFolder()">+ New Folder</button>
     </div>
 
     <div class="main-content">
@@ -234,6 +220,21 @@ header {
       <div id="scriptGrid" class="script-grid"></div>
     </div>
   </div>
+</div>
+
+<div id="hamburgerMenu" class="hamburger-sidebar">
+  <button class="close-menu-btn" onclick="toggleHamburgerMenu(false)">✕</button>
+  
+  <button class="menu-link-item" onclick="window.location.href='dashboard.html'">📋 Dashboard Hub</button>
+  <button class="menu-link-item" onclick="window.location.href='profile.html'">👤 Edit My Profile</button>
+  
+  <div class="account-section">
+    <h3>👤 Linked Vault Profiles</h3>
+    <div id="accountProfilesList"></div>
+    <button class="btn btn-ghost" style="width:100%; font-size:11px; margin-top:10px; padding:6px 12px;" onclick="linkAnotherProfile()">+ Link Another Profile</button>
+  </div>
+  
+  <button class="menu-link-item" style="color: var(--danger); margin-top: auto; border: 1px solid rgba(239, 68, 68, 0.15);" onclick="logout()">➔ Log Out Account</button>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -266,52 +267,37 @@ const particles = Array.from({length:80}, () => new Particle());
 
 /* Vault Core System */
 let currentFolderId = null;
+const activeUser = localStorage.getItem("logged_user");
 
-if(!localStorage.getItem("vault_users")) localStorage.setItem("vault_users", JSON.stringify({}));
-if(!localStorage.getItem("vault_folders")) localStorage.setItem("vault_folders", JSON.stringify([]));
-if(!localStorage.getItem("vault_scripts")) localStorage.setItem("vault_scripts", JSON.stringify([]));
+// Verificación Física de Sesión: Si no está logueado, lo manda directo a login.html
+if(!activeUser) {
+  window.location.href = "login.html";
+}
 
 function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2200); }
-function getLoggedUser() { return localStorage.getItem("logged_user"); }
-
-function showScreen(screen) {
-  document.getElementById("screenLogin").style.display = screen === 'Login' ? 'block' : 'none';
-  document.getElementById("screenRegister").style.display = screen === 'Register' ? 'block' : 'none';
-  document.getElementById("screenDashboard").style.display = screen === 'Dashboard' ? 'grid' : 'none';
-  document.getElementById("logoutBtn").style.display = screen === 'Dashboard' ? 'block' : 'none';
-  document.getElementById("btnEditorGlobal").style.display = screen === 'Dashboard' ? 'inline-flex' : 'none';
-}
-
-function register() {
-  const user = document.getElementById("regUser").value.trim(); const pass = document.getElementById("regPass").value.trim();
-  if(!user || !pass) return showToast("⚠️ Fill all fields");
-  let users = JSON.parse(localStorage.getItem("vault_users"));
-  if(users[user]) return showToast("⚠️ Username taken");
-  users[user] = pass; localStorage.setItem("vault_users", JSON.stringify(users));
-  showToast("✓ Registered successfully!"); showScreen('Login');
-}
-
-function login() {
-  const user = document.getElementById("loginUser").value.trim(); const pass = document.getElementById("loginPass").value.trim();
-  let users = JSON.parse(localStorage.getItem("vault_users"));
-  if(users[user] && users[user] === pass) {
-    localStorage.setItem("logged_user", user); 
-    showScreen('Dashboard'); 
-    renderFolders();
-    renderAccountProfiles();
-  } else { showToast("⚠️ Invalid login credentials"); }
-}
+function toggleHamburgerMenu(open) { document.getElementById("hamburgerMenu").classList.toggle("open", open); }
 
 function logout() {
-  localStorage.removeItem("logged_user"); currentFolderId = null;
-  document.getElementById("scriptGrid").innerHTML = ""; document.getElementById("currentFolderName").innerText = "Select a folder layout";
-  document.getElementById("newScriptBtn").style.display = "none"; showScreen('Login');
+  localStorage.removeItem("logged_user");
+  window.location.href = "login.html";
 }
 
-/* SISTEMA MULTI-CUENTAS DINÁMICO */
+function linkAnotherProfile() {
+  localStorage.removeItem("logged_user");
+  window.location.href = "login.html";
+}
+
+// Carga el avatar guardado en profile.html
+function loadUserAvatarHeader() {
+  const users = JSON.parse(localStorage.getItem("vault_users")) || {};
+  if(users[activeUser] && users[activeUser].avatarUrl) {
+    document.getElementById("headerUserAvatar").src = users[activeUser].avatarUrl;
+  }
+}
+
+/* SISTEMA MULTI-CUENTAS DINÁMICO DESDE EL MENÚ */
 function renderAccountProfiles() {
-  const activeUser = getLoggedUser();
-  const usersObj = JSON.parse(localStorage.getItem("vault_users"));
+  const usersObj = JSON.parse(localStorage.getItem("vault_users")) || {};
   const container = document.getElementById("accountProfilesList");
   container.innerHTML = "";
 
@@ -319,7 +305,10 @@ function renderAccountProfiles() {
     const isCurrent = user === activeUser;
     const btn = document.createElement("button");
     btn.className = `account-item-btn ${isCurrent ? 'active-acc' : ''}`;
-    btn.innerHTML = `👤 <span>${user}</span> ${isCurrent ? '<span class="account-badge-current">ACTIVE</span>' : ''}`;
+    
+    // Muestra el nombre personalizado si se configuró en profile.html
+    const displayAlias = usersObj[user].displayName || user;
+    btn.innerHTML = `👤 <span>${displayAlias}</span> ${isCurrent ? '<span class="account-badge-current">ACTIVE</span>' : ''}`;
     
     if(!isCurrent) {
       btn.onclick = () => switchAccountSimulation(user);
@@ -328,12 +317,8 @@ function renderAccountProfiles() {
   });
 }
 
-function addAlternativeAccount() {
-  logout();
-  showToast("Link alternate profile mode active.");
-}
-
 function switchAccountSimulation(targetUser) {
+  toggleHamburgerMenu(false);
   const overlay = document.getElementById("loaderOverlay");
   const loaderText = document.getElementById("loaderText");
   
@@ -343,32 +328,17 @@ function switchAccountSimulation(targetUser) {
   setTimeout(() => {
     loaderText.textContent = `> ACCESSING CORE FOR USER [${targetUser.toUpperCase()}]...`;
     setTimeout(() => {
-      loaderText.textContent = `> SYNCHRONIZING FILESYSTEM DIRECTORIES...`;
-      setTimeout(() => {
-        // Ejecutar cambio físico de sesión en memoria
-        localStorage.setItem("logged_user", targetUser);
-        currentFolderId = null;
-        
-        // Renderizar todo de nuevo bajo el nuevo contexto del usuario
-        document.getElementById("scriptGrid").innerHTML = "";
-        document.getElementById("currentFolderName").innerText = "Select a folder layout";
-        document.getElementById("newScriptBtn").style.display = "none";
-        
-        renderFolders();
-        renderAccountProfiles();
-        
-        overlay.style.display = "none";
-        showToast(`✓ Shifted to profile: ${targetUser}`);
-      }, 1000);
+      localStorage.setItem("logged_user", targetUser);
+      location.reload(); // Recarga la página bajo el nuevo contexto de usuario
     }, 900);
   }, 800);
 }
 
-/* DIRECTORIOS Y SCRIPTS */
+/* DIRECTORIOS Y SCRIPTS CON BÚSQUEDA INTEGRADA */
 function renderFolders() {
-  const user = getLoggedUser(); const folders = JSON.parse(localStorage.getItem("vault_folders"));
+  const folders = JSON.parse(localStorage.getItem("vault_folders")) || [];
   const listElement = document.getElementById("folderList"); listElement.innerHTML = "";
-  const userFolders = folders.filter(f => f.username === user);
+  const userFolders = folders.filter(f => f.username === activeUser);
   userFolders.forEach(folder => {
     const li = document.createElement("li");
     li.className = `folder-item ${currentFolderId === folder.id ? 'active' : ''}`;
@@ -379,16 +349,16 @@ function renderFolders() {
 
 function createNewFolder() {
   const name = prompt("Enter folder name:"); if(!name || !name.trim()) return;
-  const folders = JSON.parse(localStorage.getItem("vault_folders"));
-  folders.push({ id: "fold_" + Date.now(), name: name.trim(), username: getLoggedUser() });
+  const folders = JSON.parse(localStorage.getItem("vault_folders")) || [];
+  folders.push({ id: "fold_" + Date.now(), name: name.trim(), username: activeUser });
   localStorage.setItem("vault_folders", JSON.stringify(folders)); renderFolders();
 }
 
 function deleteFolder(id, event) {
   event.stopPropagation(); if(!confirm("Delete folder and all its contents permanently?")) return;
-  let folders = JSON.parse(localStorage.getItem("vault_folders"));
+  let folders = JSON.parse(localStorage.getItem("vault_folders")) || [];
   localStorage.setItem("vault_folders", JSON.stringify(folders.filter(f => f.id !== id)));
-  let scripts = JSON.parse(localStorage.getItem("vault_scripts"));
+  let scripts = JSON.parse(localStorage.getItem("vault_scripts")) || [];
   localStorage.setItem("vault_scripts", JSON.stringify(scripts.filter(s => s.folderId !== id)));
   if(currentFolderId === id) { currentFolderId = null; document.getElementById("currentFolderName").innerText = "Select a folder layout"; document.getElementById("newScriptBtn").style.display = "none"; }
   renderFolders(); renderScripts();
@@ -401,8 +371,12 @@ function selectFolder(id, name) {
 
 function renderScripts() {
   const grid = document.getElementById("scriptGrid"); grid.innerHTML = ""; if(!currentFolderId) return;
-  const scripts = JSON.parse(localStorage.getItem("vault_scripts"));
-  const folderScripts = scripts.filter(s => s.folderId === currentFolderId);
+  const scripts = JSON.parse(localStorage.getItem("vault_scripts")) || [];
+  const searchVal = document.getElementById("dashboardSearch").value.toLowerCase().trim();
+  
+  // Filtra por carpeta y por término de búsqueda en tiempo real
+  const folderScripts = scripts.filter(s => s.folderId === currentFolderId && (s.title.toLowerCase().includes(searchVal) || s.id.toLowerCase().includes(searchVal)));
+  
   folderScripts.forEach(script => {
     const card = document.createElement("div"); card.className = "script-card";
     card.innerHTML = `<div><h4>${script.title}</h4><p>ID: ${script.id}</p></div>
@@ -416,7 +390,7 @@ function renderScripts() {
 
 function goToEditorForNewScript() {
   localStorage.setItem("active_folder_target", currentFolderId);
-  localStorage.setItem("last_active_folder", currentFolderId); // Almacena el ID para recuperarlo al volver
+  localStorage.setItem("last_active_folder", currentFolderId); // Recuerda la carpeta activa al regresar
   window.location.href = `index.html?from=dashboard&folderId=${currentFolderId}`;
 }
 
@@ -426,29 +400,25 @@ function viewScript(id) {
 
 function deleteScript(id) {
   if(!confirm("Delete this script?")) return;
-  let scripts = JSON.parse(localStorage.getItem("vault_scripts"));
+  let scripts = JSON.parse(localStorage.getItem("vault_scripts")) || [];
   localStorage.setItem("vault_scripts", JSON.stringify(scripts.filter(s => s.id !== id)));
   renderScripts(); showToast("✓ Script deleted locally");
 }
 
-// ── CONTROL DE PERSISTENCIA Y RESTAURACIÓN AUTOMÁTICA DE CARPETAS ──
-if(getLoggedUser()) { 
-  showScreen('Dashboard'); 
-  renderFolders(); 
-  renderAccountProfiles();
-  
-  // Captura el estado de la carpeta para volver a posicionar al programador automáticamente
-  const restoreFolderId = localStorage.getItem("last_active_folder");
-  if(restoreFolderId) {
-    const folders = JSON.parse(localStorage.getItem("vault_folders")) || [];
-    const targeted = folders.find(f => f.id === restoreFolderId);
-    if(targeted) {
-      selectFolder(targeted.id, targeted.name);
-    }
-    localStorage.removeItem("last_active_folder");
+// Inicialización de la persistencia al cargar el archivo independiente
+loadUserAvatarHeader();
+renderFolders(); 
+renderAccountProfiles();
+
+// Comprueba si venías guardando un script en index.html para reabrir tu carpeta automática
+const restoreFolderId = localStorage.getItem("last_active_folder");
+if(restoreFolderId) {
+  const folders = JSON.parse(localStorage.getItem("vault_folders")) || [];
+  const targeted = folders.find(f => f.id === restoreFolderId);
+  if(targeted) {
+    selectFolder(targeted.id, targeted.name);
   }
-} else {
-  showScreen('Login');
+  localStorage.removeItem("last_active_folder");
 }
 </script>
 </body>
