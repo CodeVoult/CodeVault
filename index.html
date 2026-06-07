@@ -577,7 +577,7 @@ async function saveScript() {
 
     // Ajuste de Enlaces Limpios (Sin espacios en blanco de formato)
     const viewUrl = 'https://leeh10.github.io/CodeVault/view.html?id=' + id;
-    const rawUrl  = 'https://leeh10.github.io/CodeVault/view.html?id=' + id + '&raw=true';
+    const rawUrlForExecutor = 'https://codevault-vlv1.onrender.com/raw/' + scriptId;
     const ls      = 'loadstring(game:HttpGet("' + rawUrl + '"))()';
 
     document.getElementById('rawUrlText').textContent      = rawUrl;
