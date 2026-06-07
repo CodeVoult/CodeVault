@@ -659,7 +659,7 @@ async function loadScript() {
   document.getElementById('lsSection').style.display = 'block';
 
   try {
-    const res = await fetch('https://codevault-gvyn.onrender.com/raw/' + scriptId);
+    const res = await fetch('https://codevault-vlv1.onrender.com/raw/' + scriptId);
     if (!res.ok) throw new Error();
     const code = await res.text();
     
@@ -716,7 +716,7 @@ async function saveChanges() {
   setStatus('loading', 'Pushing database patch...');
 
   try {
-    const res = await fetch('https://codevault-gvyn.onrender.com/save', {
+    const res = await fetch('https://codevault-vlv1.onrender.com/save', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id: scriptId, code: updated })
