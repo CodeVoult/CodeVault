@@ -652,7 +652,7 @@ async function loadScript() {
 
   document.getElementById('scriptIdLabel').textContent = `#${scriptId.toUpperCase()}`;
 
-  const rawUrlForExecutor = 'https://leeh10.github.io/CodeVault/view.html?id=' + scriptId + '&raw=true';
+  const rawUrlForExecutor = 'https://codevault-vlv1.onrender.com/raw/' + scriptId;
   const ls = 'loadstring(game:HttpGet("' + rawUrlForExecutor + '"))()';
   
   document.getElementById('lsCode').textContent = ls;
