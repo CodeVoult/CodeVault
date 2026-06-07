@@ -595,8 +595,17 @@ function drawConnections() {
 let scriptId = '';
 let originalCode = '';
 
+// MODIFICADO: Ahora busca en la URL o en la memoria local
 function getId() {
-  return new URLSearchParams(window.location.search).get('id');
+  // 1. Intenta buscar el id en la URL (ej: view.html?id=xyz)
+  let id = new URLSearchParams(window.location.search).get('id');
+  
+  // 2. Si no hay ID en la URL, lo saca del localStorage (el que guardó tu index.html)
+  if (!id) {
+    id = localStorage.getItem('idUsuario');
+  }
+  
+  return id;
 }
 
 function setStatus(type, text) {
@@ -621,8 +630,16 @@ function updateLineCount(val) {
 /* ── LOAD ── */
 async function loadScript() {
   scriptId = getId();
-  if (!scriptId) { setStatus('error', 'Missing script ID'); return; }
+  
+  // Si no encontró ID en ningún lado, da un error limpio
+  if (!scriptId) { 
+    setStatus('error', 'No script ID found in device'); 
+    document.getElementById('code').placeholder = "Please register an ID in index.html first...";
+    showToast('⚠ No registered ID detected');
+    return; 
+  }
 
+  // Muestra el ID limpio arriba en tu etiqueta gris oscura
   document.getElementById('scriptIdLabel').textContent = `#${scriptId.toUpperCase()}`;
 
   const rawUrl = `https://codevault-gvyn.onrender.com/raw/${scriptId}`;
@@ -638,8 +655,10 @@ async function loadScript() {
     originalCode = code;
     updateLineCount(code);
     setStatus('ready', 'Script loaded — Read-Only');
+    showToast('✓ Script synchronized successfully');
   } catch {
-    setStatus('error', 'Script not found');
+    setStatus('error', 'Script not found on Server');
+    showToast('⚠ Error fetching data from Render');
   }
 }
 
