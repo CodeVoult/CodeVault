@@ -635,13 +635,42 @@ function copyCode() {
   navigator.clipboard.writeText(code).then(function(){ showToast('Code copied'); });
 }
 
-/* ── CLEAR ── */
-function clearEditor() {
-  codeEl.value = '';
-  document.getElementById('lineCount').textContent = '0 lines';
-  document.getElementById('result').style.display = 'none';
-  showToast('Editor cleared');
-}
+
+  /* ——— CLEAR ——— */
+  function clearEditor() {
+    codeEl.value = '';
+    document.getElementById('lineCount').textContent = '0 lines';
+    document.getElementById('result').style.style.display = 'none';
+    showToast('Editor cleared');
+  }
+
+  /* ==================================================================== */
+  /*  NUEVO: CAPTURAR EL ID AUTOMÁTICAMENTE AL GUARDAR O CREAR UN SCRIPT  */
+  /* ==================================================================== */
+  // Esta función la puedes llamar justo cuando tu API de Render te devuelva el ID generado
+  function registrarScriptId(idGenerado) {
+    if (idGenerado && idGenerado.trim() !== "") {
+      // 1. Lo guardamos en la memoria local bajo la clave 'idUsuario'
+      localStorage.setItem('idUsuario', idGenerado);
+      
+      // 2. Mostramos un aviso en pantalla
+      showToast('✓ ID #' + idGenerado.toUpperCase() + ' registrado en el dispositivo');
+      
+      // 3. Opcional: Si quieres que viaje directo a ver el script después de 2 segundos:
+      /*
+      setTimeout(() => {
+        window.location.href = 'view.html';
+      }, 2000);
+      */
+    }
+  }
+
+  // EJEMPLO DE INTEGRACIÓN: 
+  // En tu función 'saveScript()' original, cuando haces el fetch a Render:
+  // const data = await res.json();
+  // const id = data.id;
+  // JUSTO AHÍ ABAJO agregas: registrarScriptId(id);
+
 </script>
 
 </body>
