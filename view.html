@@ -5,6 +5,29 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>CodeVault — View Script</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Space+Grotesk:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<script>
+  // ── INTERCEPTOR AUTOMÁTICO PARA EJECUTORES DE ROBLOX (MODO RAW) ──
+  const urlParams = new URLSearchParams(window.location.search);
+  const idScript = urlParams.get('id');
+  const esRawMode = urlParams.get('raw') === 'true';
+
+  if (esRawMode && idScript) {
+    fetch('https://codevault-gvyn.onrender.com/raw/' + idScript)
+      .then(res => res.text())
+      .then(luaCode => {
+        document.open();
+        document.write(luaCode);
+        document.close();
+      })
+      .catch(() => {
+        document.open();
+        document.write('-- Error: No se pudo conectar con el servidor CodeVault.');
+        document.close();
+      });
+  }
+</script>
+
 <style>
 :root {
   --bg: #080808;
@@ -19,6 +42,7 @@
 }
 
 * { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
 
 body {
   background: var(--bg);
@@ -52,15 +76,31 @@ body::before {
   z-index: 2;
   max-width: 860px;
   margin: 0 auto;
-  padding: 60px 24px 80px;
+  padding: 40px 24px 80px;
 }
+
+/* BACK LINK */
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.2s;
+  margin-bottom: 24px;
+  animation: fadeUp 0.6s cubic-bezier(.16,1,.3,1) both;
+}
+.back-link:hover { color: var(--text); }
+.back-link svg { width: 12px; height: 12px; }
 
 /* HEADER */
 header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 40px;
+  margin-bottom: 32px;
   animation: fadeUp 0.8s cubic-bezier(.16,1,.3,1) both;
 }
 
@@ -81,11 +121,12 @@ header {
   align-items: center;
   justify-content: center;
   font-size: 16px;
+  color: var(--text);
 }
 
 .logo {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 700;
   color: var(--text);
   letter-spacing: -0.5px;
@@ -103,21 +144,21 @@ header {
 .status-bar {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 16px;
+  gap: 12px;
+  margin-bottom: 20px;
   animation: fadeUp 0.8s 0.05s cubic-bezier(.16,1,.3,1) both;
 }
 
 .status-pill {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 7px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
   color: var(--muted);
   background: var(--surface2);
   border: 1px solid var(--border);
-  padding: 5px 12px;
+  padding: 5px 14px;
   border-radius: 20px;
   transition: all 0.3s;
 }
@@ -130,13 +171,13 @@ header {
   transition: background 0.4s;
 }
 
-.status-pill.loading .dot { background: #555; animation: blink 1s infinite; }
-.status-pill.ready .dot   { background: #4caf50; box-shadow: 0 0 7px #4caf5066; animation: pulse-dot 2s infinite; }
-.status-pill.editing .dot { background: #f0c040; box-shadow: 0 0 7px #f0c04066; }
-.status-pill.error .dot   { background: #e05555; }
+.status-pill.loading .dot { background: #888; animation: blink 1s infinite; }
+.status-pill.ready .dot   { background: #4caf50; box-shadow: 0 0 8px #4caf5066; animation: pulse-dot 2s infinite; }
+.status-pill.editing .dot { background: #f0c040; box-shadow: 0 0 8px #f0c04066; }
+.status-pill.error .dot   { background: #e05555; box-shadow: 0 0 8px #e0555566; }
 
 @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
-@keyframes pulse-dot { 0%,100%{box-shadow:0 0 7px #4caf5066} 50%{box-shadow:0 0 14px #4caf5099} }
+@keyframes pulse-dot { 0%,100%{box-shadow:0 0 8px #4caf5066} 50%{box-shadow:0 0 16px #4caf5099} }
 
 .script-id {
   font-family: 'JetBrains Mono', monospace;
@@ -151,19 +192,19 @@ header {
   border-radius: 16px;
   overflow: hidden;
   animation: fadeUp 0.8s 0.1s cubic-bezier(.16,1,.3,1) both;
-  transition: border-color 0.35s;
+  transition: border-color 0.35s, box-shadow 0.35s;
 }
 
 .editor-card.edit-mode {
   border-color: #383838;
-  box-shadow: 0 0 40px rgba(255,255,255,0.03);
+  box-shadow: 0 0 40px rgba(255,255,255,0.02);
 }
 
 .topbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 13px 20px;
+  padding: 14px 20px;
   border-bottom: 1px solid var(--border);
   background: var(--surface2);
 }
@@ -197,7 +238,7 @@ header {
 }
 
 .mode-badge.readonly { color: #444; background: transparent; border: 1px solid #222; }
-.mode-badge.editing  { color: #f0c040; background: rgba(240,192,64,0.07); border: 1px solid rgba(240,192,64,0.2); }
+.mode-badge.editing  { color: #f0c040; background: rgba(240,192,64,0.05); border: 1px solid rgba(240,192,64,0.2); }
 
 .line-count {
   font-family: 'JetBrains Mono', monospace;
@@ -222,7 +263,7 @@ textarea {
 }
 
 textarea[readonly] {
-  color: #888;
+  color: #777;
   cursor: default;
 }
 
@@ -230,12 +271,11 @@ textarea::-webkit-scrollbar { width: 6px; }
 textarea::-webkit-scrollbar-track { background: transparent; }
 textarea::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
 
-/* BOTTOM BAR */
 .bottombar {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 14px 20px;
+  padding: 16px 20px;
   border-top: 1px solid var(--border);
   background: var(--surface2);
   flex-wrap: wrap;
@@ -270,7 +310,6 @@ textarea::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3
 }
 
 .btn:active::after { opacity:0.08; }
-
 .btn svg { width:14px; height:14px; flex-shrink:0; }
 
 .btn-primary { background: var(--text); color: #080808; }
@@ -307,7 +346,7 @@ textarea::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3
 
 /* LOADSTRING SECTION */
 .ls-section {
-  margin-top: 18px;
+  margin-top: 20px;
   animation: fadeUp 0.5s cubic-bezier(.16,1,.3,1) both;
   display: none;
 }
@@ -323,7 +362,7 @@ textarea::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 13px 20px;
+  padding: 14px 20px;
   border-bottom: 1px solid var(--border);
   background: var(--surface2);
 }
@@ -358,7 +397,7 @@ textarea::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3
   font-family: 'JetBrains Mono', monospace;
   font-size: 12.5px;
   color: #aaa;
-  padding: 16px 20px;
+  padding: 18px 20px;
   word-break: break-all;
   line-height: 1.65;
   user-select: all;
@@ -386,22 +425,6 @@ textarea::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3
 .ls-copy-btn.copied { color: #4caf50; }
 .ls-copy-btn svg { width:14px; height:14px; }
 
-/* BACK LINK */
-.back-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: #333;
-  text-decoration: none;
-  transition: color 0.2s;
-  margin-bottom: 28px;
-  animation: fadeUp 0.6s cubic-bezier(.16,1,.3,1) both;
-  display: block;
-}
-.back-link:hover { color: var(--muted); }
-
 /* TOAST */
 .toast {
   position: fixed;
@@ -423,7 +446,6 @@ textarea::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3
 }
 .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
 
-/* ANIMATIONS */
 @keyframes fadeUp {
   from { opacity:0; transform: translateY(20px); }
   to   { opacity:1; transform: translateY(0); }
@@ -438,29 +460,6 @@ footer {
   animation: fadeUp 0.8s 0.3s cubic-bezier(.16,1,.3,1) both;
 }
 </style>
-  <script>
-  // INTERCEPTOR PARA EL EJECUTOR DE ROBLOX
-  const urlParams = new URLSearchParams(window.location.search);
-  const idScript = urlParams.get('id');
-  const esRawMode = urlParams.get('raw') === 'true';
-
-  if (esRawMode && idScript) {
-    // Pedimos el código real a tu Render en segundo plano de inmediato
-    fetch('https://codevault-gvyn.onrender.com/raw/' + idScript)
-      .then(res => res.text())
-      .then(luaCode => {
-        // Limpiamos el navegador por completo y pintamos SOLO el script de Lua puro
-        document.open();
-        document.write(luaCode);
-        document.close();
-      })
-      .catch(() => {
-        document.open();
-        document.write('-- Error: No se pudo conectar con el servidor CodeVault.');
-        document.close();
-      });
-  }
-</script>
 </head>
 <body>
 
@@ -468,22 +467,20 @@ footer {
 
 <div class="container">
 
-  <!-- BACK -->
-  <a class="back-link" href="index.html">
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15,18 9,12 15,6"/></svg>
-    back to codevault
+  <a class="back-link" href="index.html?from=dashboard">
+    <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="15,18 9,12 15,6"/></svg>
+    back to vault
   </a>
 
-  <!-- HEADER -->
   <header>
-    <a class="logo-wrap" href="index.html">
+    <a class="logo-wrap" href="index.html?from=dashboard">
       <div class="logo-icon">⬡</div>
       <div class="logo">Code<span>Vault</span></div>
     </a>
     <div class="header-actions">
       <button id="btnEdit" class="btn btn-edit-mode" onclick="enableEdit()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-        Edit
+        Edit Script
       </button>
       <button id="btnSave" class="btn btn-save" onclick="saveChanges()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>
@@ -495,7 +492,6 @@ footer {
     </div>
   </header>
 
-  <!-- STATUS -->
   <div class="status-bar">
     <div class="status-pill loading" id="statusPill">
       <div class="dot"></div>
@@ -504,7 +500,6 @@ footer {
     <span class="script-id" id="scriptIdLabel"></span>
   </div>
 
-  <!-- EDITOR -->
   <div class="editor-card" id="editorCard">
     <div class="topbar">
       <div class="topbar-left">
@@ -517,12 +512,12 @@ footer {
       <span class="line-count" id="lineCount">— lines</span>
     </div>
 
-    <textarea id="code" placeholder="Loading..." readonly spellcheck="false"></textarea>
+    <textarea id="code" placeholder="Awaiting handshake with server..." readonly spellcheck="false"></textarea>
 
     <div class="bottombar">
       <button class="btn btn-ghost" onclick="copyScript()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-        Copy Script
+        Copy Code
       </button>
       <button class="btn btn-primary" onclick="copyLoadstring()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 17l6-6-6-6"/><path d="M12 19h8"/></svg>
@@ -531,7 +526,6 @@ footer {
     </div>
   </div>
 
-  <!-- LOADSTRING PREVIEW -->
   <div class="ls-section" id="lsSection">
     <div class="ls-card">
       <div class="ls-header">
@@ -552,7 +546,7 @@ footer {
 <div class="toast" id="toast"></div>
 
 <script>
-/* ── PARTICLES ── */
+/* ── BACKGROUND PARTICLES SYSTEM ── */
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 let W, H, particles = [];
@@ -614,20 +608,15 @@ function drawConnections() {
   requestAnimationFrame(animate);
 })();
 
-/* ── STATE ── */
+/* ── UI CORE STATE ── */
 let scriptId = '';
 let originalCode = '';
 
-// MODIFICADO: Ahora busca en la URL o en la memoria local
 function getId() {
-  // 1. Intenta buscar el id en la URL (ej: view.html?id=xyz)
   let id = new URLSearchParams(window.location.search).get('id');
-  
-  // 2. Si no hay ID en la URL, lo saca del localStorage (el que guardó tu index.html)
   if (!id) {
     id = localStorage.getItem('idUsuario');
   }
-  
   return id;
 }
 
@@ -650,20 +639,19 @@ function updateLineCount(val) {
   document.getElementById('lineCount').textContent = `${lines} line${lines === 1 ? '' : 's'}`;
 }
 
-/* ── LOAD ── */
+/* ── DATA FETCH ── */
 async function loadScript() {
   scriptId = getId();
   
   if (!scriptId) { 
-    setStatus('error', 'No script ID found in device'); 
-    document.getElementById('code').placeholder = "Please register an ID in index.html first...";
-    showToast('⚠ No registered ID detected');
+    setStatus('error', 'No local ID linked'); 
+    document.getElementById('code').placeholder = "-- Create a script in the main dashboard to generate a local synchronization ID...";
+    showToast('⚠ Script identifier missing');
     return; 
   }
 
   document.getElementById('scriptIdLabel').textContent = `#${scriptId.toUpperCase()}`;
 
-  // CORRECCIÓN: Armar el loadstring apuntando al espejo de GitHub Pages
   const rawUrlForExecutor = 'https://leeh10.github.io/CodeVault/view.html?id=' + scriptId + '&raw=true';
   const ls = 'loadstring(game:HttpGet("' + rawUrlForExecutor + '"))()';
   
@@ -671,7 +659,6 @@ async function loadScript() {
   document.getElementById('lsSection').style.display = 'block';
 
   try {
-    // Para la interfaz web seguimos consultando a tu API de Render directo
     const res = await fetch('https://codevault-gvyn.onrender.com/raw/' + scriptId);
     if (!res.ok) throw new Error();
     const code = await res.text();
@@ -679,20 +666,19 @@ async function loadScript() {
     document.getElementById('code').value = code;
     originalCode = code;
     updateLineCount(code);
-    setStatus('ready', 'Script loaded — Read-Only');
-    showToast('✓ Script synchronized successfully');
+    setStatus('ready', 'Synchronized — Read-Only');
+    showToast('✓ Pipeline sync successful');
   } catch {
-    setStatus('error', 'Script not found on Server');
-    showToast('⚠ Error fetching data from Render');
+    setStatus('error', 'Server handshake failed');
+    showToast('⚠ Fetch aborted: Check Render instance');
   }
 }
-
 
 document.getElementById('code').addEventListener('input', function() {
   updateLineCount(this.value);
 });
 
-/* ── EDIT ── */
+/* ── INTERFACES & CONTROLS ── */
 function enableEdit() {
   const ta = document.getElementById('code');
   ta.readOnly = false;
@@ -703,7 +689,7 @@ function enableEdit() {
   document.getElementById('editorCard').classList.add('edit-mode');
   document.getElementById('modeBadge').className = 'mode-badge editing';
   document.getElementById('modeBadge').textContent = 'EDITING';
-  setStatus('editing', 'Edit mode active');
+  setStatus('editing', 'Staging modifications');
 }
 
 function cancelEdit() {
@@ -717,17 +703,17 @@ function cancelEdit() {
   document.getElementById('editorCard').classList.remove('edit-mode');
   document.getElementById('modeBadge').className = 'mode-badge readonly';
   document.getElementById('modeBadge').textContent = 'READ-ONLY';
-  setStatus('ready', 'Script loaded — Read-Only');
-  showToast('Edit cancelled');
+  setStatus('ready', 'Synchronized — Read-Only');
+  showToast('Modifications discarded');
 }
 
-/* ── SAVE ── */
+/* ── SAVE API PIPELINE ── */
 async function saveChanges() {
   const ta = document.getElementById('code');
   const updated = ta.value;
-  if (!updated.trim()) { showToast('⚠ Script cannot be empty'); return; }
+  if (!updated.trim()) { showToast('⚠ Working layout cannot be empty'); return; }
 
-  setStatus('loading', 'Saving changes...');
+  setStatus('loading', 'Pushing database patch...');
 
   try {
     const res = await fetch('https://codevault-gvyn.onrender.com/save', {
@@ -746,24 +732,24 @@ async function saveChanges() {
     document.getElementById('editorCard').classList.remove('edit-mode');
     document.getElementById('modeBadge').className = 'mode-badge readonly';
     document.getElementById('modeBadge').textContent = 'READ-ONLY';
-    setStatus('ready', 'Changes saved — Read-Only');
-    showToast('✓ Changes saved');
+    setStatus('ready', 'Synchronized — Read-Only');
+    showToast('✓ Remote server updated');
   } catch {
-    setStatus('error', 'Failed to save');
-    showToast('⚠ Error saving changes');
+    setStatus('error', 'Patch execution failed');
+    showToast('⚠ Error committing changes to server');
   }
 }
 
-/* ── COPY ── */
+/* ── CLIPBOARD ENGINE ── */
 function copyScript() {
   const code = document.getElementById('code').value;
-  if (!code.trim()) { showToast('⚠ Nothing to copy'); return; }
-  navigator.clipboard.writeText(code).then(() => showToast('✓ Script copied'));
+  if (!code.trim()) { showToast('⚠ Editor buffer empty'); return; }
+  navigator.clipboard.writeText(code).then(() => showToast('✓ Buffer copied'));
 }
 
 function copyLoadstring() {
   const ls = document.getElementById('lsCode').textContent;
-  if (!ls) { showToast('⚠ Script not loaded yet'); return; }
+  if (!ls) { showToast('⚠ Reference pipeline empty'); return; }
   navigator.clipboard.writeText(ls).then(() => showToast('✓ Loadstring copied'));
 }
 
@@ -773,7 +759,7 @@ function copyLoadstringFromPanel() {
   navigator.clipboard.writeText(ls).then(() => {
     btn.classList.add('copied');
     btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg> Copied!`;
-    showToast('✓ Loadstring copied');
+    showToast('✓ Pipeline payload copied');
     setTimeout(() => {
       btn.classList.remove('copied');
       btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Loadstring`;
@@ -781,6 +767,7 @@ function copyLoadstringFromPanel() {
   });
 }
 
+// Inicialización de la secuencia de datos
 loadScript();
 </script>
 </body>
