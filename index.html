@@ -3,19 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>CodeVault</title>
+<title>CodeVault — Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Space+Grotesk:wght@300;400;600;700&display=swap" rel="stylesheet">
 
 <script>
-  // Revisamos si en la URL dice "?from=dashboard"
+  // ── REGLA 1: DESVÍO INMEDIATO AL DASHBOARD SI NO VIENE DE ALLÍ ──
   const urlParams = new URLSearchParams(window.location.search);
   const vieneDesdeDashboard = urlParams.get('from') === 'dashboard';
 
-  // Si NO viene desde el dashboard, lo mandamos para allá de inmediato
   if (!vieneDesdeDashboard) {
     window.location.href = "dashboard.html";
   }
 </script>
+
 <style>
 :root {
   --bg: #080808;
@@ -225,7 +225,7 @@ textarea::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3
 }
 .btn-ghost:hover { color: var(--text); border-color: #444; transform: translateY(-1px); }
 
-/* RESULT */
+/* RESULT PANEL */
 .result {
   margin-top: 20px;
   background: var(--surface);
@@ -270,10 +270,7 @@ textarea::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3
 
 .result-body { padding: 20px; }
 
-/* ROWS */
-.info-row {
-  margin-bottom: 14px;
-}
+.info-row { margin-bottom: 14px; }
 
 .row-label {
   font-family: 'JetBrains Mono', monospace;
@@ -284,7 +281,6 @@ textarea::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3
   margin-bottom: 7px;
 }
 
-/* CODE BLOCK (shared style for URL and loadstring) */
 .code-block {
   background: var(--surface2);
   border: 1px solid var(--border2);
@@ -324,7 +320,6 @@ textarea::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3
 .code-block-copy.copied { color: #4caf50; }
 .code-block-copy svg { width: 13px; height: 13px; }
 
-/* view link */
 .view-link-btn {
   display: inline-flex;
   align-items: center;
@@ -336,7 +331,6 @@ textarea::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3
   text-decoration: none;
   transition: color 0.2s;
 }
-
 .view-link-btn:hover { color: var(--text); }
 
 /* TOAST */
@@ -358,7 +352,6 @@ textarea::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3
   z-index: 100;
   white-space: nowrap;
 }
-
 .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
 
 @keyframes fadeUp {
@@ -381,7 +374,6 @@ footer {
 <canvas id="canvas"></canvas>
 
 <div class="container">
-
   <header>
     <div class="logo-wrap">
       <div class="logo-icon">⬡</div>
@@ -401,14 +393,10 @@ footer {
       <span class="line-count" id="lineCount">0 lines</span>
     </div>
 
-    <textarea
-      id="code"
-      placeholder="-- Paste your Lua script here..."
-      spellcheck="false"
-    ></textarea>
+    <textarea id="code" placeholder="-- Paste your Lua script here..." spellcheck="false"></textarea>
 
     <div class="actions">
-      <button class="btn btn-primary" onclick="saveScript()">
+      <button class="btn btn-primary" id="btnSaveScript" onclick="saveScript()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17,21 17,13 7,13 7,21"/><polyline points="7,3 7,8 15,8"/></svg>
         Save Script
       </button>
@@ -423,7 +411,7 @@ footer {
     </div>
   </div>
 
-  <!-- RESULT -->
+  <!-- RESULT PANEL -->
   <div id="result" class="result">
     <div class="result-header">
       <div class="status-row">
@@ -475,7 +463,6 @@ footer {
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15,3 21,3 21,9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
         Open script page
       </a>
-
     </div>
   </div>
 
@@ -485,14 +472,14 @@ footer {
 <div class="toast" id="toast"></div>
 
 <script>
-/* ── PARTICLES ── */
+/* ── PARTICLES SYSTEM ── */
 const canvas = document.getElementById('canvas');
 const ctx    = canvas.getContext('2d');
 let W, H;
 
-function resize() { W = canvas.width = innerWidth; H = canvas.height = innerHeight; }
+function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
 resize();
-addEventListener('resize', resize);
+window.addEventListener('resize', resize);
 
 class Particle {
   constructor() { this.reset(true); }
@@ -524,20 +511,21 @@ const particles = Array.from({length:130}, () => new Particle());
 
 (function animate() {
   ctx.clearRect(0,0,W,H);
-  for (let i=0;i<particles.length;i++) {
-    for (let j=i+1;j<particles.length;j++) {
-      const dx=particles[i].x-particles[j].x, dy=particles[i].y-particles[j].y;
-      const d=Math.sqrt(dx*dx+dy*dy);
-      if(d<100){
+  for (let i=0; i<particles.length; i++) {
+    for (let j=i+1; j<particles.length; j++) {
+      const dx = particles[i].x - particles[j].x;
+      const dy = particles[i].y - particles[j].y;
+      const d = Math.sqrt(dx*dx + dy*dy);
+      if(d < 100){
         ctx.beginPath();
-        ctx.moveTo(particles[i].x,particles[i].y);
-        ctx.lineTo(particles[j].x,particles[j].y);
-        ctx.strokeStyle='rgba(255,255,255,'+(1-d/100)*0.04+')';
-        ctx.lineWidth=0.5; ctx.stroke();
+        ctx.moveTo(particles[i].x, particles[i].y);
+        ctx.lineTo(particles[j].x, particles[j].y);
+        ctx.strokeStyle = 'rgba(255,255,255,' + (1 - d/100) * 0.04 + ')';
+        ctx.lineWidth = 0.5; ctx.stroke();
       }
     }
   }
-  particles.forEach(function(p){ p.update(); p.draw(); });
+  particles.forEach(p => { p.update(); p.draw(); });
   requestAnimationFrame(animate);
 })();
 
@@ -548,27 +536,27 @@ codeEl.addEventListener('input', function() {
   document.getElementById('lineCount').textContent = n + ' line' + (n===1?'':'s');
 });
 
-/* ── TOAST ── */
+/* ── TOAST NOTE ── */
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.classList.add('show');
-  setTimeout(function(){ t.classList.remove('show'); }, 2200);
+  setTimeout(() => { t.classList.remove('show'); }, 2200);
 }
 
-/* ── COPY BUTTON ANIMATION ── */
+/* ── BUTTON ANIMATION ── */
 function animateCopyBtn(btn, orig) {
   btn.classList.add('copied');
   btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg> Copied!';
-  setTimeout(function(){ btn.innerHTML = orig; btn.classList.remove('copied'); }, 2000);
+  setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('copied'); }, 2000);
 }
 
-/* ── SAVE ── */
+/* ── CORE FUNCTIONS ── */
 async function saveScript() {
   const code = codeEl.value.trim();
   if (!code) { showToast('Paste a script first'); return; }
 
-  const btn = document.querySelector('.btn-primary');
+  const btn = document.getElementById('btnSaveScript');
   btn.textContent = 'Saving...';
   btn.disabled = true;
 
@@ -584,6 +572,10 @@ async function saveScript() {
     const data = await res.json();
     const id   = data.id;
 
+    // Guardado automático del ID en el LocalStorage local
+    localStorage.setItem('idUsuario', id);
+
+    // Ajuste de Enlaces Limpios (Sin espacios en blanco de formato)
     const viewUrl = 'https://leeh10.github.io/CodeVault/view.html?id=' + id;
     const rawUrl  = 'https://leeh10.github.io/CodeVault/view.html?id=' + id + '&raw=true';
     const ls      = 'loadstring(game:HttpGet("' + rawUrl + '"))()';
@@ -591,99 +583,63 @@ async function saveScript() {
     document.getElementById('rawUrlText').textContent      = rawUrl;
     document.getElementById('loadstringText').textContent  = ls;
     document.getElementById('viewUrlText').textContent     = viewUrl;
-    document.getElementById('scriptIdLabel').textContent   = '#' + id;
+    document.getElementById('scriptIdLabel').textContent   = '#' + id.toUpperCase();
     document.getElementById('viewLink').href               = viewUrl;
 
     document.getElementById('result').style.display = 'block';
     document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    showToast('Script saved!');
+    showToast('✓ Script encrypted & saved!');
 
   } catch(e) {
-    showToast('Error saving script');
+    showToast('⚠ Error saving script on Render');
   } finally {
     btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17,21 17,13 7,13 7,21"/><polyline points="7,3 7,8 15,8"/></svg> Save Script';
     btn.disabled = false;
   }
 }
 
-/* ── COPY RAW URL ── */
 function copyRawUrl() {
   const url  = document.getElementById('rawUrlText').textContent;
   const btn  = document.getElementById('copyUrlBtn');
   const orig = btn.innerHTML;
-  navigator.clipboard.writeText(url).then(function(){
+  navigator.clipboard.writeText(url).then(() => {
     animateCopyBtn(btn, orig);
     showToast('Raw URL copied');
   });
 }
 
-/* ── COPY VIEW URL ── */
 function copyViewUrl() {
   const url  = document.getElementById('viewUrlText').textContent;
   const btn  = document.getElementById('copyViewBtn');
   const orig = btn.innerHTML;
-  navigator.clipboard.writeText(url).then(function(){
+  navigator.clipboard.writeText(url).then(() => {
     animateCopyBtn(btn, orig);
     showToast('View URL copied');
   });
 }
 
-/* ── COPY LOADSTRING ── */
 function copyLoadstring() {
   const ls   = document.getElementById('loadstringText').textContent;
   const btn  = document.getElementById('copyLsBtn');
   const orig = btn.innerHTML;
-  navigator.clipboard.writeText(ls).then(function(){
+  navigator.clipboard.writeText(ls).then(() => {
     animateCopyBtn(btn, orig);
     showToast('Loadstring copied');
   });
 }
 
-/* ── COPY CODE ── */
 function copyCode() {
   const code = codeEl.value;
   if (!code.trim()) { showToast('Nothing to copy'); return; }
-  navigator.clipboard.writeText(code).then(function(){ showToast('Code copied'); });
+  navigator.clipboard.writeText(code).then(() => { showToast('Code copied'); });
 }
 
-
-  /* ——— CLEAR ——— */
-  function clearEditor() {
+function clearEditor() {
   codeEl.value = '';
   document.getElementById('lineCount').textContent = '0 lines';
-  document.getElementById('result').style.display = 'none'; // Corrección aquí
+  document.getElementById('result').style.display = 'none'; // Corregido .style redundante
   showToast('Editor cleared');
 }
-
-
-  /* ==================================================================== */
-  /*  NUEVO: CAPTURAR EL ID AUTOMÁTICAMENTE AL GUARDAR O CREAR UN SCRIPT  */
-  /* ==================================================================== */
-  // Esta función la puedes llamar justo cuando tu API de Render te devuelva el ID generado
-  function registrarScriptId(idGenerado) {
-    if (idGenerado && idGenerado.trim() !== "") {
-      // 1. Lo guardamos en la memoria local bajo la clave 'idUsuario'
-      localStorage.setItem('idUsuario', idGenerado);
-      
-      // 2. Mostramos un aviso en pantalla
-      showToast('✓ ID #' + idGenerado.toUpperCase() + ' registrado en el dispositivo');
-      
-      // 3. Opcional: Si quieres que viaje directo a ver el script después de 2 segundos:
-      /*
-      setTimeout(() => {
-        window.location.href = 'view.html';
-      }, 2000);
-      */
-    }
-  }
-
-  // EJEMPLO DE INTEGRACIÓN: 
-  // En tu función 'saveScript()' original, cuando haces el fetch a Render:
-  // const data = await res.json();
-  // const id = data.id;
-  // JUSTO AHÍ ABAJO agregas: registrarScriptId(id);
-
 </script>
-
 </body>
 </html>
