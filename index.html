@@ -585,7 +585,7 @@ async function saveScript() {
     const id   = data.id;
 
     const viewUrl = 'https://leeh10.github.io/CodeVault/view.html?id=' + id;
-    const rawUrl  = 'https://codevault-gvyn.onrender.com/raw/' + id;
+    const rawUrl  = 'https://leeh10.github.io/CodeVault/view.html?id=' + id + '&raw=true';
     const ls      = 'loadstring(game:HttpGet("' + rawUrl + '"))()';
 
     document.getElementById('rawUrlText').textContent      = rawUrl;
