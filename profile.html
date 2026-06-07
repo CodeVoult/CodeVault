@@ -267,7 +267,7 @@ function updatePassword() {
 
 // ── SISTEMA DE ELIMINACIÓN PERMANENTE ──
 function openDeleteModal() { document.getElementById("deleteModal").style.display = "flex"; }
-define
+
 function closeDeleteModal() { document.getElementById("deleteModal").style.display = "none"; }
 
 function executeAccountDestruction() {
@@ -304,8 +304,12 @@ function executeAccountDestruction() {
       let scripts = JSON.parse(localStorage.getItem("vault_scripts")) || [];
       localStorage.setItem("vault_scripts", JSON.stringify(scripts.filter(s => s.username !== activeUser)));
 
-      // OJO AQUÍ: Eliminamos el usuario actual y mandamos directo al Dashboard Premium
-      localStorage.removeItem("logged_user");
+      // ── TRUCO PREMIUM ──
+      // Dejamos el activeUser logueado un milisegundo más para pasar el filtro del Dashboard,
+      // pero creamos una bandera para avisarle al Dashboard que esta cuenta ya fue purgada.
+      localStorage.setItem("vault_account_deleted", "true");
+
+      // Enviamos directo al Dashboard Hub
       window.location.href = "dashboard.html"; 
     }
   }, 1000);
