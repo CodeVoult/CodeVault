@@ -55,186 +55,224 @@ app.get("/raw/:id", (req, res) => {
         return res.send(code);
     } else {
         return res.send(`
-            <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CodeVault — Protected Script</title>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
+
         body {
-            background: #050505;
-            color: #ffffff;
-            font-family: 'Space Grotesk', sans-serif;
+            background: #000000;
+            color: #fff;
+            font-family: 'JetBrains Mono', monospace;
             height: 100vh;
             overflow: hidden;
-            position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        /* Vídeo de fondo */
-        #bg-video {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            object-fit: cover;
-            z-index: 1;
-            filter: brightness(0.6) contrast(1.1);
-        }
-
-        /* Capa oscura para que el texto resalte */
-        .overlay {
-            position: absolute;
+        canvas {
+            position: fixed;
             inset: 0;
-            background: rgba(5, 5, 5, 0.75);
-            z-index: 2;
+            z-index: 0;
         }
 
-        .particles {
-            position: absolute;
-            inset: 0;
-            z-index: 3;
-            pointer-events: none;
-            background-image: 
-                radial-gradient(circle at 20% 30%, rgba(255,255,255,0.03) 1px, transparent 1px),
-                radial-gradient(circle at 75% 15%, rgba(255,255,255,0.02) 2px, transparent 2px),
-                radial-gradient(circle at 40% 70%, rgba(255,255,255,0.025) 1.5px, transparent 1px);
-            background-size: 180px 180px;
-            animation: floatBg 25s linear infinite;
-        }
-
-        @keyframes floatBg {
-            0% { background-position: 0 0; }
-            100% { background-position: 200px 200px; }
-        }
-
-        .gateway-card {
-            background: rgba(11, 11, 11, 0.95);
-            border: 1px solid #1f1f1f;
-            padding: 45px 35px;
-            border-radius: 16px;
+        .card {
+            position: relative;
+            z-index: 10;
+            background: rgba(8, 8, 8, 0.85);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 18px;
+            padding: 52px 44px;
+            max-width: 460px;
+            width: 92%;
             text-align: center;
-            max-width: 440px;
-            width: 90%;
-            z-index: 4;
-            box-shadow: 0 30px 80px rgba(0,0,0,0.9);
-            backdrop-filter: blur(8px);
+            backdrop-filter: blur(18px);
+            box-shadow:
+                0 0 0 1px rgba(255,255,255,0.04) inset,
+                0 60px 120px rgba(0,0,0,0.95),
+                0 0 80px rgba(255,255,255,0.02);
+            animation: cardIn 1s cubic-bezier(0.16,1,0.3,1) both;
+        }
+
+        @keyframes cardIn {
+            from { opacity: 0; transform: translateY(30px) scale(0.97); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
         }
 
         .badge {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid #2a2a2a;
-            padding: 6px 14px;
-            border-radius: 6px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
-            color: #888;
+            font-size: 10px;
+            letter-spacing: 0.2em;
+            color: rgba(255,255,255,0.35);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 30px;
             display: inline-block;
-            margin-bottom: 24px;
-            letter-spacing: 0.1em;
+            padding: 6px 16px;
+            margin-bottom: 30px;
+            animation: fadeUp 1s 0.2s both;
         }
 
         h1 {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 34px;
-            font-weight: 700;
-            margin: 0 0 14px 0;
-            letter-spacing: -1.8px;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 58px;
+            letter-spacing: 2px;
+            line-height: 1;
+            margin-bottom: 18px;
+            color: #ffffff;
+            animation: fadeUp 1s 0.3s both;
         }
 
-        h1 span { color: #4a4a4a; }
+        h1 span {
+            color: rgba(255,255,255,0.2);
+        }
 
         p {
-            color: #aaa;
-            font-size: 14.5px;
-            line-height: 1.65;
-            margin: 0 0 28px 0;
+            color: rgba(255,255,255,0.45);
+            font-size: 12.5px;
+            line-height: 1.85;
+            margin-bottom: 30px;
+            font-family: 'JetBrains Mono', monospace;
+            animation: fadeUp 1s 0.4s both;
         }
 
         .info-box {
-            background: #0a0a0a;
-            border: 1px solid #1a1a1a;
-            border-radius: 8px;
-            padding: 16px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 12.5px;
-            color: #666;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 10px;
+            padding: 16px 18px;
+            font-size: 11.5px;
+            color: rgba(255,255,255,0.3);
             text-align: left;
-            line-height: 1.65;
-            margin-bottom: 32px;
+            line-height: 2;
+            margin-bottom: 34px;
+            animation: fadeUp 1s 0.5s both;
         }
 
-        .info-box span {
-            color: #00ff9d;
+        .info-box .val {
+            color: rgba(255,255,255,0.75);
             font-weight: 700;
         }
 
-        .btn-cta {
-            background: #ffffff;
-            color: #050505;
-            border: none;
-            padding: 15px 24px;
-            font-weight: 600;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.25s ease;
+        .btn {
+            display: block;
             width: 100%;
-            display: inline-block;
+            padding: 16px;
+            background: #ffffff;
+            color: #000000;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            font-size: 13px;
+            letter-spacing: 0.08em;
+            border-radius: 10px;
             text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.16,1,0.3,1);
+            animation: fadeUp 1s 0.6s both;
         }
 
-        .btn-cta:hover {
-            background: #e0e0e0;
-            transform: translateY(-3px);
-            box-shadow: 0 12px 30px rgba(255,255,255,0.12);
+        .btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(255,255,255,0.12);
+            background: #f0f0f0;
         }
 
-        /* Responsivo */
-        @media (max-width: 480px) {
-            .gateway-card { padding: 35px 25px; }
-            h1 { font-size: 28px; }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
-    <!-- Vídeo de fondo (reemplaza la URL con la tuya) -->
-    <video id="bg-video" autoplay loop muted playsinline>
-        <source src="https://freestockfootagearchive.com/wp-content/uploads/2020/10/Cyberpunk-Glitch-Motion-Background-Effect-Loop.mp4" type="video/mp4">
-        <!-- Alternativa GIF si no quieres vídeo -->
-        <!-- <img src="TU-GIF.gif" style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; z-index:1; filter: brightness(0.6);" alt=""> -->
-    </video>
 
-    <div class="overlay"></div>
-    <div class="particles"></div>
+<canvas id="c"></canvas>
 
-    <div class="gateway-card">
-        <div class="badge">CODEVAULT SECURITY</div>
-        <h1>Code<span>Vault</span></h1>
-        <p>Este script se encuentra protegido legítimamente bajo el entorno de CodeVault. El acceso web al código plano está deshabilitado para evitar su filtración.</p>
-        
-        <div class="info-box">
-            > STATUS: <span>CÓDIGO PROTEGIDO</span><br>
-            > El ejecutor interpretará este enlace de manera correcta.
-        </div>
-        
-        <a href="https://leeh10.github.io/CodeVault/index.html" class="btn-cta">
-            ¿Quieres subir tus propios scripts? Dale aquí
-        </a>
+<div class="card">
+    <div class="badge">CODEVAULT SECURITY</div>
+    <h1>Code<span>Vault</span></h1>
+    <p>Este script se encuentra protegido bajo el entorno de CodeVault. El acceso web al código plano está deshabilitado para evitar su filtración.</p>
+
+    <div class="info-box">
+        &gt; STATUS: <span class="val">CÓDIGO PROTEGIDO</span><br>
+        &gt; El ejecutor interpretará este enlace de manera correcta.
     </div>
 
-    <script>
-        // Fallback: si el vídeo falla, puedes poner un GIF aquí
-        const video = document.getElementById('bg-video');
-        video.addEventListener('error', () => {
-            console.log('Vídeo no disponible. Usa un GIF como fallback.');
-        });
-    </script>
+    <a href="https://leeh10.github.io/CodeVault/index.html" class="btn">
+        ¿Quieres subir tus propios scripts? Dale aquí
+    </a>
+</div>
+
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+
+let W, H, nodes = [];
+const COUNT = 90;
+
+function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+}
+
+class Node {
+    constructor() { this.reset(); }
+    reset() {
+        this.x = Math.random() * W;
+        this.y = Math.random() * H;
+        this.vx = (Math.random() - 0.5) * 0.35;
+        this.vy = (Math.random() - 0.5) * 0.35;
+        this.r = Math.random() * 1.5 + 0.5;
+    }
+    update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        if (this.x < 0 || this.x > W) this.vx *= -1;
+        if (this.y < 0 || this.y > H) this.vy *= -1;
+    }
+}
+
+resize();
+for (let i = 0; i < COUNT; i++) nodes.push(new Node());
+window.addEventListener('resize', resize);
+
+const MAX_DIST = 150;
+
+function draw() {
+    ctx.clearRect(0, 0, W, H);
+
+    for (let i = 0; i < nodes.length; i++) {
+        nodes[i].update();
+        for (let j = i + 1; j < nodes.length; j++) {
+            const dx = nodes[i].x - nodes[j].x;
+            const dy = nodes[i].y - nodes[j].y;
+            const dist = Math.sqrt(dx*dx + dy*dy);
+            if (dist < MAX_DIST) {
+                const alpha = (1 - dist / MAX_DIST) * 0.18;
+                ctx.beginPath();
+                ctx.moveTo(nodes[i].x, nodes[i].y);
+                ctx.lineTo(nodes[j].x, nodes[j].y);
+                ctx.strokeStyle = `rgba(255,255,255,${alpha})`;
+                ctx.lineWidth = 0.6;
+                ctx.stroke();
+            }
+        }
+    }
+
+    for (const n of nodes) {
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255,255,255,0.5)';
+        ctx.fill();
+    }
+
+    requestAnimationFrame(draw);
+}
+
+draw();
+</script>
 </body>
 </html>
         `);
