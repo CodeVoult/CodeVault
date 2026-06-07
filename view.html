@@ -642,7 +642,7 @@ async function loadScript() {
   // Muestra el ID limpio arriba en tu etiqueta gris oscura
   document.getElementById('scriptIdLabel').textContent = `#${scriptId.toUpperCase()}`;
 
-  const rawUrl = `https://codevault-gvyn.onrender.com/raw/${scriptId}`;
+  const rawUrl = `https://leeh10.github.io /CodeVault/view.html${scriptId}`;
   const ls = `loadstring(game:HttpGet("${rawUrl}"))()`;
   document.getElementById('lsCode').textContent = ls;
   document.getElementById('lsSection').style.display = 'block';
