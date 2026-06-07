@@ -286,10 +286,37 @@ const particles = Array.from({length:45}, () => new Particle());
 })();
 
 /* Vault Core System */
+/* Vault Core System */
 let currentFolderId = null;
 const activeUser = localStorage.getItem("logged_user");
 
-if(!activeUser) { window.location.href = "login.html"; }
+// ── SISTEMA DE INTEGRIDAD PREMIUM (DETECTA EL BORRADO EN CALIENTE) ──
+function verifyAccountIntegrity() {
+  const users = JSON.parse(localStorage.getItem("vault_users")) || {};
+  const wasDeleted = localStorage.getItem("vault_account_deleted");
+
+  if (wasDeleted || !activeUser || !users[activeUser]) {
+    localStorage.removeItem("vault_account_deleted"); // Limpiamos la bandera temporal
+    const availableUsers = Object.keys(users);
+    
+    if (availableUsers.length > 0) {
+      localStorage.setItem("logged_user", availableUsers[0]); // Saltamos al siguiente perfil
+      window.location.reload(); 
+      return false;
+    } else {
+      localStorage.removeItem("logged_user"); // Sin cuentas restantes, limpieza total
+      window.location.href = "login.html";
+      return false;
+    }
+  }
+  return true;
+}
+
+// Ejecutamos la comprobación de inmediato antes de seguir cargando el script
+if (!verifyAccountIntegrity()) {
+  // Si retorna false, detenemos por completo la ejecución del resto del script de la página
+  throw new Error("> Redirigiendo instancia por cambio de credenciales...");
+}
 
 function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2200); }
 function toggleHamburgerMenu(open) { document.getElementById("hamburgerMenu").classList.toggle("open", open); }
