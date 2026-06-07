@@ -46,33 +46,67 @@ async function saveScript() {
 
     // Mostramos el contenedor de resultados de forma elegante
     const resultBox = document.getElementById('result');
-    resultBox.style.display = 'block';
-    resultBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    if (resultBox) {
+      resultBox.style.display = 'block';
+      resultBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
     
     if (typeof showToast === 'function') showToast('Script saved!');
 
-    // ── VINCULACIÓN CON EL DASHBOARD Y SUS CARPETAS ──
+    // ── VINCULACIÓN INTELIGENTE CON EL DASHBOARD ──
     const urlParams = new URLSearchParams(window.location.search);
     const folderId = urlParams.get('folderId');
+    const editId = urlParams.get('editId'); // Detectamos si venimos en modo edición
     const loggedUser = sessionStorage.getItem("logged_user");
 
-    if (folderId && loggedUser) {
-      // Obtenemos el baúl de scripts locales para el panel
+    if (loggedUser) {
       let vaultScripts = JSON.parse(localStorage.getItem("vault_scripts")) || [];
       
-      // Pedimos un título personalizado para identificar la tarjeta en el panel
-      const scriptTitle = prompt("Ponle un nombre a tu Script para el Dashboard:") || "Nuevo Script";
-      
-      // Añadimos el script estructurado al almacén del dashboard
-      vaultScripts.push({
-        id: id,                  // Vinculado al ID único de tu servidor de Render
-        folderId: folderId,      // Vinculado a la carpeta actual de la que vienes
-        username: loggedUser,    // Vinculado a la sesión de tu cuenta
-        title: scriptTitle.trim(),
-        code: code               // Guardamos copia del código original para permitir re-editarlo
-      });
-      
-      localStorage.setItem("vault_scripts", JSON.stringify(vaultScripts));
+      if (editId) {
+        // MODO EDICIÓN: Buscamos el script original en el baúl y actualizamos sus datos
+        let scriptEncontrado = false;
+        vaultScripts = vaultScripts.map(s => {
+          if (s.id === editId) {
+            s.id = id;     // Reemplazamos por el nuevo ID generado por Render
+            s.code = code; // Actualizamos el código fuente
+            scriptEncontrado = true;
+          }
+          return s;
+        });
+
+        // Si por alguna razón el script no existía (ej. se borró caché), lo recuperamos de forma segura
+        if (!scriptEncontrado && folderId) {
+          vaultScripts.push({
+            id: id,
+            folderId: folderId,
+            username: loggedUser,
+            title: "Script Editado",
+            code: code
+          });
+        }
+
+        localStorage.setItem("vault_scripts", JSON.stringify(vaultScripts));
+        if (typeof showToast === 'function') showToast('✓ Script actualizado en el Dashboard');
+        
+        // Opcional: Actualizar la URL de la barra de direcciones para que los siguientes guardados sigan editando sobre el nuevo ID
+        const nuevaUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?editId=' + id;
+        window.history.pushState({ path: nuevaUrl }, '', nuevaUrl);
+
+      } else if (folderId) {
+        // MODO NUEVO SCRIPT: Si venimos de una carpeta y no estamos editando, creamos tarjeta nueva
+        const scriptTitle = prompt("Ponle un nombre a tu Script para el Dashboard:") || "Nuevo Script";
+        
+        vaultScripts.push({
+          id: id,                  // ID único de Render
+          folderId: folderId,      // ID de la carpeta contenedora
+          username: loggedUser,    // Usuario dueño del script
+          title: scriptTitle.trim(),
+          code: code               // Copia original para re-editar
+        });
+        
+        localStorage.setItem("vault_scripts", JSON.stringify(vaultScripts));
+        if (typeof showToast === 'function') showToast('✓ Script añadido a la carpeta');
+      }
     }
 
     // Guardar ID general en almacenamiento local del dispositivo (Tracking alternativo)
@@ -96,47 +130,4 @@ async function saveScript() {
       btn.disabled = false;
     }
   }
-}
-
-/* ── FUNCIONES DE COPIADO COMPLEMENTARIAS ── */
-
-function copyRawUrl() {
-  const url  = document.getElementById('rawUrlText').textContent;
-  const btn  = document.getElementById('copyUrlBtn');
-  if (!url) return;
-  navigator.clipboard.writeText(url).then(function(){
-    if (typeof animateCopyBtn === 'function') animateCopyBtn(btn, btn.innerHTML);
-    if (typeof showToast === 'function') showToast('Raw URL copied');
-  });
-}
-
-function copyViewUrl() {
-  const url  = document.getElementById('viewUrlText').textContent;
-  const btn  = document.getElementById('copyViewBtn');
-  if (!url) return;
-  navigator.clipboard.writeText(url).then(function(){
-    if (typeof animateCopyBtn === 'function') animateCopyBtn(btn, btn.innerHTML);
-    if (typeof showToast === 'function') showToast('View URL copied');
-  });
-}
-
-function copyLoadstring() {
-  const ls   = document.getElementById('loadstringText').textContent;
-  const btn  = document.getElementById('copyLsBtn');
-  if (!ls) return;
-  navigator.clipboard.writeText(ls).then(function(){
-    if (typeof animateCopyBtn === 'function') animateCopyBtn(btn, btn.innerHTML);
-    if (typeof showToast === 'function') showToast('Loadstring copied');
-  });
-}
-
-function copyCode() {
-  const codeEl = document.getElementById('code');
-  if (!codeEl || !codeEl.value.trim()) { 
-    if (typeof showToast === 'function') showToast('Nothing to copy'); 
-    return; 
-  }
-  navigator.clipboard.writeText(codeEl.value).then(function(){ 
-    if (typeof showToast === 'function') showToast('Code copied'); 
-  });
 }
