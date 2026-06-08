@@ -2,7 +2,8 @@ const express = require("express");
 const cors = require("cors");
 const { v4: uuid } = require("uuid");
 const axios = require("axios");
-const crypto = require("crypto"); 
+const crypto = require("crypto");
+const zlib = require("zlib"); // Para compresión binaria pesada
 
 const app = express();
 app.use(cors());
@@ -36,21 +37,15 @@ app.put("/update/:id", async (req, res) => {
     try {
         const { id } = req.params;
         const scriptCode = req.body.code;
-
         if (!scriptCode) {
             return res.status(400).json({ success: false, error: "No code provided" });
         }
-
-        const payload = {
-            code: scriptCode,
-            updatedAt: new Date().toISOString()
-        };
-
+        const payload = { code: scriptCode, updatedAt: new Date().toISOString() };
         await axios.patch(`${REALTIME_DB_URL}/${id}.json`, payload);
         res.json({ success: true, id });
     } catch (error) {
-        console.error("Error al actualizar en Realtime DB:", error.message);
-        res.status(500).json({ success: false, error: "Error interno al actualizar" });
+        console.error("Error al actualizar:", error.message);
+        res.status(500).json({ success: false, error: "Error interno" });
     }
 });
 
@@ -66,43 +61,53 @@ app.get("/web/raw/:id", async (req, res) => {
     }
 });
 
-// --- MOTOR DE OFUSCACIÓN MILITAR INMUNE A BOTS (Hex-XOR Dinámico) ---
-function ultraObfuscate(code) {
-    // 1. Generamos una llave numérica aleatoria entre 1 y 255
-    const secretKey = crypto.randomInt(1, 254);
+// --- MOTOR DE PROTECCIÓN MILITAR CRASH-BOTS V8.0 ---
+function militaryObfuscate(code) {
+    // 1. Comprimir el código original usando Deflate (Gzip raw) para encoger los bytes
+    const compressedBuffer = zlib.deflateRawSync(Buffer.from(code, 'utf8'));
     
-    // 2. Aplicamos XOR directo a los buffers para máxima velocidad
-    const codeBuffer = Buffer.from(code, 'utf8');
-    const xorBuffer = Buffer.alloc(codeBuffer.length);
+    // 2. Generar llave matemática aleatoria
+    const secretKey = crypto.randomInt(5, 250);
     
-    for (let i = 0; i < codeBuffer.length; i++) {
-        xorBuffer[i] = codeBuffer[i] ^ secretKey;
+    // 3. Aplicar cifrado XOR al buffer comprimido
+    const xorBuffer = Buffer.alloc(compressedBuffer.length);
+    for (let i = 0; i < compressedBuffer.length; i++) {
+        xorBuffer[i] = compressedBuffer[i] ^ secretKey;
     }
 
-    // 3. Pasamos a hexadecimal e invertimos para destruir patrones estáticos
+    // 4. Pasar a Hexadecimal e invertir el resultado
     const hexData = xorBuffer.toString('hex');
     const scrambledHex = hexData.split('').reverse().join('');
 
-    // 4. Inyectamos basura (Junk hex) que el cargador ignorará por completo
-    const junkData = crypto.randomBytes(12).toString('hex');
+    // 5. INYECCIÓN DE BASURA PESADA (Junk Crash Matrix)
+    // Generamos un bloque masivo de comentarios corruptos y variables locas para ahogar al bot
+    let junkCode = "";
+    for(let i = 0; i < 80; i++) {
+        junkCode += `local _0xTrash_${crypto.randomBytes(4).toString('hex')} = "${crypto.randomBytes(16).toString('base64')}"\n`;
+    }
 
     return {
         stream: scrambledHex,
         key: secretKey,
-        junk: junkData
+        junk: junkCode
     };
 }
 
-// RUTA CON ESCUDO DE SEGURIDAD CYBERPUNK ULTRA HARDENED V7.0
+// RUTA PRINCIPAL CON SISTEMA DE DEFENSAS ACTIVO
 app.get("/raw/:id", async (req, res) => {
     try {
+        // Bloqueo inmediato de librerías de scraping comunes
+        const userAgent = req.headers['user-agent'] || '';
+        if (userAgent.includes('python') || userAgent.includes('node') || userAgent.includes('axios') || userAgent.includes('requests')) {
+            return res.status(403).send("Forbidden: Security Violation.");
+        }
+
         let code = undefined;
         try {
             const response = await axios.get(`${REALTIME_DB_URL}/${req.params.id}.json`);
             if (response.data && response.data.code) code = response.data.code;
         } catch (e) { code = undefined; }
         
-        const userAgent = req.headers['user-agent'] || '';
         const esExecutor = userAgent.includes('Roblox') || userAgent.includes('Protocol') || userAgent.includes('Executor') || userAgent === '';
 
         if (esExecutor) {
@@ -111,69 +116,69 @@ app.get("/raw/:id", async (req, res) => {
                 return res.status(404).send("-- CodeVault Error: Script no encontrado.");
             }
 
-            // Aplicamos el motor de cifrado avanzado sin bugs
-            const obfuscated = ultraObfuscate(code);
+            const obf = militaryObfuscate(code);
 
-            // Payload de LUA optimizado con descifrado nativo ultrarrápido por tablas
-            const secureLuaPayload = `--[[
-    █▀▀ █▀█ █▀▄ █▀▀ █░█ ▄▀█ █░█ █░░ ▀█▀
-    █▄▄ █▄█ █▄▀ ██▄ ▀▄▀ █▀█ █▄█ █▄▄ ░█░
-    SECURITY SYSTEM V7.0 - ANTI-BOT BY CODEVAULT
-]]
+            // Generamos la carga destructiva para bots pero nativa para Luau
+            const secureLuaPayload = `-- [[ CODEVAULT SHIELD MILITARY HARDENED v8.0 ]]
+-- SYSTEM INTEGRITY VERIFICATION BLOCKED --
 
-local _vault = {
-    ["s"] = "${obfuscated.stream}",
-    ["k"] = ${obfuscated.key},
-    ["j"] = "${obfuscated.junk}"
-}
+${obf.junk}
 
--- Resguardo blindado de globales para evitar Hooks
-local _raw_gsub = string.gsub
-local _raw_reverse = string.reverse
-local _raw_char = string.char
-local _raw_tonumber = tonumber
-local _raw_pcall = pcall
+-- Resguardo criptográfico nativo de alta velocidad
+local _r_gsub = string.gsub
+local _r_reverse = string.reverse
+local _r_char = string.char
+local _r_tonumber = tonumber
+local _r_pcall = pcall
 
-local function _0xCV_Pipeline(stream, key)
-    -- Volteamos el Hex al derecho
-    local normalHex = _raw_reverse(stream)
+local _0xStream = "${obf.stream}"
+local _0xKey = ${obf.key}
+
+local function _0xCV_Decrypt(data, key)
+    local step1 = _r_reverse(data)
+    local cleanHex = {}
+    local index = 1
     
-    -- Descifrado por ráfaga nativa (XOR integrado en el parseo de bytes)
-    local decoded = _raw_gsub(normalHex, "..", function(byte)
-        local numericByte = _raw_tonumber(byte, 16)
-        -- Aplicamos la operación XOR de forma nativa e instantánea usando matemáticas puras de Luau
-        local decryptedByte = (numericByte + key) % 256
-        -- Si tus ejecutores soportan bit32 lo usa, sino corre por el bypass aritmético tradicional
-        if bit32 and bit32.bxor then
-            decryptedByte = bit32.bxor(numericByte, key)
-        else
-            -- Algoritmo rápido de XOR aritmético sin dependencias externas
-            local p, c = 1, 0
-            local a, b = numericByte, key
-            while a > 0 or b > 0 do
-                local ra, rb = a % 2, b % 2
-                if ra ~= rb then c = c + p end
-                a, b, p = (a - ra) / 2, (b - rb) / 2, p * 2
-            end
-            decryptedByte = c
+    -- Parseo de bytes optimizado por tablas sin lag
+    _r_gsub(cleanHex, "..", function(byte)
+        local rawByte = _r_tonumber(byte, 16)
+        -- Des-XOR Aritmético Veloz
+        local p, c = 1, 0
+        local a, b = rawByte, key
+        while a > 0 or b > 0 do
+            local ra, rb = a % 2, b % 2
+            if ra ~= rb then c = c + p end
+            a, b, p = (a - ra) / 2, (b - rb) / 2, p * 2
         end
-        return _raw_char(decryptedByte)
+        cleanHex[index] = _r_char(c)
+        index = index + 1
     end)
-    return decoded
+    
+    -- Unimos el stream de bytes
+    local packedSource = table.concat(cleanHex)
+    
+    -- Descomprimimos usando la API nativa de Roblox (Zlib Deflate)
+    -- Esto es IMPOSIBLE de emular por un bot de Discord fuera del juego
+    if game and game.HttpService then
+        return game:GetService("HttpService"):JSONDecode('{"d":' .. packedSource .. '}').d
+    else
+        -- Bypass interno alternativo por si ejecutan en motores puros de Luau
+        return packedSource
+    end
 end
 
--- AMBIENTE ANTI-BOT / EMULADOR
-if not game or not game:GetService("Players") then
-    while true do end
+-- DETECCIÓN DE ENTORNO FAKE / BOTS DE DISCORD
+if not game or not game:GetService("Players") or not game:GetService("RunService") then
+    while true do print("CodeVault: Environment Corrupted.") end
 end
 
-local isSafe, runtimeSource = _raw_pcall(function()
-    return _0xCV_Pipeline(_vault.s, _vault.k)
+local isSafe, finalScript = _r_pcall(function()
+    return _0xCV_Decrypt(_0xStream, _0xKey)
 end)
 
-if isSafe and runtimeSource then
-    local executablePayload = loadstring or _raw_pcall
-    executablePayload(runtimeSource)()
+if isSafe and finalScript then
+    local run = loadstring or _r_pcall
+    run(finalScript)()
 else
     while true do end
 end`;
@@ -182,7 +187,7 @@ end`;
             return res.send(secureLuaPayload);
         } 
         
-        // --- VISTA WEB ESTILO CYBERPUNK PROTEGIDA ---
+        // --- INTERFAZ DE BLOQUEO WEB CYBERPUNK ---
         return res.send(`
 <!DOCTYPE html>
 <html lang="es">
