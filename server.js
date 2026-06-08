@@ -1,42 +1,118 @@
-// Mantiene la protección original intacta y estilizada para el resto del mundo
-app.get("/raw/:id", (req, res) => {
-    const code = scripts[req.params.id];
-    const userAgent = req.headers['user-agent'] || '';
+const express = require("express");
+const cors = require("cors");
+const { v4: uuid } = require("uuid");
+// Importamos los módulos necesarios de Firebase
+const { initializeApp } = require("firebase/app");
+const { getFirestore, doc, setDoc, getDoc } = require("firebase/firestore");
 
-    const esExecutor = userAgent.includes('Roblox') || 
-                       userAgent.includes('Protocol') || 
-                       userAgent.includes('Executor') ||
-                       userAgent === '';
+const app = express();
 
-    // Si es un ejecutor de Roblox, necesita la respuesta limpia en texto plano
-    if (esExecutor) {
-        if (!code) {
-            res.setHeader('Content-Type', 'text/plain');
-            return res.status(404).send("-- CodeVault Error: Script no encontrado o expirado.");
+app.use(cors());
+app.use(express.json());
+
+// Tus credenciales reales de CodeVault extraídas de tu consola de Firebase
+const firebaseConfig = {
+    apiKey: "AIzaSyCZMCATLRhpUSPG LhBo49RGoDOGyEq1jsk",
+    authDomain: "codevault-9ca85.firebaseapp.com",
+    projectId: "codevault-9ca85",
+    storageBucket: "codevault-9ca85.firebasestorage.app",
+    messagingSenderId: "628637088734",
+    appId: "1:628637088734:web:821d74b55b75b230528b4f"
+};
+
+// Inicializamos la conexión con Firestore Database
+const firebaseApp = initializeApp(firebaseConfig);
+const db = getFirestore(firebaseApp);
+
+app.get("/", (req, res) => {
+    res.send("API funcionando con Firebase persistente");
+});
+
+// RUTA PARA GUARDAR: Registra el script de forma permanente en la nube de Google
+app.post("/save", async (req, res) => {
+    try {
+        const id = uuid();
+        const scriptCode = req.body.code;
+
+        if (!scriptCode) {
+            return res.status(400).json({ success: false, error: "No code provided" });
         }
+
+        // Guarda el documento en la colección "scripts" usando el ID único
+        await setDoc(doc(db, "scripts", id), {
+            code: scriptCode,
+            createdAt: new Date().toISOString()
+        });
+
+        res.json({
+            success: true,
+            id
+        });
+    } catch (error) {
+        console.error("Error al guardar en Firebase:", error);
+        res.status(500).json({ success: false, error: "Error interno del servidor" });
+    }
+});
+
+// RUTA EXCLUSIVA WEB: Para que tu view.html lea el código limpio dentro del editor
+app.get("/web/raw/:id", async (req, res) => {
+    try {
+        const docRef = doc(db, "scripts", req.params.id);
+        const docSnap = await getDoc(docRef);
+
+        if (!docSnap.exists()) {
+            return res.status(404).send("Not Found");
+        }
+
+        const code = docSnap.data().code;
         res.setHeader('Content-Type', 'text/plain');
         return res.send(code);
-    } 
-    
-    // Si entran desde un navegador web normal (celular o PC), SIEMPRE les muestra la interfaz pro
-    const statusText = code ? "CÓDIGO PROTEGIDO" : "NOT FOUND / EXPIRADO";
-    const statusClass = code ? "ok" : "danger";
-    const descText = code 
-        ? `Este script está cifrado y custodiado por CodeVault.<br>
-           El acceso directo desde navegador está bloqueado.<br>
-           Úsalo desde tu executor — el enlace funciona correctamente.`
-        : `El identificador de script solicitado no existe en la base de datos temporal.<br>
-           Es probable que el servidor se haya reiniciado recientemente.<br>
-           Vuelve al Dashboard principal para generar un nuevo enlace de sincronización.`;
+    } catch (error) {
+        return res.status(500).send("Error al consultar la base de datos");
+    }
+});
 
-    return res.send(`
+// RUTA CON ESCUDO DE SEGURIDAD: Controla el acceso de Ejecutores vs Navegadores comunes
+app.get("/raw/:id", async (req, res) => {
+    try {
+        const docRef = doc(db, "scripts", req.params.id);
+        const docSnap = await getDoc(docRef);
+        
+        // Si el documento existe sacamos el código, si no queda indefinido
+        const code = docSnap.exists() ? docSnap.data().code : undefined;
+
+        const userAgent = req.headers['user-agent'] || '';
+
+        const esExecutor = userAgent.includes('Roblox') || 
+                           userAgent.includes('Protocol') || 
+                           userAgent.includes('Executor') ||
+                           userAgent === '';
+
+        // Si la petición viene de un Executor de Roblox
+        if (esExecutor) {
+            if (!code) {
+                res.setHeader('Content-Type', 'text/plain');
+                return res.status(404).send("-- CodeVault Error: Script no encontrado o expirado permanentemente.");
+            }
+            res.setHeader('Content-Type', 'text/plain');
+            return res.send(code);
+        } 
+        
+        // Si entran desde un navegador web común (Chrome, Safari, etc.), se activa el escudo Cyberpunk
+        const statusText = code ? "CÓDIGO PROTEGIDO" : "NOT FOUND / EXPIRADO";
+        const statusClass = code ? "ok" : "danger";
+        const descText = code 
+            ? `Este script se encuentra protegido legítimamente bajo el entorno de CodeVault. El acceso web al código plano está deshabilitado para evitar su filtración.`
+            : `El identificador de script solicitado no existe en la base de datos de Firebase.<br>Verifica que el ID en la URL sea correcto o genera un nuevo enlace desde el panel principal.`;
+
+        return res.send(`
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CodeVault — Protected Script</title>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:ital,wght=0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -202,12 +278,12 @@ app.get("/raw/:id", (req, res) => {
             <span class="topbar-tag">codevault.security</span>
             <div class="topbar-status">
                 <div class="status-dot"></div>
-                ${code ? 'SECURITY SYSTEM ACTIVE' : 'VALIDATION FAILED'}
+                ${code ? 'ACCESS DENIED' : 'VALIDATION FAILED'}
             </div>
         </div>
 
         <div class="card-body">
-            <div class="eyebrow">// security shield</div>
+            <div class="eyebrow">// codevault security</div>
             <div class="title">Code</div>
             <div class="title-sub">V A U L T</div>
 
@@ -300,5 +376,14 @@ draw();
 </script>
 </body>
 </html>
-    `);
+        `);
+    } catch (error) {
+        return res.status(500).send("Error en el escudo de seguridad");
+    }
+});
+
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+    console.log("Server running with Firebase Integration");
 });
