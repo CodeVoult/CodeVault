@@ -596,6 +596,10 @@ async function saveScript() {
   const code = codeEl.value.trim();
   if (!code) { showToast('Paste a script first'); return; }
 
+ const sizeKB = new Blob([code]).size / 1024;
+ console.log("Size:", sizeKB, "KB");
+
+  
   const btn = document.getElementById('btnSaveScript');
   btn.textContent = 'Saving...';
   btn.disabled = true;
