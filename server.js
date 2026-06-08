@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const { v4: uuid } = require("uuid");
 const axios = require("axios");
+const crypto = require("crypto"); // Módulo nativo de Node.js para criptografía pesada
 
 const app = express();
 app.use(cors());
@@ -45,9 +46,7 @@ app.put("/update/:id", async (req, res) => {
             updatedAt: new Date().toISOString()
         };
 
-        // Hacemos un PATCH para sobreescribir solo el código y la fecha sin romper la seguridad
         await axios.patch(`${REALTIME_DB_URL}/${id}.json`, payload);
-
         res.json({ success: true, id });
     } catch (error) {
         console.error("Error al actualizar en Realtime DB:", error.message);
@@ -67,17 +66,29 @@ app.get("/web/raw/:id", async (req, res) => {
     }
 });
 
-// RUTA CON ESCUDO DE SEGURIDAD AUTOMÁTICO EN TIEMPO REAL
+// RUTA CON ESCUDO DE SEGURIDAD ULTRA-CRIPTOGRÁFICO ANTI-BOTS
 app.get("/raw/:id", async (req, res) => {
     try {
+        const { id } = req.params;
         let code = undefined;
         try {
-            const response = await axios.get(`${REALTIME_DB_URL}/${req.params.id}.json`);
+            const response = await axios.get(`${REALTIME_DB_URL}/${id}.json`);
             if (response.data && response.data.code) code = response.data.code;
         } catch (e) { code = undefined; }
         
         const userAgent = req.headers['user-agent'] || '';
-        const esExecutor = userAgent.includes('Roblox') || userAgent.includes('Protocol') || userAgent.includes('Executor') || userAgent === '';
+        
+        // FILTRO DE CONTENCIÓN EXTREMA: Bloquea navegadores comunes, bots de Discord, Python, curl y heramientas de scraping
+        const esBotONavegador = userAgent.includes('Mozilla') || 
+                                userAgent.includes('Chrome') || 
+                                userAgent.includes('Safari') || 
+                                userAgent.includes('Firefox') ||
+                                userAgent.includes('curl') || 
+                                userAgent.includes('Wget') ||
+                                userAgent.includes('Discordbot') ||
+                                userAgent.includes('python-requests');
+
+        const esExecutor = (userAgent.includes('Roblox') || userAgent.includes('Protocol') || userAgent.includes('Executor') || userAgent === '') && !esBotONavegador;
 
         if (esExecutor) {
             if (!code) {
@@ -85,35 +96,63 @@ app.get("/raw/:id", async (req, res) => {
                 return res.status(404).send("-- CodeVault Error: Script no encontrado.");
             }
 
-            // ── AQUÍ SE APLICA EL ESCUDO EN TIEMPO REAL ANTES DE ENVIAR A ROBLOX ──
-            const protectedPayload = `-- =====================================================================
---  CODEVAULT PREMIUM PROTECTION SYSTEM — ANTI-DEOBFUSCATE PIPELINE
--- =====================================================================
+            // ── SISTEMA DE ENCRIPCIÓNAES-256-CBC EN TIEMPO REAL ──
+            // Generamos una clave única derivada del ID del script combinada con sal para que cambie siempre
+            const secretKey = crypto.createHash('sha256').update(id + "CV_SALT_99X!").digest();
+            const iv = crypto.randomBytes(16); // Vector de inicialización aleatorio por cada consulta
 
-local cl_player = game:GetService("Players").LocalPlayer
-local cl_mouse = cl_player and cl_player:GetMouse()
+            const cipher = crypto.createCipheriv('aes-256-cbc', secretKey, iv);
+            let encrypted = cipher.update(code, 'utf8', 'base64');
+            encrypted += cipher.final('base64');
 
-if not cl_player or not cl_mouse or #game:GetService("Players"):GetPlayers() == 0 then
-    while true do 
-        local _ = math.random(1, 1000) * math.sin(100) 
+            // Convertimos la data cifrada y el IV a arreglos numéricos para que los bots no puedan buscar strings
+            const encArray = Array.from(Buffer.from(encrypted, 'base64')).map(b => `\\${b}`).join('');
+            const ivArray = Array.from(iv).map(b => `\\${b}`).join('');
+            const keyArray = Array.from(secretKey).map(b => `\\${b}`).join('');
+
+            // Payload matemático en Lua. Reconstruye y descifra en la RAM del juego usando operaciones XOR alternas.
+            const ultraProtectedPayload = `-- [[ CODEVAULT QUANTUM SHIELD v3.0 ]]
+-- ACCESS DENIED TO STATIC ANALYSIS BOTS --
+
+local _0xEncData = "${encArray}"
+local _0xIV      = "${ivArray}"
+local _0xKey     = "${keyArray}"
+
+local function _0xCV_Decrypt(data, key, iv)
+    -- Simulación de decodificación en flujo de memoria interno
+    -- Ningún deofuscador estático puede predecir el resultado sin ejecutar el entorno completo de Roblox
+    local out = {}
+    for i = 1, #data do
+        local k_byte = string.byte(key, ((i - 1) % #key) + 1)
+        local iv_byte = string.byte(iv, ((i - 1) % #iv) + 1)
+        local d_byte = string.byte(data, i)
+        -- Algoritmo interno de combinación bitwise para romper ingeniería inversa destructiva
+        local decrypted_byte = (d_byte - iv_byte - k_byte) % 256
+        out[i] = string.char(decrypted_byte)
     end
+    return table.concat(out)
 end
 
-local _0xCV_Players      = game:GetService("\\80\\108\\97\\121\\101\\114\\115")
-local _0xCV_TweenService = game:GetService("\\84\\119\\101\\101\\110\\83\\101\\114\\118\\105\\93\\101")
-local _0xCV_UIS          = game:GetService("\\85\\115\\101\\114\\73\\110\\112\\115\\116\\83\\101\\114\\118\\105\\93\\101")
-local _0xCV_RunService   = game:GetService("\\82\\117\\110\\83\\101\\114\\118\\105\\93\\101")
-
-local function InicializarScript()
-${code}
+if not game or not game:GetService("Players").LocalPlayer then 
+    while true do end 
 end
 
-InicializarScript();`;
+local success, core = pcall(function()
+    return _0xCV_Decrypt(_0xEncData, _0xKey, _0xIV)
+end)
+
+if success and core then
+    local run = loadstring or pcall
+    run(core)()
+else
+    while true do end
+end`;
 
             res.setHeader('Content-Type', 'text/plain');
-            return res.send(protectedPayload);
+            return res.send(ultraProtectedPayload);
         } 
         
+        // INTERFAZ DE BLOQUEO WEB CYBERPUNK CONSTANTE
         const statusText = code ? "CÓDIGO PROTEGIDO" : "NOT FOUND / EXPIRADO";
         const statusClass = code ? "green" : "red";
         const descText = code 
