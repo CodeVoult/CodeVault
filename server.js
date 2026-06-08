@@ -2,31 +2,16 @@ const express = require("express");
 const cors = require("cors");
 const { v4: uuid } = require("uuid");
 
-// IMPORTACIÓN CORREGIDA PARA NODE.JS (Evita el crash de Render)
-const { initializeApp } = require("firebase/app");
-const { getFirestore, doc, setDoc, getDoc } = require("firebase/firestore");
-
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
-// Credenciales oficiales de CodeVault (Llave corregida sin espacios)
-const firebaseConfig = {
-    apiKey: "AIzaSyCZMCATLRhpUSPGLhBo49RGoDOGyEq1jsk",
-    authDomain: "codevault-9ca85.firebaseapp.com",
-    projectId: "codevault-9ca85",
-    storageBucket: "codevault-9ca85.firebasestorage.app",
-    messagingSenderId: "628637088734",
-    appId: "1:628637088734:web:821d74b55b75b230528b4f"
-};
-
-// Inicialización segura
-const firebaseApp = initializeApp(firebaseConfig);
-const db = getFirestore(firebaseApp);
+// Configuración nativa para pegarle directo a la base de datos de Google
+const FIRESTORE_URL = "https://firestore.googleapis.com/v1/projects/codevault-9ca85/databases/(default)/documents/scripts";
 
 app.get("/", (req, res) => {
-    res.send("API funcionando con Firebase persistente");
+    res.send("API funcionando con Firebase REST nativo");
 });
 
 // RUTA PARA GUARDAR
@@ -39,29 +24,45 @@ app.post("/save", async (req, res) => {
             return res.status(400).json({ success: false, error: "No code provided" });
         }
 
-        await setDoc(doc(db, "scripts", id), {
-            code: scriptCode,
-            createdAt: new Date().toISOString()
+        // Estructura oficial que pide la API de Google Firestore
+        const payload = {
+            fields: {
+                code: { stringValue: scriptCode },
+                createdAt: { stringValue: new Date().toISOString() }
+            }
+        };
+
+        // Guardamos directamente con un PUT usando el ID único
+        const response = await fetch(`${FIRESTORE_URL}/${id}`, {
+            method: "PATCH", // PATCH crea o sobreescribe el documento en Firestore
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
         });
+
+        if (!response.ok) {
+            const errText = await response.text();
+            throw new Error(`Google API Error: ${errText}`);
+        }
 
         res.json({ success: true, id });
     } catch (error) {
-        console.error("Error en Firebase:", error);
+        console.error("Error al guardar en Firebase REST:", error);
         res.status(500).json({ success: false, error: "Error interno del servidor" });
     }
 });
 
-// RUTA EXCLUSIVA WEB RAW
+// RUTA EXCLUSIVA WEB RAW (Para tu view.html)
 app.get("/web/raw/:id", async (req, res) => {
     try {
-        const docRef = doc(db, "scripts", req.params.id);
-        const docSnap = await getDoc(docRef);
-
-        if (!docSnap.exists()) {
+        const response = await fetch(`${FIRESTORE_URL}/${req.params.id}`);
+        
+        if (!response.ok) {
             return res.status(404).send("Not Found");
         }
 
-        const code = docSnap.data().code;
+        const data = await response.json();
+        const code = data.fields.code.stringValue;
+
         res.setHeader('Content-Type', 'text/plain');
         return res.send(code);
     } catch (error) {
@@ -72,12 +73,15 @@ app.get("/web/raw/:id", async (req, res) => {
 // RUTA CON ESCUDO DE SEGURIDAD CYBERPUNK
 app.get("/raw/:id", async (req, res) => {
     try {
-        const docRef = doc(db, "scripts", req.params.id);
-        const docSnap = await getDoc(docRef);
-        
-        const code = docSnap.exists() ? docSnap.data().code : undefined;
-        const userAgent = req.headers['user-agent'] || '';
+        const response = await fetch(`${FIRESTORE_URL}/${req.params.id}`);
+        let code = undefined;
 
+        if (response.ok) {
+            const data = await response.json();
+            code = data.fields && data.fields.code ? data.fields.code.stringValue : undefined;
+        }
+        
+        const userAgent = req.headers['user-agent'] || '';
         const esExecutor = userAgent.includes('Roblox') || 
                            userAgent.includes('Protocol') || 
                            userAgent.includes('Executor') ||
@@ -178,7 +182,7 @@ app.get("/raw/:id", async (req, res) => {
         </div>
         <div class="card-footer">
             <span class="footer-text">© 2026 CODEVAULT — ALL RIGHTS RESERVED</span>
-            <span class="footer-id">#${req.params.id.substring(0,8).toUpperCase()}</span>
+            <span class="footer-id">#${req.params.id ? req.params.id.substring(0,8).toUpperCase() : 'UNKNOWN'}</span>
         </div>
     </div>
 </div>
@@ -199,5 +203,5 @@ function draw() { ctx.clearRect(0, 0, W, H); for (let i = 0; i < nodes.length; i
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log("Server running with Firebase Integration");
+    console.log("Server running with Native Google REST API");
 });
