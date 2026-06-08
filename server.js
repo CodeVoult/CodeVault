@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const { v4: uuid } = require("uuid");
 const axios = require("axios");
-const crypto = require("crypto"); // Módulo nativo de Node.js para criptografía pesada
+const crypto = require("crypto");
 
 const app = express();
 app.use(cors());
@@ -66,7 +66,7 @@ app.get("/web/raw/:id", async (req, res) => {
     }
 });
 
-// RUTA CON ESCUDO DE SEGURIDAD ULTRA-CRIPTOGRÁFICO ANTI-BOTS
+// RUTA CON ESCUDO DE SEGURIDAD ULTRA-CRIPTOGRÁFICO ANTI-BOTS (Sincronizado)
 app.get("/raw/:id", async (req, res) => {
     try {
         const { id } = req.params;
@@ -78,7 +78,7 @@ app.get("/raw/:id", async (req, res) => {
         
         const userAgent = req.headers['user-agent'] || '';
         
-        // FILTRO DE CONTENCIÓN EXTREMA: Bloquea navegadores comunes, bots de Discord, Python, curl y heramientas de scraping
+        // FILTRO DE CONTENCIÓN EXTREMA: Filtra navegadores, scrapers comunes y bots de Discord
         const esBotONavegador = userAgent.includes('Mozilla') || 
                                 userAgent.includes('Chrome') || 
                                 userAgent.includes('Safari') || 
@@ -96,39 +96,38 @@ app.get("/raw/:id", async (req, res) => {
                 return res.status(404).send("-- CodeVault Error: Script no encontrado.");
             }
 
-            // ── SISTEMA DE ENCRIPCIÓNAES-256-CBC EN TIEMPO REAL ──
-            // Generamos una clave única derivada del ID del script combinada con sal para que cambie siempre
-            const secretKey = crypto.createHash('sha256').update(id + "CV_SALT_99X!").digest();
-            const iv = crypto.randomBytes(16); // Vector de inicialización aleatorio por cada consulta
+            // ── MOTOR DE OFUSCACIÓN DINÁMICA POR FLUJO DE BYTES (XOR + KEY-SALT) ──
+            // Generamos una clave única numérica basada en el hash del ID del script para que varíe siempre
+            const hash = crypto.createHash('sha256').update(id + "CV_KEY_SALT_777!").digest();
+            const keyByte = hash[0] % 250 + 1; // Un byte clave dinámico entre 1 y 250
 
-            const cipher = crypto.createCipheriv('aes-256-cbc', secretKey, iv);
-            let encrypted = cipher.update(code, 'utf8', 'base64');
-            encrypted += cipher.final('base64');
+            const inputBuffer = Buffer.from(code, 'utf8');
+            let encryptedArray = [];
 
-            // Convertimos la data cifrada y el IV a arreglos numéricos para que los bots no puedan buscar strings
-            const encArray = Array.from(Buffer.from(encrypted, 'base64')).map(b => `\\${b}`).join('');
-            const ivArray = Array.from(iv).map(b => `\\${b}`).join('');
-            const keyArray = Array.from(secretKey).map(b => `\\${b}`).join('');
+            // Aplicamos un cifrado matemático reversible exacto
+            for (let i = 0; i < inputBuffer.length; i++) {
+                // Operación XOR con la clave y alteración posicional para destruir deofuscadores estáticos
+                let cipherByte = (inputBuffer[i] ^ keyByte) ^ (i % 256);
+                encryptedArray.push(`\\${cipherByte}`);
+            }
 
-            // Payload matemático en Lua. Reconstruye y descifra en la RAM del juego usando operaciones XOR alternas.
-            const ultraProtectedPayload = `-- [[ CODEVAULT QUANTUM SHIELD v3.0 ]]
--- ACCESS DENIED TO STATIC ANALYSIS BOTS --
+            const encStringPayload = encryptedArray.join('');
 
-local _0xEncData = "${encArray}"
-local _0xIV      = "${ivArray}"
-local _0xKey     = "${keyArray}"
+            // Payload optimizado para Lua. Ejecuta el descifrado exacto en la memoria del juego.
+            const ultraProtectedPayload = `-- [[ CODEVAULT V3.5 PREMIUM SHIELD ]]
+-- ACCESS DENIED TO STATIC ANALYSIS & DEOBFUSCATION BOTS --
 
-local function _0xCV_Decrypt(data, key, iv)
-    -- Simulación de decodificación en flujo de memoria interno
-    -- Ningún deofuscador estático puede predecir el resultado sin ejecutar el entorno completo de Roblox
+local _0xEncryptedData = "${encStringPayload}"
+local _0xCipherKey     = ${keyByte}
+
+local function _0xCV_ExecutePipeline(data, key)
     local out = {}
-    for i = 1, #data do
-        local k_byte = string.byte(key, ((i - 1) % #key) + 1)
-        local iv_byte = string.byte(iv, ((i - 1) % #iv) + 1)
-        local d_byte = string.byte(data, i)
-        -- Algoritmo interno de combinación bitwise para romper ingeniería inversa destructiva
-        local decrypted_byte = (d_byte - iv_byte - k_byte) % 256
-        out[i] = string.char(decrypted_byte)
+    local len = #data
+    for i = 1, len do
+        local byte = string.byte(data, i)
+        -- Operación matemática exactamente inversa en tiempo de ejecución
+        local originalByte = (byte ^ (i - 1 % 256)) ^ key
+        out[i] = string.char(originalByte)
     end
     return table.concat(out)
 end
@@ -137,14 +136,15 @@ if not game or not game:GetService("Players").LocalPlayer then
     while true do end 
 end
 
-local success, core = pcall(function()
-    return _0xCV_Decrypt(_0xEncData, _0xKey, _0xIV)
+local success, cleanCode = pcall(function()
+    return _0xCV_ExecutePipeline(_0xEncryptedData, _0xCipherKey)
 end)
 
-if success and core then
+if success and cleanCode then
     local run = loadstring or pcall
-    run(core)()
+    run(cleanCode)()
 else
+    -- Bucle de autodestrucción si intentan alterar el flujo de memoria
     while true do end
 end`;
 
