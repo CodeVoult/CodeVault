@@ -57,25 +57,21 @@ app.get("/web/raw/:id", async (req, res) => {
     }
 });
 
-// --- MOTOR DE OFUSCACIÓN MILITAR CODEVAULT V9.2 (ANTI-RAM DUMP OPTIMIZADO) ---
+// --- MOTOR DE OFUSCACIÓN MILITAR CODEVAULT V9.3 (ESTABILIDAD MÁXIMA EN EJECUCIÓN) ---
 function militaryObfuscate(code) {
     const xorKey = crypto.randomInt(20, 230);
     const shiftKey = crypto.randomInt(4, 18);
     
-    // Encapsulación de aislamiento para evitar el volcado de memoria de strings planos
-    const memoryIsolatedCode = `
-        local function _0x_ExecuteEncapsulated()
-            script = nil
-            ${code}
-        end
-        _0x_ExecuteEncapsulated()
-        _0x_ExecuteEncapsulated = nil
-        collectgarbage("collect")
+    // El código se mantiene en su raíz original para no alterar entornos locales o globales de la UI
+    const optimizedCode = `
+        script = nil
+        ${code}
     `;
     
-    const codeBuffer = Buffer.from(memoryIsolatedCode, 'utf8');
+    const codeBuffer = Buffer.from(optimizedCode, 'utf8');
     const protectedBuffer = Buffer.alloc(codeBuffer.length);
     
+    // Doble flujo matemático posicional
     for (let i = 0; i < codeBuffer.length; i++) {
         let processed = codeBuffer[i] ^ xorKey;
         processed = (processed + shiftKey) % 256; 
@@ -85,11 +81,12 @@ function militaryObfuscate(code) {
     const hexData = protectedBuffer.toString('hex');
     const scrambledHex = hexData.split('').reverse().join('');
 
+    // Matriz de ruido dinámico para desviar escáneres automáticos de red y firmas fijas
     let junkCode = "";
-    for(let i = 0; i < 45; i++) {
+    for(let i = 0; i < 35; i++) {
         const fakeHex = crypto.randomBytes(4).toString('hex');
-        const fakeData = crypto.randomBytes(6).toString('hex');
-        junkCode += `local _0xErr_${fakeHex} = "${fakeData}"; if _0xErr_${fakeHex} == "null" then loadstring("")() end\n`;
+        const fakeData = crypto.randomBytes(4).toString('hex');
+        junkCode += `local _0xErr_${fakeHex} = "${fakeData}";\n`;
     }
 
     return {
@@ -100,7 +97,7 @@ function militaryObfuscate(code) {
     };
 }
 
-// RUTA PRINCIPAL CON TRATAMIENTO SEGURO DE ERRORES DE EJECUCIÓN
+// RUTA PRINCIPAL BLINDADA Y REPARADA PARA EJECUCIÓN INMEDIATA
 app.get("/raw/:id", async (req, res) => {
     try {
         const userAgent = req.headers['user-agent'] || '';
@@ -128,8 +125,8 @@ app.get("/raw/:id", async (req, res) => {
     ▄▀█ ▄▄▀█▄▄ █▀█ ▄▄▀█▄▄ █░█ ▄▄▀█▄▄ █░█ █░░ ▀█▀
     █▀█ █▄█▄▄█ █▄█ █▄█▄▄█ ▀▄▀ █▀█▀▄█ █▄█ █▄▄ ░█░
    
-   [ PREMIUM MILITARY SHIELD V9.2 — BRANDING: CODEVAULT ]
-   [ ANTI-RAM DUMPS AND MEMORY HOOKING PROTECTION ENFORCED ]
+   [ PREMIUM MILITARY SHIELD V9.3 — BRANDING: CODEVAULT ]
+   [ ANTI-HOOKING & HIGH SPEED STABLE PIPELINE ENFORCED ]
 ]]
 
 ${obf.junk}
@@ -189,21 +186,23 @@ local isExecutionSafe, runtimeScript = _r_pcall(function()
 end)
 
 if isExecutionSafe and runtimeScript and #runtimeScript > 0 then
-    -- Limpieza inmediata de variables de infraestructura criptográfica para blindar la RAM
+    -- Purga inmediata de variables del cargador criptográfico para limpiar memoria RAM
     _0xStreamContainer = nil
     _0xCV_ExecutePipeline = nil
     
-    -- Compilación segura controlada para evitar caídas por errores de sintaxis del usuario
+    -- Compilación limpia en la raíz del entorno sin funciones envolventes restrictivas
     local loaderFunction, compileError = loadstring(runtimeScript)
     runtimeScript = nil
     collectgarbage("collect")
     
     if loaderFunction then
-        -- Ejecución protegida para que fallas internas del menú del usuario no congelen el cargador
+        -- Se ejecuta el script original garantizando el acceso a las variables globales de juego
         local executionSuccess, runtimeError = _r_pcall(loaderFunction)
         if not executionSuccess then
-            warn("[CODEVAULT]: Runtime error inside user script: " .. tostring(runtimeError))
+            warn("[CODEVAULT]: Runtime warning inside user script: " .. tostring(runtimeError))
         end
+        loaderFunction = nil
+        collectgarbage("collect")
     else
         warn("[CODEVAULT]: Syntax error in delivered script: " .. tostring(compileError))
     end
