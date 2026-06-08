@@ -58,20 +58,18 @@ app.get("/web/raw/:id", async (req, res) => {
 });
 
 // --- MOTOR DE OFUSCACIÓN MILITAR CODEVAULT V9.3 (ESTABILIDAD MÁXIMA EN EJECUCIÓN) ---
+// --- MOTOR DE OFUSCACIÓN MILITAR CODEVAULT V9.3 (REPARADO PARA INTERFACES GRÁFICAS) ---
 function militaryObfuscate(code) {
     const xorKey = crypto.randomInt(20, 230);
     const shiftKey = crypto.randomInt(4, 18);
     
-    // El código se mantiene en su raíz original para no alterar entornos locales o globales de la UI
-    const optimizedCode = `
-        script = nil
-        ${code}
-    `;
+    // Se elimina 'script = nil' para permitir que las librerías gráficas hereden el entorno nativo sin romperse
+    const optimizedCode = `${code}`;
     
     const codeBuffer = Buffer.from(optimizedCode, 'utf8');
     const protectedBuffer = Buffer.alloc(codeBuffer.length);
     
-    // Doble flujo matemático posicional
+    // Doble flujo matemático posicional intacto (Lo que rompió al bot)
     for (let i = 0; i < codeBuffer.length; i++) {
         let processed = codeBuffer[i] ^ xorKey;
         processed = (processed + shiftKey) % 256; 
@@ -81,7 +79,7 @@ function militaryObfuscate(code) {
     const hexData = protectedBuffer.toString('hex');
     const scrambledHex = hexData.split('').reverse().join('');
 
-    // Matriz de ruido dinámico para desviar escáneres automáticos de red y firmas fijas
+    // Matriz de ruido dinámico para desviar firmas
     let junkCode = "";
     for(let i = 0; i < 35; i++) {
         const fakeHex = crypto.randomBytes(4).toString('hex');
@@ -96,6 +94,7 @@ function militaryObfuscate(code) {
         junk: junkCode
     };
 }
+
 
 // RUTA PRINCIPAL BLINDADA Y REPARADA PARA EJECUCIÓN INMEDIATA
 app.get("/raw/:id", async (req, res) => {
@@ -121,7 +120,7 @@ app.get("/raw/:id", async (req, res) => {
 
             const obf = militaryObfuscate(code);
 
-            const secureLuaPayload = `--[[
+                    const secureLuaPayload = `--[[
     ▄▀█ ▄▄▀█▄▄ █▀█ ▄▄▀█▄▄ █░█ ▄▄▀█▄▄ █░█ █░░ ▀█▀
     █▀█ █▄█▄▄█ █▄█ █▄█▄▄█ ▀▄▀ █▀█▀▄█ █▄█ █▄▄ ░█░
    
@@ -186,23 +185,32 @@ local isExecutionSafe, runtimeScript = _r_pcall(function()
 end)
 
 if isExecutionSafe and runtimeScript and #runtimeScript > 0 then
-    -- Purga inmediata de variables del cargador criptográfico para limpiar memoria RAM
+    -- Purga inmediata de variables de red e infraestructura criptográfica
     _0xStreamContainer = nil
     _0xCV_ExecutePipeline = nil
     
-    -- Compilación limpia en la raíz del entorno sin funciones envolventes restrictivas
+    -- Compilación limpia sin envoltorios restrictivos de funciones locales
     local loaderFunction, compileError = loadstring(runtimeScript)
     runtimeScript = nil
-    collectgarbage("collect")
     
     if loaderFunction then
-        -- Se ejecuta el script original garantizando el acceso a las variables globales de juego
+        -- Se ejecuta el script original de forma directa garantizando el entorno global de la UI
         local executionSuccess, runtimeError = _r_pcall(loaderFunction)
         if not executionSuccess then
             warn("[CODEVAULT]: Runtime warning inside user script: " .. tostring(runtimeError))
         end
-        loaderFunction = nil
-        collectgarbage("collect")
+        
+        -- Limpieza post-ejecución asíncrona: Permite que los menús se rendericen completamente en segundo plano
+        -- antes de forzar la recolección de basura de los residuos del cargador criptográfico.
+        if task and task.defer then
+            task.defer(function()
+                loaderFunction = nil
+                collectgarbage("collect")
+            end)
+        else
+            loaderFunction = nil
+            collectgarbage("collect")
+        end
     else
         warn("[CODEVAULT]: Syntax error in delivered script: " .. tostring(compileError))
     end
