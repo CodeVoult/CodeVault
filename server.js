@@ -67,7 +67,7 @@ app.get("/web/raw/:id", async (req, res) => {
     }
 });
 
-// RUTA CON ESCUDO DE SEGURIDAD CYBERPUNK
+// RUTA CON ESCUDO DE SEGURIDAD CYBERPUNK + PROTECCIÓN ANTI-BOTS
 app.get("/raw/:id", async (req, res) => {
     try {
         let code = undefined;
@@ -84,8 +84,46 @@ app.get("/raw/:id", async (req, res) => {
                 res.setHeader('Content-Type', 'text/plain');
                 return res.status(404).send("-- CodeVault Error: Script no encontrado.");
             }
+
+            // ── MOTOR DE OCULTAMIENTO HEXADECIMAL INVERSO ──
+            // Convertimos el script original de Firebase a Hexadecimal plano
+            const hexString = Buffer.from(code, 'utf8').toString('hex');
+            // Volteamos la cadena al revés para romper por completo los patrones de los deofuscadores automáticos
+            const reverseHex = hexString.split('').reverse().join('');
+
+            // Generamos la respuesta en Lua que procesará el ejecutor nativamente en RAM
+            const secureLuaPayload = `-- [[ CODEVAULT PREMIUM SHIELD v5.5 ]]
+-- SYSTEM ANTI-STATIC ANALYSIS ACTIVE --
+
+local _0xStreamContainer = "${reverseHex}"
+
+local function _0xCV_Pipeline(stream)
+    -- Voltea el string a su orden correcto de forma instantánea
+    local normalHex = string.reverse(stream)
+    -- Convierte los pares Hex a caracteres reales a la velocidad de la luz
+    local decoded = string.gsub(normalHex, "..", function(byte)
+        return string.char(tonumber(byte, 16))
+    end)
+    return decoded
+end
+
+if not game or not game:GetService("Players").LocalPlayer then 
+    while true do end 
+end
+
+local success, runtimeScript = pcall(function()
+    return _0xCV_Pipeline(_0xStreamContainer)
+end)
+
+if success and runtimeScript then
+    local run = loadstring or pcall
+    run(runtimeScript)()
+else
+    while true do end
+end`;
+
             res.setHeader('Content-Type', 'text/plain');
-            return res.send(code);
+            return res.send(secureLuaPayload);
         } 
         
         const statusText = code ? "CÓDIGO PROTEGIDO" : "NOT FOUND / EXPIRADO";
