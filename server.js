@@ -10,9 +10,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Tus credenciales reales de CodeVault extraídas de tu consola de Firebase
+// Tus credenciales reales de CodeVault con el espacio en blanco corregido en la apiKey
 const firebaseConfig = {
-    apiKey: "AIzaSyCZMCATLRhpUSPG LhBo49RGoDOGyEq1jsk",
+    apiKey: "AIzaSyCZMCATLRhpUSPGLhBo49RGoDOGyEq1jsk",
     authDomain: "codevault-9ca85.firebaseapp.com",
     projectId: "codevault-9ca85",
     storageBucket: "codevault-9ca85.firebasestorage.app",
@@ -171,7 +171,7 @@ app.get("/raw/:id", async (req, res) => {
             z-index: 10;
             height: 100vh;
             display: grid;
-            place-items: center;
+place-items: center;
             padding: 20px;
         }
 
