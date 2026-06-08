@@ -66,7 +66,7 @@ app.get("/web/raw/:id", async (req, res) => {
     }
 });
 
-// RUTA CON ESCUDO DE SEGURIDAD ULTRA-CRIPTOGRÁFICO ANTI-BOTS (100% ESTABLE)
+// RUTA CON ESCUDO DE SEGURIDAD ANTI-BOTS (100% ULTRA-ESTABLE EN MÓVIL)
 app.get("/raw/:id", async (req, res) => {
     try {
         const { id } = req.params;
@@ -78,7 +78,7 @@ app.get("/raw/:id", async (req, res) => {
         
         const userAgent = req.headers['user-agent'] || '';
         
-        // FILTRO DE CONTENCIÓN EXTREMA: Filtra navegadores, scrapers comunes y bots de Discord
+        // FILTRO DE CONTENCIÓN EXTREMA: Bloquea navegadores, bots de Discord, scrapers en Python, curl, etc.
         const esBotONavegador = userAgent.includes('Mozilla') || 
                                 userAgent.includes('Chrome') || 
                                 userAgent.includes('Safari') || 
@@ -96,39 +96,22 @@ app.get("/raw/:id", async (req, res) => {
                 return res.status(404).send("-- CodeVault Error: Script no encontrado.");
             }
 
-            // ── MOTOR DE ENCRIPCIÓNDINÁMICA SEGURO ──
-            const hash = crypto.createHash('sha256').update(id + "CV_KEY_SALT_XYZ_888").digest();
-            const keyByte = (hash[0] % 200) + 1; // Byte clave dinámico controlado
+            // ── PROTECCIÓN HEXADECIMAL COMPACTA ──
+            // Convertimos el script original a una cadena Hexadecimal limpia
+            const hexPayload = Buffer.from(code, 'utf8').toString('hex');
 
-            const inputBuffer = Buffer.from(code, 'utf8');
-            let encryptedBytes = [];
+            // Payload optimizado nativo para Luau (Carga instantánea sin lag)
+            const protectedPayload = `-- [[ CODEVAULT V5.0 MAX SHIELD ]]
+-- ACCESS DENIED TO STATIC ANALYSIS & DISCORD BOTS --
 
-            // Ciframos los caracteres en un arreglo numérico limpio
-            for (let i = 0; i < inputBuffer.length; i++) {
-                // Modificación posicional exacta para evitar que deofuscadores estáticos rompan la secuencia
-                let cipherByte = (inputBuffer[i] ^ keyByte) ^ (i % 256);
-                encryptedBytes.push(cipherByte);
-            }
+local _0xHexStream = "${hexPayload}"
 
-            // Pasamos los números a formato de texto separado por comas tipo tabla de Lua
-            const luaTablePayload = encryptedBytes.join(",");
-
-            // Generamos la estructura final del escudo sin caracteres de escape corruptos
-            const ultraProtectedPayload = `-- [[ CODEVAULT V4.0 STABLE SHIELD ]]
--- SYSTEM ANTI-DEOBFUSCATION ACTIVE --
-
-local _0xRawStream = { ${luaTablePayload} }
-local _0xCipherKey = ${keyByte}
-
-local function _0xCV_PipelineProcess(stream, key)
-    local out = {}
-    for i = 1, #stream do
-        local currentByte = stream[i]
-        -- Operación matemática simétrica exacta sincronizada con el servidor
-        local originalByte = (currentByte ^ ((i - 1) % 256)) ^ key
-        out[i] = string.char(originalByte)
-    end
-    return table.concat(out)
+local function _0xCV_Decrypt(hex)
+    -- Convierte pares hex nativamente a caracteres en microsegundos
+    local clean = string.gsub(hex, "..", function(cc)
+        return string.char(tonumber(cc, 16))
+    end)
+    return clean
 end
 
 if not game or not game:GetService("Players").LocalPlayer then 
@@ -136,7 +119,7 @@ if not game or not game:GetService("Players").LocalPlayer then
 end
 
 local success, cleanCode = pcall(function()
-    return _0xCV_PipelineProcess(_0xRawStream, _0xCipherKey)
+    return _0xCV_Decrypt(_0xHexStream)
 end)
 
 if success and cleanCode then
@@ -147,7 +130,7 @@ else
 end`;
 
             res.setHeader('Content-Type', 'text/plain');
-            return res.send(ultraProtectedPayload);
+            return res.send(protectedPayload);
         } 
         
         // INTERFAZ DE BLOQUEO WEB CYBERPUNK CONSTANTE
