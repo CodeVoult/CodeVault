@@ -55,7 +55,7 @@ app.put("/update/:id", async (req, res) => {
     }
 });
 
-// RUTA EXCLUSIVA WEB RAW (Muestra el código limpio solo a tu panel web)
+// RUTA EXCLUSIVA WEB RAW
 app.get("/web/raw/:id", async (req, res) => {
     try {
         const response = await axios.get(`${REALTIME_DB_URL}/${req.params.id}.json`);
@@ -67,7 +67,7 @@ app.get("/web/raw/:id", async (req, res) => {
     }
 });
 
-// RUTA CON ESCUDO DE SEGURIDAD AUTOMÁTICO EN TIEMPO REAL
+// RUTA CON ESCUDO DE SEGURIDAD CYBERPUNK
 app.get("/raw/:id", async (req, res) => {
     try {
         let code = undefined;
@@ -84,34 +84,8 @@ app.get("/raw/:id", async (req, res) => {
                 res.setHeader('Content-Type', 'text/plain');
                 return res.status(404).send("-- CodeVault Error: Script no encontrado.");
             }
-
-            // ── AQUÍ SE APLICA EL ESCUDO EN TIEMPO REAL ANTES DE ENVIAR A ROBLOX ──
-            const protectedPayload = `-- =====================================================================
---  CODEVAULT PREMIUM PROTECTION SYSTEM — ANTI-DEOBFUSCATE PIPELINE
--- =====================================================================
-
-local cl_player = game:GetService("Players").LocalPlayer
-local cl_mouse = cl_player and cl_player:GetMouse()
-
-if not cl_player or not cl_mouse or #game:GetService("Players"):GetPlayers() == 0 then
-    while true do 
-        local _ = math.random(1, 1000) * math.sin(100) 
-    end
-end
-
-local _0xCV_Players      = game:GetService("\\80\\108\\97\\121\\101\\114\\115")
-local _0xCV_TweenService = game:GetService("\\84\\119\\101\\101\\110\\83\\101\\114\\118\\105\\93\\101")
-local _0xCV_UIS          = game:GetService("\\85\\115\\101\\114\\73\\110\\112\\115\\116\\83\\101\\114\\118\\105\\93\\101")
-local _0xCV_RunService   = game:GetService("\\82\\117\\110\\83\\101\\114\\118\\105\\93\\101")
-
-local function InicializarScript()
-${code}
-end
-
-InicializarScript();`;
-
             res.setHeader('Content-Type', 'text/plain');
-            return res.send(protectedPayload);
+            return res.send(code);
         } 
         
         const statusText = code ? "CÓDIGO PROTEGIDO" : "NOT FOUND / EXPIRADO";
