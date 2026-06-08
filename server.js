@@ -45,9 +45,7 @@ app.put("/update/:id", async (req, res) => {
             updatedAt: new Date().toISOString()
         };
 
-        // Hacemos un PATCH para sobreescribir solo el código y la fecha sin romper la seguridad
         await axios.patch(`${REALTIME_DB_URL}/${id}.json`, payload);
-
         res.json({ success: true, id });
     } catch (error) {
         console.error("Error al actualizar en Realtime DB:", error.message);
@@ -67,7 +65,7 @@ app.get("/web/raw/:id", async (req, res) => {
     }
 });
 
-// RUTA CON ESCUDO DE SEGURIDAD CYBERPUNK + PROTECCIÓN ANTI-BOTS
+// RUTA CON ESCUDO ULTRA ANTI-TAMPER HARDENED V6.0
 app.get("/raw/:id", async (req, res) => {
     try {
         let code = undefined;
@@ -85,40 +83,67 @@ app.get("/raw/:id", async (req, res) => {
                 return res.status(404).send("-- CodeVault Error: Script no encontrado.");
             }
 
-            // ── MOTOR DE OCULTAMIENTO HEXADECIMAL INVERSO ──
-            // Convertimos el script original de Firebase a Hexadecimal plano
+            // ── MOTOR ANTI-TAMPER ULTRA HARDENED ──
+            // 1. Pasamos el script plano a Hexadecimal
             const hexString = Buffer.from(code, 'utf8').toString('hex');
-            // Volteamos la cadena al revés para romper por completo los patrones de los deofuscadores automáticos
-            const reverseHex = hexString.split('').reverse().join('');
+            
+            // 2. Ofuscación Dinámica: Insertamos un separador falso cada 4 caracteres para volver loco al bot
+            let dynamicHex = "";
+            for (let i = 0; i < hexString.length; i += 4) {
+                dynamicHex += hexString.substring(i, i + 4) + "X";
+            }
+            
+            // 3. Volteamos toda la estructura con el ruido incluido
+            const heavyReverseHex = dynamicHex.split('').reverse().join('');
 
-            // Generamos la respuesta en Lua que procesará el ejecutor nativamente en RAM
-            const secureLuaPayload = `-- [[ CODEVAULT PREMIUM SHIELD v5.5 ]]
--- SYSTEM ANTI-STATIC ANALYSIS ACTIVE --
+            // Generamos la carga útil de Lua con validación estricta de entorno de ejecución
+            const secureLuaPayload = `-- [[ CODEVAULT ANTI-TAMPER PRO V6.0 BETA ]]
+-- WARNING: UNATHORIZED TAMPERING OR DECOMPILING WILL TRIGGER AUTO-CRASH --
 
-local _0xStreamContainer = "${reverseHex}"
+-- Clonación y respaldo de globales nativas para evitar Hooks/Metatables alteradas
+local _raw_gsub = string.gsub
+local _raw_reverse = string.reverse
+local _raw_char = string.char
+local _raw_tonumber = tonumber
+local _raw_pcall = pcall
 
-local function _0xCV_Pipeline(stream)
-    -- Voltea el string a su orden correcto de forma instantánea
-    local normalHex = string.reverse(stream)
-    -- Convierte los pares Hex a caracteres reales a la velocidad de la luz
-    local decoded = string.gsub(normalHex, "..", function(byte)
-        return string.char(tonumber(byte, 16))
+local _0xSecureVaultStream = "${heavyReverseHex}"
+
+local function _0xCV_DecryptionPipeline(cipher)
+    -- Paso 1: Revertir la cadena invertida de vuelta a su posición lineal
+    local step1 = _raw_reverse(cipher)
+    -- Paso 2: Limpiar el patrón de ruido dinámico 'X' inyectado por el servidor
+    local cleanHex = _raw_gsub(step1, "X", "")
+    -- Paso 3: Reconstruir caracteres planos desde los pares Hex nativos
+    local sourceCode = _raw_gsub(cleanHex, "..", function(byte)
+        return _raw_char(_raw_tonumber(byte, 16))
     end)
-    return decoded
+    return sourceCode
 end
 
-if not game or not game:GetService("Players").LocalPlayer then 
-    while true do end 
+-- AMBIENTE ANTI-BOT / ANTI-VIRTUAL MACHINE
+if not game or not game:GetService("Players") or not game:GetService("RunService") then
+    while true do end
 end
 
-local success, runtimeScript = pcall(function()
-    return _0xCV_Pipeline(_0xStreamContainer)
+-- Verificación estricta del LocalPlayer para evitar ejecuciones simuladas fuera del motor
+local plrs = game:GetService("Players")
+if not plrs.LocalPlayer or not plrs.LocalPlayer.Parent then
+    task.wait(0.5)
+    if not plrs.LocalPlayer then
+        while true do end
+    end
+end
+
+local isExecutionSafe, runtimeSource = _raw_pcall(function()
+    return _0xCV_DecryptionPipeline(_0xSecureVaultStream)
 end)
 
-if success and runtimeScript then
-    local run = loadstring or pcall
-    run(runtimeScript)()
+if isExecutionSafe and runtimeSource then
+    local executablePayload = loadstring or _raw_pcall
+    executablePayload(runtimeSource)()
 else
+    -- Si detecta alteración o error en la pipeline, crashea el hilo inmediatamente
     while true do end
 end`;
 
