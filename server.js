@@ -1,20 +1,21 @@
 const express = require("express");
 const cors = require("cors");
 const { v4: uuid } = require("uuid");
+const fetch = require("node-fetch"); // CORRECCIÓN CLAVE PARA EVITAR CRASH EN RENDER
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
-// Tu URL Real de Realtime Database extraída de tu propia consola
+// Tu URL de Realtime Database pública
 const REALTIME_DB_URL = "https://codevault-9ca85-default-rtdb.firebaseio.com/scripts";
 
 app.get("/", (req, res) => {
-    res.send("API funcionando con Realtime Database nativo");
+    res.send("API funcionando con Realtime Database y Fetch Estable");
 });
 
-// RUTA PARA GUARDAR: Guarda el script directo en Realtime Database
+// RUTA PARA GUARDAR
 app.post("/save", async (req, res) => {
     try {
         const id = uuid();
@@ -29,7 +30,6 @@ app.post("/save", async (req, res) => {
             createdAt: new Date().toISOString()
         };
 
-        // En Realtime Database se guarda con un PUT apuntando al ID.json
         const response = await fetch(`${REALTIME_DB_URL}/${id}.json`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
@@ -48,7 +48,7 @@ app.post("/save", async (req, res) => {
     }
 });
 
-// RUTA EXCLUSIVA WEB RAW: Para tu view.html
+// RUTA EXCLUSIVA WEB RAW
 app.get("/web/raw/:id", async (req, res) => {
     try {
         const response = await fetch(`${REALTIME_DB_URL}/${req.params.id}.json`);
