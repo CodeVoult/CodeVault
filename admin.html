@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CodeVault — Central Admin Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Space+Grotesk:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #040404; --surface: #0a0a0a; --surface2: #121212;
+  --border: #1c1c1c; --border2: #282828; --text: #f5f5f5; --muted: #666666;
+  --accent: #ffffff; --danger: #ef4444; --danger-bg: rgba(239, 68, 68, 0.1);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background: var(--bg); color: var(--text); font-family: 'Space Grotesk', sans-serif; padding: 30px 16px; }
+
+.admin-card {
+  max-width: 800px; margin: 20px auto; background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; padding: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+}
+.header-area { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; border-bottom: 1px solid var(--border); padding-bottom: 16px; }
+h2 { font-family: 'JetBrains Mono'; font-size: 18px; font-weight: 600; }
+h2 span { color: var(--muted); }
+
+/* TABLA ULTRA SCANNABLE PARA CELULARES */
+.table-wrapper { width: 100%; overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; background: var(--surface2); }
+table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; font-family: 'JetBrains Mono', monospace; }
+th { background: #0e0e0e; color: var(--muted); padding: 12px 16px; font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: 0.05em; border-bottom: 1px solid var(--border); }
+td { padding: 12px 16px; border-bottom: 1px solid var(--border); color: #fff; vertical-align: middle; }
+tr:last-child td { border-bottom: none; }
+
+.user-inline { display: flex; align-items: center; gap: 10px; }
+.avatar-mini { width: 26px; height: 26px; border-radius: 50%; object-fit: cover; background: #222; border: 1px solid var(--border2); }
+
+.pass-box { background: #1a1a1a; padding: 4px 8px; border-radius: 4px; border: 1px solid var(--border); color: var(--accent); }
+.badge { font-size: 10px; background: var(--text); color: #000; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
+
+.btn-delete { background: var(--danger-bg); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); padding: 6px 12px; border-radius: 6px; font-size: 11px; cursor: pointer; font-family: 'Space Grotesk'; font-weight: 600; }
+.btn-delete:hover { background: var(--danger); color: #000; }
+.btn-back { padding: 8px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid var(--border); background: transparent; color: var(--muted); text-decoration: none; font-family: 'Space Grotesk'; }
+.btn-back:hover { color: #fff; border-color: #666; }
+
+.empty-state { padding: 32px; text-align: center; color: var(--muted); font-size: 13px; }
+</style>
+</head>
+<body>
+
+<div class="admin-card">
+  <div class="header-area">
+    <h2>Vault <span>// Central Database Admin</span></h2>
+    <a href="dashboard.html" class="btn-back">← Back to Hub</a>
+  </div>
+
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>User Identity</th>
+          <th>Display Name</th>
+          <th>Stored Password</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="adminUserTable">
+        </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+// VALIDACIÓN: Solo tú puedes entrar. Si el usuario logueado no es NULLX, lo rebota
+const masterAdmin = localStorage.getItem("logged_user");
+if (masterAdmin !== "NULLX") { 
+  alert("🛑 ACCESS DENIED: Master Privileges Required.");
+  window.location.href = "dashboard.html"; 
+}
+
+function renderAdminDatabase() {
+  const usersObj = JSON.parse(localStorage.getItem("vault_users")) || {};
+  const tbody = document.getElementById("adminUserTable");
+  tbody.innerHTML = "";
+
+  const userKeys = Object.keys(usersObj);
+
+  if (userKeys.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="4" class="empty-state">> NO ACTIVE VAULT INSTANCES FOUND IN LOCAL STORAGE.</td></tr>`;
+    return;
+  }
+
+  userKeys.forEach(username => {
+    const data = usersObj[username] || {};
+    const tr = document.createElement("tr");
+
+    // Verificar si es la cuenta maestra actual
+    const isMaster = username === masterAdmin;
+    const defaultAvatar = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23666'%3E%3Cpath d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5-3.33-8-3.33z'/%3E%3C/svg%3E";
+    const avatarImg = data.avatarUrl || defaultAvatar;
+    const alias = data.displayName || username;
+    const password = data.password || "— (No password set)";
+
+    tr.innerHTML = `
+      <td>
+        <div class="user-inline">
+          <img class="avatar-mini" src="${avatarImg}">
+          <span>${username} ${isMaster ? '<span class="badge">YOU</span>' : ''}</span>
+        </div>
+      </td>
+      <td><span style="color: #a3a3a3;">${alias}</span></td>
+      <td><span class="pass-box">${password}</span></td>
+      <td>
+        <button class="btn-delete" ${isMaster ? 'disabled style="opacity:0.3; cursor:not-allowed;"' : ''} onclick="adminPurgeUser('${username}')">Purge</button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function adminPurgeUser(targetUser) {
+  if (!confirm(`Are you sure you want to completely erase execution records for user [${targetUser}]?`)) return;
+
+  // 1. Quitar de la lista de usuarios
+  let usersObj = JSON.parse(localStorage.getItem("vault_users")) || {};
+  delete usersObj[targetUser];
+  localStorage.setItem("vault_users", JSON.stringify(usersObj));
+
+  // 2. Quitar carpetas del usuario
+  let folders = JSON.parse(localStorage.getItem("vault_folders")) || [];
+  localStorage.setItem("vault_folders", JSON.stringify(folders.filter(f => f.username !== targetUser)));
+
+  // 3. Quitar scripts del usuario
+  let scripts = JSON.parse(localStorage.getItem("vault_scripts")) || [];
+  localStorage.setItem("vault_scripts", JSON.stringify(scripts.filter(s => s.username !== targetUser)));
+
+  // Recarga en caliente la tabla
+  renderAdminDatabase();
+}
+
+// Iniciar base de datos al cargar
+document.addEventListener("DOMContentLoaded", renderAdminDatabase);
+</script>
+</body>
+</html>
