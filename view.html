@@ -732,7 +732,8 @@ function cancelEdit() {
   showToast('Modifications discarded');
 }
 
-/* ── SAVE API PIPELINE CON TIEMPO DE ESPERA EXTENDIDO ── */
+
+/* ── SAVE API PIPELINE CORREGIDO PARA ACTUALIZAR EL MISMO ID ── */
 async function saveChanges() {
   const ta = document.getElementById('code');
   const updated = ta.value;
@@ -744,10 +745,11 @@ async function saveChanges() {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 40000); // 40 segundos de tolerancia
 
-    const res = await fetch('https://codevault-vlv1.onrender.com/save', {
-      method: 'POST',
+    // Apuntamos a la nueva ruta /update/:id usando el ID actual del script
+    const res = await fetch('https://codevault-vlv1.onrender.com/update/' + scriptId, {
+      method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: scriptId, code: updated }),
+      body: JSON.stringify({ code: updated }),
       signal: controller.signal
     });
 
@@ -770,6 +772,7 @@ async function saveChanges() {
     showToast('⚠ Error committing changes to server');
   }
 }
+
 
 /* ── CLIPBOARD ENGINE ── */
 function copyScript() {
