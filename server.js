@@ -69,7 +69,7 @@ app.get("/web/raw/:id", async (req, res) => {
     }
 });
 
-// --- MOTOR DE OFUSCACIÓN MILITAR CODEVAULT V12 (MUTILACIÓN DE BUFFER + VIRTUALIZACIÓN) ---
+// --- MOTOR DE OFUSCACIÓN MILITAR CODEVAULT V13 (FRAGMENTACIÓN MUTILADA + VIRTUALIZACIÓN PRECOZ) ---
 function militaryObfuscate(code) {
     const xorKey = crypto.randomInt(25, 225);
     const shiftKey = crypto.randomInt(7, 17);
@@ -86,14 +86,13 @@ function militaryObfuscate(code) {
     const hexData = protectedBuffer.toString('hex');
     const scrambledHex = hexData.split('').reverse().join('');
 
-    // --- SEGMENTACIÓN Y DESORDENAMIENTO DE CADENA (MÉTODO SPEEDDRAW) ---
+    // Fragmentación en 4 piezas desordenadas
     const size = Math.ceil(scrambledHex.length / 4);
     const p1 = scrambledHex.substring(0, size) || "0";
     const p2 = scrambledHex.substring(size, size * 2) || "0";
     const p3 = scrambledHex.substring(size * 2, size * 3) || "0";
     const p4 = scrambledHex.substring(size * 3) || "0";
 
-    // Generador de identificadores polimórficos aleatorios
     const randomVar = () => `_0xCV_${crypto.randomBytes(4).toString('hex')}`;
     
     const vStream = randomVar();
@@ -109,7 +108,6 @@ function militaryObfuscate(code) {
         junkCode += `local _0xErr_${fakeHex} = function() return "${crypto.randomBytes(5).toString('base64')}" end;\n`;
     }
 
-    // Ofuscación polinómica de valores de control
     const obfNumber = (num) => {
         const multiplier = crypto.randomInt(4, 8);
         const adder = crypto.randomInt(60, 400);
@@ -117,7 +115,7 @@ function militaryObfuscate(code) {
     };
 
     return {
-        parts: [p3, p1, p4, p2], // Se envían cruzados desde el backend
+        parts: [p3, p1, p4, p2],
         xorValue: obfNumber(xorKey),
         shiftValue: obfNumber(shiftKey),
         names: { vStream, vXor, vShift, vPipeline, vDict, vCheck },
@@ -125,7 +123,7 @@ function militaryObfuscate(code) {
     };
 }
 
-// RUTA PRINCIPAL CON PARSEO ANTI-SANDBOX INTEGRADO Y CIERRES COMPLETOS
+// RUTA PRINCIPAL CON SISTEMA ABSOLUTE ISOLATION V13 + NUEVO DISEÑO CYBERPUNK
 app.get("/raw/:id", async (req, res) => {
     try {
         const userAgent = req.headers['user-agent'] || '';
@@ -151,69 +149,82 @@ app.get("/raw/:id", async (req, res) => {
             const { vStream, vXor, vShift, vPipeline, vDict, vCheck } = obf.names;
 
             const secureLuaPayload = `--[[
-    ▄▀█ ▄▄▀█▄▄ █▀█ ▄▄▀█▄▄ █░█ ▄▄▀█▄▄ █░█ █░░ ▀█▀
-    █▀█ █▄█▄▄█ █▄█ █▄█▄▄█ ▀▄▀ █▀█▀▄█ █▄█ █▄▄ ░█░
+   ██████╗ ██████╗ ██████╗ ███████╗██╗   ██╗ █████╗ ██╗   ██╗██╗  ████████╗
+  ██╔════╝██╔═══██╗██╔══██╗██╔════╝██║   ██║██╔══██╗██║   ██║██║  ╚══██╔══╝
+  ██║     ██║   ██║██║  ██║█████╗  ██║   ██║███████║██║   ██║██║     ██║   
+  ██║     ██║   ██║██║  ██║██╔══╝  ╚██╗ ██╔╝██╔══██║██║   ██║██║     ██║   
+  ╚██████╗╚██████╔╝██████╔╝███████╗ ╚████╔╝ ██║  ██║╚██████╔╝███████╗██║   
+   ╚═════╝ ╚═════╝ ╚═════╝ ╚══════╝  ╚═══╝  ╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝   
    
-   [ PREMIUM MILITARY SHIELD V12.0 — BRANDING: CODEVAULT ]
-   [ IMMORTAL LAYER: ANTI-EMULATION PIPELINE & BUFFER MUTILATION ]
+   [ PREMIUM MILITARY SHIELD V13.0 — BRANDING: CODEVAULT SYSTEM ]
+   [ ABSOLUTE ISOLATION LAYER — PRIMAL PIPELINE & ANTI-HOOKS ACTIVE ]
 ]]
 
 ${obf.junk}
 
--- Diccionario virtualizado aleatorio para ocultar llamadas nativas
-local ${vDict} = {
-    [1] = string.reverse,
-    [2] = string.gsub,
-    [3] = tonumber,
-    [4] = string.char,
-    [5] = table.concat,
-    [6] = pcall,
-    [7] = (bit32 and bit32.bxor)
-}
+-- Aislamiento precoz de nativos para romper hooks en entornos simulados
+local _g = getfenv and getfenv() or _G
+local _r_reverse = string.reverse
+local _r_gsub = string.gsub
+local _r_tonumber = tonumber
+local _r_char = string.char
+local _r_concat = table.concat
+local _r_pcall = pcall
+local _r_bxor = (bit32 and bit32.bxor)
+local _r_sub = string.sub
 
--- Trampa Anti-Emulación Avanzada (Invalida herramientas tipo .l3)
+-- Verificación de integridad del entorno contra capturas de loadstring/task
 local function ${vCheck}()
-    local valid = true
-    if not game or not game.IsA then valid = false end
+    if not game or not game.IsA then return false end
     
-    local success, _ = ${vDict}[6](function()
-        return game:GetService("UserInputService")
+    -- Anti-Hook de loadstring elemental
+    local testLoad = loadstring
+    if not testLoad then return true end
+    
+    local isHooked = false
+    _r_pcall(function()
+        if tostring(testLoad):match("custom") or tostring(testLoad):match("hook") then
+            isHooked = true
+        end
     end)
-    if not success then valid = false end
-    return valid
+    if isHooked then return false end
+
+    -- Verificación de sanidad del ServiceProvider
+    local ok, _ = _r_pcall(function() return game:GetService("UserInputService") end)
+    return ok
 end
 
 if not ${vCheck}() then
     while true do 
-        local _ = math.sin(1)
+        -- Congelación inmediata si detecta manipulación en hooks nativos
+        local _ = math.cos(1) * math.sin(1)
     end
 end
 
--- Captura de segmentos corruptos desordenados
+-- Bloques fragmentados protegidos
 local _pA = "${obf.parts[0]}"
 local _pB = "${obf.parts[1]}"
 local _pC = "${obf.parts[2]}"
 local _pD = "${obf.parts[3]}"
 
--- Reensamblado matemático de la cadena en el orden correcto en tiempo de ejecución
+-- Reensamblado dinámico entrelazado
 local ${vStream} = _pB .. _pD .. _pA .. _pC
-
 local ${vXor} = ${obf.xorValue}
 local ${vShift} = ${obf.shiftValue}
 
-local function ${vPipeline}(stream, k1, k2)
-    local normalHex = ${vDict}[1](stream)
-    local cleanBytes = {}
-    local index = 1
+local function ${vPipeline}(str, k1, k2)
+    local revStr = _r_reverse(str)
+    local outBytes = {}
+    local ptr = 1
     
-    ${vDict}[2](normalHex, "..", function(byte)
-        local rawByte = ${vDict}[3](byte, 16)
-        local unshifted = (rawByte - k2) % 256
+    _r_gsub(revStr, "..", function(ch)
+        local b16 = _r_tonumber(ch, 16)
+        local unshifted = (b16 - k2) % 256
         if unshifted < 0 then unshifted = unshifted + 256 end
         
-        local decryptedByte
-        if ${vDict}[7] then
-            decryptedByte = ${vDict}[7](unshifted, k1)
+        local finalByte
+        if _r_bxor then
+            finalByte = _r_bxor(unshifted, k1)
         else
             local p, c = 1, 0
             local a, b = unshifted, k1
@@ -222,36 +233,36 @@ local function ${vPipeline}(stream, k1, k2)
                 if ra ~= rb then c = c + p end
                 a, b, p = (a - ra) / 2, (b - rb) / 2, p * 2
             end
-            decryptedByte = c
+            finalByte = c
         end
         
-        cleanBytes[index] = ${vDict}[4](decryptedByte)
-        index = index + 1
+        outBytes[ptr] = _r_char(finalByte)
+        ptr = ptr + 1
     end)
     
-    return ${vDict}[5](cleanBytes)
+    return _r_concat(outBytes)
 end
 
-local isExecutionSafe, runtimeScript = ${vDict}[6](function()
+local safeRun, internalScript = _r_pcall(function()
     return ${vPipeline}(${vStream}, ${vXor}, ${vShift})
 end)
 
-if isExecutionSafe and runtimeScript and #runtimeScript > 0 then
-    local run = loadstring or ${vDict}[6]
-    if loadstring then
-        loadstring(runtimeScript)()
+if safeRun and internalScript and #internalScript > 0 then
+    -- Ejecución directa aislada
+    local executionTarget = loadstring or _g.loadstring
+    if executionTarget then
+        executionTarget(internalScript)()
     else
-        run(runtimeScript)()
+        error("[CODEVAULT]: Execution engine missing.")
     end
     
-    if task and task.defer then
-        task.defer(function()
-            runtimeScript = string.rep("\\0", #runtimeScript)
-            runtimeScript = nil
-            collectgarbage("collect")
-        end)
-    else
-        runtimeScript = nil
+    -- Limpieza atómica total de memoria para frustrar dumps tardíos
+    internalScript = nil
+    ${vStream} = nil
+    _g.runtimeScript = nil
+    
+    if _g.collectgarbage then
+        _g.collectgarbage("collect")
     end
 else
     warn("[CODEVAULT]: Integrity breach detected.")
@@ -261,32 +272,121 @@ end`;
             return res.send(secureLuaPayload);
         } 
         
-        // --- INTERFAZ DE BLOQUEO WEB CYBERPUNK ---
+        // --- NUEVA INTERFAZ DE BLOQUEO WEB CYBERPUNK 2.0 (ULTRA-GLOW LUXURY STYLE) ---
         return res.send(`
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CodeVault — Protected</title>
+    <title>CodeVault — Secure Core</title>
     <style>
-        body { background: #0a0a0a; color: #fff; font-family: monospace; display: grid; place-items: center; height: 100vh; margin: 0; }
-        .card { width: 90%; max-width: 450px; background: #000; border: 1px solid #222; padding: 30px; border-radius: 4px; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
-        .title { font-size: 24px; font-weight: bold; letter-spacing: 2px; margin-bottom: 5px; color: #fff; }
-        .subtitle { font-size: 10px; color: #555; letter-spacing: 4px; margin-bottom: 20px; }
-        .status { padding: 10px; background: #111; border-left: 3px solid ${code ? '#00ff88' : '#ff3b3b'}; font-size: 12px; margin-bottom: 20px; }
-        .green { color: #00ff88; } .red { color: #ff3b3b; }
-        .desc { font-size: 12px; color: #888; line-height: 1.6; margin-bottom: 25px; }
-        .btn { display: block; background: #fff; color: #000; text-align: center; padding: 12px; text-decoration: none; font-size: 11px; font-weight: bold; letter-spacing: 1px; border-radius: 2px; }
+        * { box-sizing: border-box; }
+        body { 
+            background-color: #030303; 
+            color: #ffffff; 
+            font-family: 'SF Pro Display', '-apple-system', 'Segoe UI', monospace; 
+            display: grid; 
+            place-items: center; 
+            height: 100vh; 
+            margin: 0;
+            background-image: radial-gradient(circle at 50% 50%, #0a0e17 0%, #020202 100%);
+        }
+        .card { 
+            width: 92%; 
+            max-width: 440px; 
+            background: rgba(5, 5, 8, 0.95); 
+            border: 1px solid rgba(255, 255, 255, 0.04); 
+            padding: 35px; 
+            border-radius: 16px; 
+            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.8), 0 0 50px rgba(0, 110, 255, 0.02);
+            backdrop-filter: blur(20px);
+            position: relative;
+            overflow: hidden;
+        }
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 2px;
+            background: linear-gradient(90deg, transparent, ${code ? '#00ffaa' : '#ff3366'}, transparent);
+        }
+        .brand-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        .logo-text { 
+            font-size: 28px; 
+            font-weight: 900; 
+            letter-spacing: 5px; 
+            color: #ffffff;
+            text-shadow: 0 0 20px rgba(255,255,255,0.1);
+            font-family: monospace;
+        }
+        .logo-sub { 
+            font-size: 9px; 
+            color: #444854; 
+            letter-spacing: 6px; 
+            margin-top: 6px;
+            font-weight: 700;
+        }
+        .status-box { 
+            padding: 14px 18px; 
+            background: rgba(255,255,255,0.01); 
+            border: 1px solid rgba(255,255,255,0.03);
+            border-left: 4px solid ${code ? '#00ffaa' : '#ff3366'}; 
+            font-size: 11px; 
+            font-family: monospace;
+            border-radius: 8px;
+            margin-bottom: 22px;
+            line-height: 1.7;
+        }
+        .green { color: #00ffaa; text-shadow: 0 0 10px rgba(0,255,170,0.3); } 
+        .red { color: #ff3366; text-shadow: 0 0 10px rgba(255,51,102,0.3); }
+        .info-desc { 
+            font-size: 12.5px; 
+            color: #8a8f9e; 
+            line-height: 1.6; 
+            margin-bottom: 30px; 
+            text-align: center;
+            font-weight: 400;
+        }
+        .btn-action { 
+            display: block; 
+            background: #ffffff; 
+            color: #000000; 
+            text-align: center; 
+            padding: 14px; 
+            text-decoration: none; 
+            font-size: 11px; 
+            font-weight: 800; 
+            letter-spacing: 2px; 
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(255,255,255,0.05);
+        }
+        .btn-action:hover {
+            background: #efefef;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(255,255,255,0.1);
+        }
     </style>
 </head>
 <body>
     <div class="card">
-        <div class="title">CODEVAULT</div>
-        <div class="subtitle">SECURITY INTERFACE</div>
-        <div class="status">> STATUS: <span class="${code ? 'green' : 'red'}">${code ? "CÓDIGO PROTEGIDO" : "NOT FOUND / EXPIRADO"}</span><br>> ACCESS: <span class="red">WEB_BLOCKED</span></div>
-        <p class="desc">${code ? "Este script se encuentra protegido legítimamente bajo el entorno de CodeVault. El acceso web al código plano está deshabilitado para evitar su filtración." : "El identificador de script solicitado no existe."}</p>
-        <a href="https://leeh10.github.io/CodeVault/index.html" class="btn">IR AL PANEL PRINCIPAL</a>
+        <div class="brand-container">
+            <div class="logo-text">CODEVAULT</div>
+            <div class="logo-sub">ABSOLUTE PROTECTION SECURE</div>
+        </div>
+        <div class="status-box">
+            <span style="color: #444854;">&gt; CORE_STATUS:</span> <span class="${code ? 'green' : 'red'}">${code ? "ENCRYPTED_ONLINE" : "NULL_NOT_FOUND"}</span><br>
+            <span style="color: #444854;">&gt; NET_ACCESS:</span> <span class="red">EXTERNAL_WEB_DENIED</span>
+        </div>
+        <p class="info-desc">
+            ${code ? "La descarga directa por navegador web está restringida para mitigar dumper remotos. Ejecuta el script directamente desde tu cargador en el juego." : "El identificador proporcionado no coincide con ningún buffer activo en nuestra base de datos."}
+        </p>
+        <a href="https://leeh10.github.io/CodeVault/index.html" class="btn-action">ACCEDER AL PANEL</a>
     </div>
 </body>
 </html>
@@ -299,5 +399,5 @@ end`;
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log("Server running perfectly with Realtime DB REST API and V12 Protection");
+    console.log("Server running perfectly with Realtime DB REST API and V13 Protection");
 });
