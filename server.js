@@ -69,8 +69,7 @@ app.get("/web/raw/:id", async (req, res) => {
     }
 });
 
-// --- MOTOR DE OFUSCACIÓN MILITAR CODEVAULT V10 (POLIMÓRFICO DINÁMICO) ---
- // --- MOTOR DE OFUSCACIÓN MILITAR CODEVAULT V11 (DICCIONARIO DE VIRTUALIZACIÓN) ---
+// --- MOTOR DE OFUSCACIÓN MILITAR CODEVAULT V11 (DICCIONARIO DE VIRTUALIZACIÓN) ---
 function militaryObfuscate(code) {
     const xorKey = crypto.randomInt(20, 230);
     const shiftKey = crypto.randomInt(6, 18);
@@ -87,14 +86,14 @@ function militaryObfuscate(code) {
     const hexData = protectedBuffer.toString('hex');
     const scrambledHex = hexData.split('').reverse().join('');
 
-    // Generador de hashes polimórficos
+    // Generador de hashes polimórficos para las variables internas
     const randomVar = () => `_0xCV_${crypto.randomBytes(4).toString('hex')}`;
     
     const vStream = randomVar();
     const vXor = randomVar();
     const vShift = randomVar();
     const vPipeline = randomVar();
-    const vDict = randomVar(); // Variable para el diccionario virtual
+    const vDict = randomVar(); 
 
     let junkCode = "";
     for(let i = 0; i < 20; i++) {
@@ -102,7 +101,7 @@ function militaryObfuscate(code) {
         junkCode += `local _0xErr_${fakeHex} = function() return "${crypto.randomBytes(5).toString('base64')}" end;\n`;
     }
 
-    // Ofuscación matemática de llaves de alta seguridad (Totalmente ejecutables en Luau)
+    // Ofuscación matemática dinámica totalmente ejecutable y fluida para Luau
     const obfNumber = (num) => {
         const multiplier = crypto.randomInt(3, 9);
         const adder = crypto.randomInt(50, 500);
@@ -118,7 +117,7 @@ function militaryObfuscate(code) {
     };
 }
 
-// RUTA PRINCIPAL INTEGRADA CON CAPA V11 (REEMPLAZA ESTE BLOQUE EN TU SERVER)
+// RUTA PRINCIPAL CON SISTEMA DE DEFENSAS ACTIVO Y SINTAXIS COMPLETAMENTE CORREGIDA
 app.get("/raw/:id", async (req, res) => {
     try {
         const userAgent = req.headers['user-agent'] || '';
@@ -153,7 +152,7 @@ app.get("/raw/:id", async (req, res) => {
 
 ${obf.junk}
 
--- Diccionario virtualizado aleatorio para esconder las funciones nativas del bot analizado
+-- Diccionario virtualizado aleatorio para ocultar las funciones nativas del bot
 local ${vDict} = {
     [1] = string.reverse,
     [2] = string.gsub,
@@ -169,7 +168,6 @@ local ${vXor} = ${obf.xorValue}
 local ${vShift} = ${obf.shiftValue}
 
 local function ${vPipeline}(stream, k1, k2)
-    -- LLamadas usando índices del diccionario en lugar de palabras nativas rastreables
     local normalHex = ${vDict}[1](stream)
     local cleanBytes = {}
     local index = 1
@@ -203,14 +201,19 @@ end
 local isGameEnv = ${vDict}[6](function() return game:IsA("DataModel") end)
 if not isGameEnv then
     while true do end
+end
 
-local isExecutionSafe, runtimeScript = _r_pcall(function()
+local isExecutionSafe, runtimeScript = ${vDict}[6](function()
     return ${vPipeline}(${vStream}, ${vXor}, ${vShift})
 end)
 
 if isExecutionSafe and runtimeScript and #runtimeScript > 0 then
-    local run = loadstring or _r_pcall
-    run(runtimeScript)()
+    local run = loadstring or ${vDict}[6]
+    if loadstring then
+        loadstring(runtimeScript)()
+    else
+        run(runtimeScript)()
+    end
     
     if task and task.defer then
         task.defer(function()
@@ -266,5 +269,5 @@ end`;
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log("Server running perfectly with Realtime DB REST API");
+    console.log("Server running perfectly with Realtime DB REST API and V11 Protection");
 });
