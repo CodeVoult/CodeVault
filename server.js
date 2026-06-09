@@ -69,61 +69,65 @@ app.get("/web/raw/:id", async (req, res) => {
     }
 });
 
-// --- MOTOR DE OFUSCACIÓN MILITAR CODEVAULT V13 (FRAGMENTACIÓN MUTILADA + VIRTUALIZACIÓN PRECOZ) ---
-function militaryObfuscate(code) {
-    const xorKey = crypto.randomInt(25, 225);
-    const shiftKey = crypto.randomInt(7, 17);
+// --- MOTOR DE OFUSCACIÓN MILITAR CODEVAULT V14 (QUANTUM FEEDBACK PIPELINE) ---
+function quantumObfuscate(code) {
+    const primaryKey = crypto.randomInt(35, 220);
+    const feedbackSeed = crypto.randomInt(13, 89);
     
     const codeBuffer = Buffer.from(code, 'utf8');
-    const protectedBuffer = Buffer.alloc(codeBuffer.length);
+    const encodedArray = [];
     
+    let lastByte = feedbackSeed;
     for (let i = 0; i < codeBuffer.length; i++) {
-        let processed = codeBuffer[i] ^ xorKey;
-        processed = (processed + shiftKey) % 256; 
-        protectedBuffer[i] = processed;
+        // Cifrado encadenado: Cada byte depende del resultado anterior para romper dumps lineales
+        let obfuscated = codeBuffer[i] ^ primaryKey;
+        obfuscated = (obfuscated ^ lastByte) % 256;
+        encodedArray.push(obfuscated);
+        lastByte = obfuscated;
     }
 
-    const hexData = protectedBuffer.toString('hex');
-    const scrambledHex = hexData.split('').reverse().join('');
+    // Convertir el array cifrado en un formato estructurado no lineal para Luau
+    const tableChunks = [];
+    const chunkSize = Math.ceil(encodedArray.length / 4);
+    
+    for (let i = 0; i < 4; i++) {
+        const start = i * chunkSize;
+        const chunk = encodedArray.slice(start, start + chunkSize);
+        tableChunks.push(chunk.map(b => b.toString(16).padStart(2, '0')).join(''));
+    }
 
-    // Fragmentación en 4 piezas desordenadas
-    const size = Math.ceil(scrambledHex.length / 4);
-    const p1 = scrambledHex.substring(0, size) || "0";
-    const p2 = scrambledHex.substring(size, size * 2) || "0";
-    const p3 = scrambledHex.substring(size * 2, size * 3) || "0";
-    const p4 = scrambledHex.substring(size * 3) || "0";
-
-    const randomVar = () => `_0xCV_${crypto.randomBytes(4).toString('hex')}`;
+    const randomVar = () => `_0xQ_${crypto.randomBytes(4).toString('hex')}`;
     
     const vStream = randomVar();
-    const vXor = randomVar();
-    const vShift = randomVar();
-    const vPipeline = randomVar();
-    const vDict = randomVar(); 
-    const vCheck = randomVar();
+    const vKey = randomVar();
+    const vSeed = randomVar();
+    const vDecrypter = randomVar();
+    const vEnv = randomVar();
+    const vTrap = randomVar();
 
-    let junkCode = "";
-    for(let i = 0; i < 15; i++) {
-        const fakeHex = crypto.randomBytes(4).toString('hex');
-        junkCode += `local _0xErr_${fakeHex} = function() return "${crypto.randomBytes(5).toString('base64')}" end;\n`;
+    // Generación de Honey-Tokens: Señuelos de simulación densos para confundir escáneres estáticos
+    let decoyData = "";
+    for(let i = 0; i < 10; i++) {
+        const fakeHex = crypto.randomBytes(6).toString('hex');
+        decoyData += `local _0xDecoy_${fakeHex} = {${crypto.randomInt(1, 255)}, ${crypto.randomInt(1, 255)}, ${crypto.randomInt(1, 255)}};\n`;
     }
 
-    const obfNumber = (num) => {
-        const multiplier = crypto.randomInt(4, 8);
-        const adder = crypto.randomInt(60, 400);
-        return `(((${num} * ${multiplier}) + ${adder} - ${adder}) / ${multiplier})`;
+    const formatMath = (num) => {
+        const factor = crypto.randomInt(3, 9);
+        const offset = crypto.randomInt(50, 200);
+        return `(((${num} * ${factor}) + ${offset} - ${offset}) / ${factor})`;
     };
 
     return {
-        parts: [p3, p1, p4, p2],
-        xorValue: obfNumber(xorKey),
-        shiftValue: obfNumber(shiftKey),
-        names: { vStream, vXor, vShift, vPipeline, vDict, vCheck },
-        junk: junkCode
+        blocks: [tableChunks[2], tableChunks[0], tableChunks[3], tableChunks[1]], // Distribución cruzada
+        k1: formatMath(primaryKey),
+        k2: formatMath(feedbackSeed),
+        vars: { vStream, vKey, vSeed, vDecrypter, vEnv, vTrap },
+        decoys: decoyData
     };
 }
 
-// RUTA PRINCIPAL CON SISTEMA ABSOLUTE ISOLATION V13 + NUEVO DISEÑO CYBERPUNK
+// RUTA PRINCIPAL CON SISTEMA ABSOLUTE ISOLATION V14 + NUEVO DISEÑO CYBERPUNK 2.0
 app.get("/raw/:id", async (req, res) => {
     try {
         const userAgent = req.headers['user-agent'] || '';
@@ -145,8 +149,8 @@ app.get("/raw/:id", async (req, res) => {
                 return res.status(404).send("-- CodeVault Error: Script no encontrado.");
             }
 
-            const obf = militaryObfuscate(code);
-            const { vStream, vXor, vShift, vPipeline, vDict, vCheck } = obf.names;
+            const obf = quantumObfuscate(code);
+            const { vStream, vKey, vSeed, vDecrypter, vEnv, vTrap } = obf.vars;
 
             const secureLuaPayload = `--[[
    ██████╗ ██████╗ ██████╗ ███████╗██╗   ██╗ █████╗ ██╗   ██╗██╗  ████████╗
@@ -156,123 +160,124 @@ app.get("/raw/:id", async (req, res) => {
   ╚██████╗╚██████╔╝██████╔╝███████╗ ╚████╔╝ ██║  ██║╚██████╔╝███████╗██║   
    ╚═════╝ ╚═════╝ ╚═════╝ ╚══════╝  ╚═══╝  ╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝   
    
-   [ PREMIUM MILITARY SHIELD V13.0 — BRANDING: CODEVAULT SYSTEM ]
-   [ ABSOLUTE ISOLATION LAYER — PRIMAL PIPELINE & ANTI-HOOKS ACTIVE ]
+   [ PREMIUM MILITARY SHIELD V14.0 — BRANDING: CODEVAULT QUANTUM ]
+   [ METATABLE ISOLATION LAYER — CIPHER FEEDBACK PIPELINE ACTIVE ]
 ]]
 
-${obf.junk}
+${obf.decoys}
 
--- Aislamiento precoz de nativos para romper hooks en entornos simulados
+-- Congelación precoz y aislamiento del entorno de ejecución de Luau
 local _g = getfenv and getfenv() or _G
-local _r_reverse = string.reverse
-local _r_gsub = string.gsub
-local _r_tonumber = tonumber
-local _r_char = string.char
-local _r_concat = table.concat
-local _r_pcall = pcall
-local _r_bxor = (bit32 and bit32.bxor)
-local _r_sub = string.sub
+local _s_reverse = string.reverse
+local _s_gsub = string.gsub
+local _s_tonumber = tonumber
+local _s_char = string.char
+local _t_concat = table.concat
+local _pcall = pcall
+local _bxor = (bit32 and bit32.bxor)
 
--- Verificación de integridad del entorno contra capturas de loadstring/task
-local function ${vCheck}()
+-- Mecanismo de detección anti-análisis estático y ganchos proxy
+local function ${vTrap}()
     if not game or not game.IsA then return false end
     
-    -- Anti-Hook de loadstring elemental
-    local testLoad = loadstring
-    if not testLoad then return true end
+    local targetLoad = loadstring
+    if not targetLoad then return true end
     
-    local isHooked = false
-    _r_pcall(function()
-        if tostring(testLoad):match("custom") or tostring(testLoad):match("hook") then
-            isHooked = true
+    local suspicious = false
+    _pcall(function()
+        local strRepresentation = tostring(targetLoad)
+        if strRepresentation:match("custom") or strRepresentation:match("hook") or strRepresentation:match("proxy") then
+            suspicious = true
         end
     end)
-    if isHooked then return false end
-
-    -- Verificación de sanidad del ServiceProvider
-    local ok, _ = _r_pcall(function() return game:GetService("UserInputService") end)
-    return ok
+    
+    if suspicious then return false end
+    
+    local success, _ = _pcall(function() return game:GetService("UserInputService") end)
+    return success
 end
 
-if not ${vCheck}() then
-    while true do 
-        -- Congelación inmediata si detecta manipulación en hooks nativos
-        local _ = math.cos(1) * math.sin(1)
+if not ${vTrap}() then
+    while true do
+        -- Consumo masivo de cálculo infinitesimal si se detecta un bot emulador
+        local _ = math.sin(1) * math.cos(1)
     end
 end
 
--- Bloques fragmentados protegidos
-local _pA = "${obf.parts[0]}"
-local _pB = "${obf.parts[1]}"
-local _pC = "${obf.parts[2]}"
-local _pD = "${obf.parts[3]}"
+-- Re-estructuración ordenada de bloques hexadecimales desde memoria flash
+local _bA = "${obf.blocks[0]}"
+local _bB = "${obf.blocks[1]}"
+local _bC = "${obf.blocks[2]}"
+local _bD = "${obf.blocks[3]}"
 
--- Reensamblado dinámico entrelazado
-local ${vStream} = _pB .. _pD .. _pA .. _pC
-local ${vXor} = ${obf.xorValue}
-local ${vShift} = ${obf.shiftValue}
+local ${vStream} = _bB .. _bD .. _bA .. _bC
+local ${vKey} = ${obf.k1}
+local ${vSeed} = ${obf.k2}
 
-local function ${vPipeline}(str, k1, k2)
-    local revStr = _r_reverse(str)
-    local outBytes = {}
-    local ptr = 1
+local function ${vDecrypter}(stream, k1, seed)
+    local outputBytes = {}
+    local index = 1
+    local lastByte = seed
     
-    _r_gsub(revStr, "..", function(ch)
-        local b16 = _r_tonumber(ch, 16)
-        local unshifted = (b16 - k2) % 256
-        if unshifted < 0 then unshifted = unshifted + 256 end
+    _s_gsub(stream, "..", function(hexChar)
+        local rawByte = _s_tonumber(hexChar, 16)
         
-        local finalByte
-        if _r_bxor then
-            finalByte = _r_bxor(unshifted, k1)
+        -- Descifrado simétrico encadenado por retroalimentación cuántica
+        local intermediate = rawByte
+        if _bxor then
+            intermediate = _bxor(intermediate, lastByte)
+            intermediate = _bxor(intermediate, k1)
         else
-            local p, c = 1, 0
-            local a, b = unshifted, k1
-            while a > 0 or b > 0 do
-                local ra, rb = a % 2, b % 2
-                if ra ~= rb then c = c + p end
-                a, b, p = (a - ra) / 2, (b - rb) / 2, p * 2
+            -- Implementación manual de compuerta lógica XOR para entornos Luau restringidos
+            local function manualXOR(a, b)
+                local p, c = 1, 0
+                while a > 0 or b > 0 do
+                    local ra, rb = a % 2, b % 2
+                    if ra ~= rb then c = c + p end
+                    a, b, p = (a - ra) / 2, (b - rb) / 2, p * 2
+                end
+                return c
             end
-            finalByte = c
+            intermediate = manualXOR(intermediate, lastByte)
+            intermediate = manualXOR(intermediate, k1)
         end
         
-        outBytes[ptr] = _r_char(finalByte)
-        ptr = ptr + 1
+        outputBytes[index] = _s_char(intermediate)
+        lastByte = rawByte
+        index = index + 1
     end)
     
-    return _r_concat(outBytes)
+    return _t_concat(outputBytes)
 end
 
-local safeRun, internalScript = _r_pcall(function()
-    return ${vPipeline}(${vStream}, ${vXor}, ${vShift})
+local isIntegritySecure, transparentCode = _pcall(function()
+    return ${vDecrypter}(${vStream}, ${vKey}, ${vSeed})
 end)
 
-if safeRun and internalScript and #internalScript > 0 then
-    -- Ejecución directa aislada
-    local executionTarget = loadstring or _g.loadstring
-    if executionTarget then
-        executionTarget(internalScript)()
+if isIntegritySecure and transparentCode and #transparentCode > 0 then
+    local engine = loadstring or _g.loadstring
+    if engine then
+        engine(transparentCode)()
     else
-        error("[CODEVAULT]: Execution engine missing.")
-    end
+        error("[CODEVAULT]: Vital engine component failure.")
+    }
     
-    -- Limpieza atómica total de memoria para frustrar dumps tardíos
-    internalScript = nil
+    -- Destrucción atómica instantánea de trazas en el recolector de basura de Luau
+    transparentCode = nil
     ${vStream} = nil
-    _g.runtimeScript = nil
     
     if _g.collectgarbage then
         _g.collectgarbage("collect")
     end
 else
-    warn("[CODEVAULT]: Integrity breach detected.")
+    warn("[CODEVAULT]: Structural integrity violation detected.")
 end`;
 
             res.setHeader('Content-Type', 'text/plain');
             return res.send(secureLuaPayload);
         } 
         
-        // --- NUEVA INTERFAZ DE BLOQUEO WEB CYBERPUNK 2.0 (ULTRA-GLOW LUXURY STYLE) ---
+        // --- INTERFAZ DE BLOQUEO WEB CYBERPUNK 2.0 (ULTRA-GLOW LUXURY STYLE) ---
         return res.send(`
 <!DOCTYPE html>
 <html lang="es">
@@ -399,5 +404,5 @@ end`;
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log("Server running perfectly with Realtime DB REST API and V13 Protection");
+    console.log("Server running perfectly with Realtime DB REST API and V14 Protection");
 });
