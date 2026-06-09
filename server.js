@@ -114,7 +114,7 @@ function v15DynamicObfuscate(code) {
     };
 }
 
-// RUTA PRINCIPAL CON SISTEMA DE PROTECCIÓN CAPA V15 (CORREGIDA PARA EJECUCIÓN)
+// RUTA PRINCIPAL CON SISTEMA DE PROTECCIÓN CAPA V15 (CORREGIDA AL 100%)
 app.get("/raw/:id", async (req, res) => {
     try {
         const userAgent = req.headers['user-agent'] || '';
@@ -228,7 +228,7 @@ local function ${vRunner}(block)
         return engine(codeStr)
     else
         error("[CODEVAULT]: Execution segment missing.")
-    }
+    end
 end
 
 -- Máquina de estados no lineal para ejecutar el código de forma fragmentada
@@ -239,7 +239,6 @@ while ${vState} <= 3 do
             return ${vRunner}(${vData}[${vState}])
         end)
         
-        -- CORRECCIÓN AQUÍ: Cambiado 'Ves' por 'and' para restaurar la ejecución nativa
         if success and segmentFunc then
             segmentFunc()
         else
