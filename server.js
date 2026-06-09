@@ -58,7 +58,7 @@ app.get("/web/raw/:id", async (req, res) => {
     }
 });
 
-// --- MOTOR DE OFUSCACIÓN MILITAR CODEVAULT V9.6 (MUTACIÓN ESTRUCTURAL COMPLETA) ---
+    // --- MOTOR DE OFUSCACIÓN MILITAR CODEVAULT V10 (POLIMÓRFICO DINÁMICO) ---
 function militaryObfuscate(code) {
     const xorKey = crypto.randomInt(15, 235);
     const shiftKey = crypto.randomInt(5, 20);
@@ -75,45 +75,36 @@ function militaryObfuscate(code) {
     const hexData = protectedBuffer.toString('hex');
     const scrambledHex = hexData.split('').reverse().join('');
 
-    // Capa de fragmentación para romper patrones estáticos: partimos el string hex en pedazos aleatorios unidos por '..'
-    let dynamicStreamStr = "";
-    let position = 0;
-    while (position < scrambledHex.length) {
-        let chunkSize = crypto.randomInt(5, 15);
-        let chunk = scrambledHex.slice(position, position + chunkSize);
-        dynamicStreamStr += `"${chunk}" .. `;
-        position += chunkSize;
-    }
-    dynamicStreamStr += `""`; // Cerramos la concatenación de Luau
-
-    // Generador de firmas mutables (Cambiamos el nombre de las variables en cada request)
-    const generateVarName = () => `_0xCV_${crypto.randomBytes(4).toString('hex')}`;
-    const vStream = generateVarName();
-    const vXor = generateVarName();
-    const vShift = generateVarName();
-    const vPipeline = generateVarName();
+    // Generador de variables aleatorias por cada request para reventar el .match() estático del bot
+    const randomVar = () => `_0xCV_${crypto.randomBytes(4).toString('hex')}`;
+    
+    const vStream = randomVar();
+    const vXor = randomVar();
+    const vShift = randomVar();
+    const vPipeline = randomVar();
 
     let junkCode = "";
-    for(let i = 0; i < 30; i++) {
+    for(let i = 0; i < 25; i++) {
         const fakeHex = crypto.randomBytes(4).toString('hex');
-        junkCode += `local _0xErr_${fakeHex} = function() return "${crypto.randomBytes(8).toString('base64')}" end;\n`;
+        junkCode += `local _0xErr_${fakeHex} = function() return "${crypto.randomBytes(6).toString('base64')}" end;\n`;
     }
 
-    // Ofuscación numérica para las llaves: en vez de "local key = 45", enviamos operaciones matemáticas mutables
+    // Ofuscación de llaves numéricas estable para Luau
     const obfNumber = (num) => {
-        const rand = crypto.randomInt(10, 500);
-        return `(${num + rand} - ${rand})`;
+        const offset = crypto.randomInt(10, 200);
+        return `(${num + offset} - ${offset})`;
     };
 
     return {
-        streamDecl: `local ${vStream} = ${dynamicStreamStr}`,
-        xorDecl: `local ${vXor} = ${obfNumber(xorKey)}`,
-        shiftDecl: `local ${vShift} = ${obfNumber(shiftKey)}`,
+        stream: scrambledHex,
+        xorValue: obfNumber(xorKey),
+        shiftValue: obfNumber(shiftKey),
         names: { vStream, vXor, vShift, vPipeline },
         junk: junkCode
     };
 }
 
+// RUTA PRINCIPAL ACTUALIZADA (REEMPLAZA ESTE BLOQUE EN TU SERVER)
 app.get("/raw/:id", async (req, res) => {
     try {
         const userAgent = req.headers['user-agent'] || '';
@@ -138,19 +129,12 @@ app.get("/raw/:id", async (req, res) => {
             const obf = militaryObfuscate(code);
             const { vStream, vXor, vShift, vPipeline } = obf.names;
 
-            // Ensamblaje dinámico: El orden de declaración de las variables cambia aleatoriamente para romper las expresiones regulares rígidas
-            const declarations = [obf.streamDecl, obf.xorDecl, obf.shiftDecl];
-            for (let i = declarations.length - 1; i > 0; i--) {
-                const j = crypto.randomInt(0, i + 1);
-                [declarations[i], declarations[j]] = [declarations[j], declarations[i]];
-            }
-
             const secureLuaPayload = `--[[
     ▄▀█ ▄▄▀█▄▄ █▀█ ▄▄▀█▄▄ █░█ ▄▄▀█▄▄ █░█ █░░ ▀█▀
     █▀█ █▄█▄▄█ █▄█ █▄█▄▄█ ▀▄▀ █▀█▀▄█ █▄█ █▄▄ ░█░
    
-   [ PREMIUM MILITARY SHIELD V9.6 — BRANDING: CODEVAULT ]
-   [ STRUCTURAL MUTATION PIPELINE ACTIVATED — DETONATING BOT SCANNER ]
+   [ PREMIUM MILITARY SHIELD V10.0 — BRANDING: CODEVAULT ]
+   [ POLYMORPHIC INTEGRITY PIPELINE ENFORCED BY CODEVAULT INTERNALS ]
 ]]
 
 ${obf.junk}
@@ -162,9 +146,10 @@ local _r_tonumber = tonumber
 local _r_pcall = pcall
 local _r_bxor = (bit32 and bit32.bxor)
 
-${declarations[0]}
-${declarations[1]}
-${declarations[2]}
+-- Declaraciones dinámicas y polimórficas (Inmunes al bot actual)
+local ${vStream} = "${obf.stream}"
+local ${vXor} = ${obf.xorValue}
+local ${vShift} = ${obf.shiftValue}
 
 local function ${vPipeline}(stream, k1, k2)
     local normalHex = _r_reverse(stream)
@@ -259,10 +244,4 @@ end`;
     } catch (error) {
         return res.status(500).send("Security Shield Error");
     }
-});
-
-const PORT = process.env.PORT || 3000;
-app.get('/*', (req, res) => { res.redirect('/'); }); // Captura rutas huérfanas
-app.listen(PORT, () => {
-    console.log("Server running perfectly with Realtime DB REST API");
 });
