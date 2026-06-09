@@ -70,9 +70,10 @@ app.get("/web/raw/:id", async (req, res) => {
 });
 
 // --- MOTOR DE OFUSCACIÓN MILITAR CODEVAULT V10 (POLIMÓRFICO DINÁMICO) ---
+ // --- MOTOR DE OFUSCACIÓN MILITAR CODEVAULT V11 (DICCIONARIO DE VIRTUALIZACIÓN) ---
 function militaryObfuscate(code) {
-    const xorKey = crypto.randomInt(15, 235);
-    const shiftKey = crypto.randomInt(5, 20);
+    const xorKey = crypto.randomInt(20, 230);
+    const shiftKey = crypto.randomInt(6, 18);
     
     const codeBuffer = Buffer.from(code, 'utf8');
     const protectedBuffer = Buffer.alloc(codeBuffer.length);
@@ -86,36 +87,38 @@ function militaryObfuscate(code) {
     const hexData = protectedBuffer.toString('hex');
     const scrambledHex = hexData.split('').reverse().join('');
 
-    // Generador de variables aleatorias por cada request para reventar el .match() estático del bot
+    // Generador de hashes polimórficos
     const randomVar = () => `_0xCV_${crypto.randomBytes(4).toString('hex')}`;
     
     const vStream = randomVar();
     const vXor = randomVar();
     const vShift = randomVar();
     const vPipeline = randomVar();
+    const vDict = randomVar(); // Variable para el diccionario virtual
 
     let junkCode = "";
-    for(let i = 0; i < 25; i++) {
+    for(let i = 0; i < 20; i++) {
         const fakeHex = crypto.randomBytes(4).toString('hex');
-        junkCode += `local _0xErr_${fakeHex} = function() return "${crypto.randomBytes(6).toString('base64')}" end;\n`;
+        junkCode += `local _0xErr_${fakeHex} = function() return "${crypto.randomBytes(5).toString('base64')}" end;\n`;
     }
 
-    // Ofuscación de llaves numéricas estable para Luau
+    // Ofuscación matemática de llaves de alta seguridad (Totalmente ejecutables en Luau)
     const obfNumber = (num) => {
-        const offset = crypto.randomInt(10, 200);
-        return `(${num + offset} - ${offset})`;
+        const multiplier = crypto.randomInt(3, 9);
+        const adder = crypto.randomInt(50, 500);
+        return `(((${num} * ${multiplier}) + ${adder} - ${adder}) / ${multiplier})`;
     };
 
     return {
         stream: scrambledHex,
         xorValue: obfNumber(xorKey),
         shiftValue: obfNumber(shiftKey),
-        names: { vStream, vXor, vShift, vPipeline },
+        names: { vStream, vXor, vShift, vPipeline, vDict },
         junk: junkCode
     };
 }
 
-// RUTA PRINCIPAL CON SISTEMA DE DEFENSAS ACTIVO
+// RUTA PRINCIPAL INTEGRADA CON CAPA V11 (REEMPLAZA ESTE BLOQUE EN TU SERVER)
 app.get("/raw/:id", async (req, res) => {
     try {
         const userAgent = req.headers['user-agent'] || '';
@@ -138,43 +141,47 @@ app.get("/raw/:id", async (req, res) => {
             }
 
             const obf = militaryObfuscate(code);
-            const { vStream, vXor, vShift, vPipeline } = obf.names;
+            const { vStream, vXor, vShift, vPipeline, vDict } = obf.names;
 
             const secureLuaPayload = `--[[
     ▄▀█ ▄▄▀█▄▄ █▀█ ▄▄▀█▄▄ █░█ ▄▄▀█▄▄ █░█ █░░ ▀█▀
     █▀█ █▄█▄▄█ █▄█ █▄█▄▄█ ▀▄▀ █▀█▀▄█ █▄█ █▄▄ ░█░
    
-   [ PREMIUM MILITARY SHIELD V10.0 — BRANDING: CODEVAULT ]
-   [ POLYMORPHIC INTEGRITY PIPELINE ENFORCED BY CODEVAULT INTERNALS ]
+   [ PREMIUM MILITARY SHIELD V11.0 — BRANDING: CODEVAULT ]
+   [ OVERLORD LAYER: VIRTUALIZED NATIVE DICTIONARY ACTIVE ]
 ]]
 
 ${obf.junk}
 
-local _r_gsub = string.gsub
-local _r_reverse = string.reverse
-local _r_char = string.char
-local _r_tonumber = tonumber
-local _r_pcall = pcall
-local _r_bxor = (bit32 and bit32.bxor)
+-- Diccionario virtualizado aleatorio para esconder las funciones nativas del bot analizado
+local ${vDict} = {
+    [1] = string.reverse,
+    [2] = string.gsub,
+    [3] = tonumber,
+    [4] = string.char,
+    [5] = table.concat,
+    [6] = pcall,
+    [7] = (bit32 and bit32.bxor)
+}
 
--- Declaraciones dinámicas y polimórficas (Inmunes al bot actual)
 local ${vStream} = "${obf.stream}"
 local ${vXor} = ${obf.xorValue}
 local ${vShift} = ${obf.shiftValue}
 
 local function ${vPipeline}(stream, k1, k2)
-    local normalHex = _r_reverse(stream)
+    -- LLamadas usando índices del diccionario en lugar de palabras nativas rastreables
+    local normalHex = ${vDict}[1](stream)
     local cleanBytes = {}
     local index = 1
     
-    _r_gsub(normalHex, "..", function(byte)
-        local rawByte = _r_tonumber(byte, 16)
+    ${vDict}[2](normalHex, "..", function(byte)
+        local rawByte = ${vDict}[3](byte, 16)
         local unshifted = (rawByte - k2) % 256
         if unshifted < 0 then unshifted = unshifted + 256 end
         
         local decryptedByte
-        if _r_bxor then
-            decryptedByte = _r_bxor(unshifted, k1)
+        if ${vDict}[7] then
+            decryptedByte = ${vDict}[7](unshifted, k1)
         else
             local p, c = 1, 0
             local a, b = unshifted, k1
@@ -186,17 +193,16 @@ local function ${vPipeline}(stream, k1, k2)
             decryptedByte = c
         end
         
-        cleanBytes[index] = _r_char(decryptedByte)
+        cleanBytes[index] = ${vDict}[4](decryptedByte)
         index = index + 1
     end)
     
-    return table.concat(cleanBytes)
+    return ${vDict}[5](cleanBytes)
 end
 
-local isGameEnv = pcall(function() return game:IsA("DataModel") end)
+local isGameEnv = ${vDict}[6](function() return game:IsA("DataModel") end)
 if not isGameEnv then
     while true do end
-end
 
 local isExecutionSafe, runtimeScript = _r_pcall(function()
     return ${vPipeline}(${vStream}, ${vXor}, ${vShift})
