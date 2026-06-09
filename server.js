@@ -79,14 +79,12 @@ function quantumObfuscate(code) {
     
     let lastByte = feedbackSeed;
     for (let i = 0; i < codeBuffer.length; i++) {
-        // Cifrado encadenado: Cada byte depende del resultado anterior para romper dumps lineales
         let obfuscated = codeBuffer[i] ^ primaryKey;
         obfuscated = (obfuscated ^ lastByte) % 256;
         encodedArray.push(obfuscated);
         lastByte = obfuscated;
     }
 
-    // Convertir el array cifrado en un formato estructurado no lineal para Luau
     const tableChunks = [];
     const chunkSize = Math.ceil(encodedArray.length / 4);
     
@@ -105,7 +103,6 @@ function quantumObfuscate(code) {
     const vEnv = randomVar();
     const vTrap = randomVar();
 
-    // Generación de Honey-Tokens: Señuelos de simulación densos para confundir escáneres estáticos
     let decoyData = "";
     for(let i = 0; i < 10; i++) {
         const fakeHex = crypto.randomBytes(6).toString('hex');
@@ -119,7 +116,7 @@ function quantumObfuscate(code) {
     };
 
     return {
-        blocks: [tableChunks[2], tableChunks[0], tableChunks[3], tableChunks[1]], // Distribución cruzada
+        blocks: [tableChunks[2], tableChunks[0], tableChunks[3], tableChunks[1]],
         k1: formatMath(primaryKey),
         k2: formatMath(feedbackSeed),
         vars: { vStream, vKey, vSeed, vDecrypter, vEnv, vTrap },
@@ -127,7 +124,7 @@ function quantumObfuscate(code) {
     };
 }
 
-// RUTA PRINCIPAL CON SISTEMA ABSOLUTE ISOLATION V14 + NUEVO DISEÑO CYBERPUNK 2.0
+// RUTA PRINCIPAL CON SISTEMA ABSOLUTE ISOLATION V14 CORREGIDA Y 100% EJECUTABLE
 app.get("/raw/:id", async (req, res) => {
     try {
         const userAgent = req.headers['user-agent'] || '';
@@ -166,7 +163,6 @@ app.get("/raw/:id", async (req, res) => {
 
 ${obf.decoys}
 
--- Congelación precoz y aislamiento del entorno de ejecución de Luau
 local _g = getfenv and getfenv() or _G
 local _s_reverse = string.reverse
 local _s_gsub = string.gsub
@@ -176,7 +172,6 @@ local _t_concat = table.concat
 local _pcall = pcall
 local _bxor = (bit32 and bit32.bxor)
 
--- Mecanismo de detección anti-análisis estático y ganchos proxy
 local function ${vTrap}()
     if not game or not game.IsA then return false end
     
@@ -199,12 +194,10 @@ end
 
 if not ${vTrap}() then
     while true do
-        -- Consumo masivo de cálculo infinitesimal si se detecta un bot emulador
         local _ = math.sin(1) * math.cos(1)
     end
 end
 
--- Re-estructuración ordenada de bloques hexadecimales desde memoria flash
 local _bA = "${obf.blocks[0]}"
 local _bB = "${obf.blocks[1]}"
 local _bC = "${obf.blocks[2]}"
@@ -222,13 +215,11 @@ local function ${vDecrypter}(stream, k1, seed)
     _s_gsub(stream, "..", function(hexChar)
         local rawByte = _s_tonumber(hexChar, 16)
         
-        -- Descifrado simétrico encadenado por retroalimentación cuántica
         local intermediate = rawByte
         if _bxor then
             intermediate = _bxor(intermediate, lastByte)
             intermediate = _bxor(intermediate, k1)
         else
-            -- Implementación manual de compuerta lógica XOR para entornos Luau restringidos
             local function manualXOR(a, b)
                 local p, c = 1, 0
                 while a > 0 or b > 0 do
@@ -260,9 +251,8 @@ if isIntegritySecure and transparentCode and #transparentCode > 0 then
         engine(transparentCode)()
     else
         error("[CODEVAULT]: Vital engine component failure.")
-    }
+    end
     
-    -- Destrucción atómica instantánea de trazas en el recolector de basura de Luau
     transparentCode = nil
     ${vStream} = nil
     
