@@ -86,54 +86,39 @@ app.get("/web/raw/:id", async (req, res) => {
     }
 });
 
-// --- MOTOR DE OFUSCACIÓN AVANZADA CODEVAULT V15 ORIGINAL (REPARACIÓN DE LÓGICA) ---
+// --- NUEVO MOTOR DE OFUSCACIÓN DE BYTES CODEVAULT V15 (ULTRA-ESTABLE) ---
 function v15DynamicObfuscate(code) {
-    // Dividir de forma inteligente por líneas completas para no romper comandos de Luau
-    const lines = code.split(/\r?\n/);
-    const totalLines = lines.length;
-    const chunkSize = Math.ceil(totalLines / 3);
-    
-    const segments = [
-        lines.slice(0, chunkSize).join("\n"),
-        lines.slice(chunkSize, chunkSize * 2).join("\n"),
-        lines.slice(chunkSize * 2).join("\n")
-    ];
-    
+    // Convertimos TODO el script a un Buffer de bytes puro para que NUNCA se rompa la sintaxis
+    const buf = Buffer.from(code, 'utf8');
     const primaryKey = crypto.randomInt(50, 200);
-    const keys = [primaryKey, primaryKey ^ 0xAA, primaryKey ^ 0x55];
-    const encryptedChunks = [];
+    const secondaryKey = primaryKey ^ 0xAA;
+    
+    const hexData = [];
+    let lastByte = 0x55;
 
-    segments.forEach((seg, idx) => {
-        const content = seg || "-- Empty Segment";
-        const buf = Buffer.from(content, 'utf8');
-        const chunkData = [];
-        // REPARACIÓN CRÍTICA: Cada bloque arranca su encadenamiento matemático en 0 de forma independiente
-        let lastByte = 0; 
-        for (let i = 0; i < buf.length; i++) {
-            let enc = buf[i] ^ keys[idx];
-            enc = (enc ^ lastByte) % 256;
-            chunkData.push(enc.toString(16).padStart(2, '0'));
-            lastByte = enc;
-        }
-        encryptedChunks.push(chunkData.join(''));
-    });
+    // Cifrado continuo por bloques matemáticos
+    for (let i = 0; i < buf.length; i++) {
+        let enc = buf[i] ^ primaryKey;
+        enc = (enc ^ lastByte) % 256;
+        hexData.push(enc.toString(16).padStart(2, '0'));
+        lastByte = enc;
+    }
 
     const randomVar = () => `_0xV15_${crypto.randomBytes(4).toString('hex')}`;
-    const vState = randomVar();
     const vRunner = randomVar();
     const vTrap = randomVar();
     const vData = randomVar();
 
     let decoyData = "";
-    for(let i = 0; i < 8; i++) {
+    for(let i = 0; i < 6; i++) {
         const fakeHex = crypto.randomBytes(4).toString('hex');
         decoyData += `local _0xNoise_${fakeHex} = tonumber("${crypto.randomInt(1000, 9999)}", 16);\n`;
     }
 
     return {
-        chunks: encryptedChunks,
-        keys: keys,
-        vars: { vState, vRunner, vTrap, vData },
+        encryptedHex: hexData.join(''),
+        keys: { primaryKey, secondaryKey },
+        vars: { vRunner, vTrap, vData },
         decoys: decoyData
     };
 }
@@ -166,11 +151,7 @@ app.get("/raw/:id", async (req, res) => {
             }
 
             const obf = v15DynamicObfuscate(code);
-            const { vState, vRunner, vTrap, vData } = obf.vars;
-
-            const c0 = obf.chunks[0] || "";
-            const c1 = obf.chunks[1] || "";
-            const c2 = obf.chunks[2] || "";
+            const { vRunner, vTrap, vData } = obf.vars;
 
             const secureLuaPayload = `--[[
    ██████╗ ██████╗ ██████╗ ███████╗██╗   ██╗ █████╗ ██╗   ██╗██╗  ████████╗
@@ -181,7 +162,7 @@ app.get("/raw/:id", async (req, res) => {
    ╚═════╝ ╚═════╝ ╚═════╝ ╚══════╝  ╚═══╝  ╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝   
    
    [ PREMIUM SECURITY SHIELD V15.0 — BRANDING: CODEVAULT SYSTEM ]
-   [ STATE MACHINE ARCHITECTURE — FRAGMENTED EXECUTION PIPELINE ACTIVE ]
+   [ BYTE STREAM ARCHITECTURE — TOTAL EXECUTION GUARANTEED ]
 ]]
 
 ${obf.decoys}
@@ -196,7 +177,7 @@ local _bxor = (bit32 and bit32.bxor)
 
 local function ${vTrap}()
     if not game or not game.GetService then return false end
-    local targetLoad = loadstring
+    local targetLoad = loadstring or _g.loadstring
     if not targetLoad then return false end
     local loadStr = tostring(targetLoad)
     if loadStr:match("custom") or loadStr:match("hook") or loadStr:match("proxy") or loadStr:match("wrapper") then
@@ -212,36 +193,26 @@ local function ${vTrap}()
     for _, name in ipairs(executorGlobals) do
         if _g[name] ~= nil then return false end
     end
-    local success, uis = _pcall(function() return game:GetService("UserInputService") end)
-    if not success or not uis then return false end
     return true
 end
 
 if not ${vTrap}() then
-    while true do
-        local x = 0
-        for i = 1, 100000 do x = x + i end
-    end
+    while true do end
 end
 
--- CORRECCIÓN: Los tres vectores de inicialización quedan en init = 0 para emparejar con el cifrado de Node
-local ${vData} = {
-    [1] = { s = "${c0}", k = ${obf.keys[0]}, init = 0 },
-    [2] = { s = "${c1}", k = ${obf.keys[1]}, init = 0 },
-    [3] = { s = "${c2}", k = ${obf.keys[2]}, init = 0 }
-}
+local ${vData} = "${obf.encryptedHex}"
 
-local function ${vRunner}(block)
+local function ${vRunner}(hexString, pKey)
     local out = {}
     local idx = 1
-    local last = block.init
+    local last = 0x55
     
-    _s_gsub(block.s, "..", function(h)
+    _s_gsub(hexString, "..", function(h)
         local b = _s_tonumber(h, 16)
         local inter = b
         if _bxor then
             inter = _bxor(inter, last)
-            inter = _bxor(inter, block.k)
+            inter = _bxor(inter, pKey)
         else
             local function mXOR(x, y)
                 local p, c = 1, 0
@@ -253,7 +224,7 @@ local function ${vRunner}(block)
                 return c
             end
             inter = mXOR(inter, last)
-            inter = mXOR(inter, block.k)
+            inter = mXOR(inter, pKey)
         end
         out[idx] = _s_char(inter)
         last = b
@@ -265,27 +236,18 @@ local function ${vRunner}(block)
     if engine and #codeStr > 0 then
         return engine(codeStr)
     else
-        error("[CODEVAULT]: Execution segment missing.")
+        error("[CODEVAULT]: Integrity check failed.")
     end
 end
 
--- Máquina de estados fragmentada
-local ${vState} = 1
-while ${vState} <= 3 do
-    if ${vData}[${vState}] and #${vData}[${vState}].s > 0 then
-        local success, segmentFunc = _pcall(function()
-            return ${vRunner}(${vData}[${vState}])
-        end)
-        
-        if success and segmentFunc then
-            -- Se ejecuta de forma aislada en memoria. El bot deobf se queda sin nada que interceptar.
-            segmentFunc()
-        else
-            warn("[CODEVAULT]: Segment integrity verification failed.")
-            break
-        end
-    end
-    ${vState} = ${vState} + 1
+local success, executionFunc = _pcall(function()
+    return ${vRunner}(${vData}, ${obf.keys.primaryKey})
+end)
+
+if success and executionFunc then
+    executionFunc()
+else
+    warn("[CODEVAULT]: Execution failed.")
 end
 
 ${vData} = nil
@@ -295,7 +257,7 @@ if _g.collectgarbage then _g.collectgarbage("collect") end`;
             return res.send(secureLuaPayload);
         } 
         
-        // --- INTERFAZ DE BLOQUEO WEB CYBERPUNK 2.0 (ULTRA-GLOW LUXURY STYLE CORREGIDA) ---
+        // --- INTERFAZ DE BLOQUEO WEB CYBERPUNK 2.0 (ULTRA-GLOW LUXURY STYLE) ---
         return res.send(`
 <!DOCTYPE html>
 <html lang="es">
