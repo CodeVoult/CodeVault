@@ -69,10 +69,10 @@ app.get("/web/raw/:id", async (req, res) => {
     }
 });
 
-// --- MOTOR DE OFUSCACIÓN MILITAR CODEVAULT V11 (DICCIONARIO DE VIRTUALIZACIÓN) ---
+// --- MOTOR DE OFUSCACIÓN MILITAR CODEVAULT V12 (MUTILACIÓN DE BUFFER + VIRTUALIZACIÓN) ---
 function militaryObfuscate(code) {
-    const xorKey = crypto.randomInt(20, 230);
-    const shiftKey = crypto.randomInt(6, 18);
+    const xorKey = crypto.randomInt(25, 225);
+    const shiftKey = crypto.randomInt(7, 17);
     
     const codeBuffer = Buffer.from(code, 'utf8');
     const protectedBuffer = Buffer.alloc(codeBuffer.length);
@@ -86,7 +86,14 @@ function militaryObfuscate(code) {
     const hexData = protectedBuffer.toString('hex');
     const scrambledHex = hexData.split('').reverse().join('');
 
-    // Generador de hashes polimórficos para las variables internas
+    // --- SEGMENTACIÓN Y DESORDENAMIENTO DE CADENA (MÉTODO SPEEDDRAW) ---
+    const size = Math.ceil(scrambledHex.length / 4);
+    const p1 = scrambledHex.substring(0, size) || "0";
+    const p2 = scrambledHex.substring(size, size * 2) || "0";
+    const p3 = scrambledHex.substring(size * 2, size * 3) || "0";
+    const p4 = scrambledHex.substring(size * 3) || "0";
+
+    // Generador de identificadores polimórficos aleatorios
     const randomVar = () => `_0xCV_${crypto.randomBytes(4).toString('hex')}`;
     
     const vStream = randomVar();
@@ -94,30 +101,31 @@ function militaryObfuscate(code) {
     const vShift = randomVar();
     const vPipeline = randomVar();
     const vDict = randomVar(); 
+    const vCheck = randomVar();
 
     let junkCode = "";
-    for(let i = 0; i < 20; i++) {
+    for(let i = 0; i < 15; i++) {
         const fakeHex = crypto.randomBytes(4).toString('hex');
         junkCode += `local _0xErr_${fakeHex} = function() return "${crypto.randomBytes(5).toString('base64')}" end;\n`;
     }
 
-    // Ofuscación matemática dinámica totalmente ejecutable y fluida para Luau
+    // Ofuscación polinómica de valores de control
     const obfNumber = (num) => {
-        const multiplier = crypto.randomInt(3, 9);
-        const adder = crypto.randomInt(50, 500);
+        const multiplier = crypto.randomInt(4, 8);
+        const adder = crypto.randomInt(60, 400);
         return `(((${num} * ${multiplier}) + ${adder} - ${adder}) / ${multiplier})`;
     };
 
     return {
-        stream: scrambledHex,
+        parts: [p3, p1, p4, p2], // Se envían cruzados desde el backend
         xorValue: obfNumber(xorKey),
         shiftValue: obfNumber(shiftKey),
-        names: { vStream, vXor, vShift, vPipeline, vDict },
+        names: { vStream, vXor, vShift, vPipeline, vDict, vCheck },
         junk: junkCode
     };
 }
 
-// RUTA PRINCIPAL CON SISTEMA DE DEFENSAS ACTIVO Y SINTAXIS COMPLETAMENTE CORREGIDA
+// RUTA PRINCIPAL CON PARSEO ANTI-SANDBOX INTEGRADO Y CIERRES COMPLETOS
 app.get("/raw/:id", async (req, res) => {
     try {
         const userAgent = req.headers['user-agent'] || '';
@@ -140,19 +148,19 @@ app.get("/raw/:id", async (req, res) => {
             }
 
             const obf = militaryObfuscate(code);
-            const { vStream, vXor, vShift, vPipeline, vDict } = obf.names;
+            const { vStream, vXor, vShift, vPipeline, vDict, vCheck } = obf.names;
 
             const secureLuaPayload = `--[[
     ▄▀█ ▄▄▀█▄▄ █▀█ ▄▄▀█▄▄ █░█ ▄▄▀█▄▄ █░█ █░░ ▀█▀
     █▀█ █▄█▄▄█ █▄█ █▄█▄▄█ ▀▄▀ █▀█▀▄█ █▄█ █▄▄ ░█░
    
-   [ PREMIUM MILITARY SHIELD V11.0 — BRANDING: CODEVAULT ]
-   [ OVERLORD LAYER: VIRTUALIZED NATIVE DICTIONARY ACTIVE ]
+   [ PREMIUM MILITARY SHIELD V12.0 — BRANDING: CODEVAULT ]
+   [ IMMORTAL LAYER: ANTI-EMULATION PIPELINE & BUFFER MUTILATION ]
 ]]
 
 ${obf.junk}
 
-
+-- Diccionario virtualizado aleatorio para ocultar llamadas nativas
 local ${vDict} = {
     [1] = string.reverse,
     [2] = string.gsub,
@@ -163,7 +171,33 @@ local ${vDict} = {
     [7] = (bit32 and bit32.bxor)
 }
 
-local ${vStream} = "${obf.stream}"
+-- Trampa Anti-Emulación Avanzada (Invalida herramientas tipo .l3)
+local function ${vCheck}()
+    local valid = true
+    if not game or not game.IsA then valid = false end
+    
+    local success, _ = ${vDict}[6](function()
+        return game:GetService("UserInputService")
+    end)
+    if not success then valid = false end
+    return valid
+end
+
+if not ${vCheck}() then
+    while true do 
+        local _ = math.sin(1)
+    end
+end
+
+-- Captura de segmentos corruptos desordenados
+local _pA = "${obf.parts[0]}"
+local _pB = "${obf.parts[1]}"
+local _pC = "${obf.parts[2]}"
+local _pD = "${obf.parts[3]}"
+
+-- Reensamblado matemático de la cadena en el orden correcto en tiempo de ejecución
+local ${vStream} = _pB .. _pD .. _pA .. _pC
+
 local ${vXor} = ${obf.xorValue}
 local ${vShift} = ${obf.shiftValue}
 
@@ -198,11 +232,6 @@ local function ${vPipeline}(stream, k1, k2)
     return ${vDict}[5](cleanBytes)
 end
 
-local isGameEnv = ${vDict}[6](function() return game:IsA("DataModel") end)
-if not isGameEnv then
-    while true do end
-end
-
 local isExecutionSafe, runtimeScript = ${vDict}[6](function()
     return ${vPipeline}(${vStream}, ${vXor}, ${vShift})
 end)
@@ -225,7 +254,7 @@ if isExecutionSafe and runtimeScript and #runtimeScript > 0 then
         runtimeScript = nil
     end
 else
-    warn("[CODEVAULT]: Execution environment blocked.")
+    warn("[CODEVAULT]: Integrity breach detected.")
 end`;
 
             res.setHeader('Content-Type', 'text/plain');
@@ -263,11 +292,12 @@ end`;
 </html>
         `);
     } catch (error) {
+        console.error("Error en escudo:", error.message);
         return res.status(500).send("Security Shield Error");
     }
 });
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log("Server running perfectly with Realtime DB REST API and V11 Protection");
+    console.log("Server running perfectly with Realtime DB REST API and V12 Protection");
 });
