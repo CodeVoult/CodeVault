@@ -57,6 +57,7 @@ app.post("/save", async (req, res) => {
     }
 });
 
+// RUTA PARA ACTUALIZAR UN SCRIPT EXISTENTE
 app.put("/update/:id", async (req, res) => {
     try {
         const { id } = req.params;
@@ -73,6 +74,7 @@ app.put("/update/:id", async (req, res) => {
     }
 });
 
+// RUTA EXCLUSIVA WEB RAW
 app.get("/web/raw/:id", async (req, res) => {
     try {
         const response = await axios.get(`${REALTIME_DB_URL}/${req.params.id}.json`);
@@ -84,9 +86,9 @@ app.get("/web/raw/:id", async (req, res) => {
     }
 });
 
-// --- MOTOR DE OFUSCACIâˆšÄN AVANZADA CODEVAULT V15 ORIGINAL (REPARACIâˆšÄN DE FRAGMENTOS) ---
+// --- MOTOR DE OFUSCACIÓN AVANZADA CODEVAULT V15 ORIGINAL (REPARACIÓN DE LÓGICA) ---
 function v15DynamicObfuscate(code) {
-    // CORRECCIâˆšÄN CRâˆšÄ‡TICA: Dividir por lâˆšâ‰ neas completas para evitar romper palabras clave de Luau
+    // Dividir de forma inteligente por líneas completas para no romper comandos de Luau
     const lines = code.split(/\r?\n/);
     const totalLines = lines.length;
     const chunkSize = Math.ceil(totalLines / 3);
@@ -105,7 +107,8 @@ function v15DynamicObfuscate(code) {
         const content = seg || "-- Empty Segment";
         const buf = Buffer.from(content, 'utf8');
         const chunkData = [];
-        let lastByte = idx * 7;
+        // REPARACIÓN CRÍTICA: Cada bloque arranca su encadenamiento matemático en 0 de forma independiente
+        let lastByte = 0; 
         for (let i = 0; i < buf.length; i++) {
             let enc = buf[i] ^ keys[idx];
             enc = (enc ^ lastByte) % 256;
@@ -135,7 +138,7 @@ function v15DynamicObfuscate(code) {
     };
 }
 
-// RUTA PRINCIPAL CON PROTECCIâˆšÄN REAL V15 PROTEGIDA CONTRA DEOFUSCACIâˆšÄN
+// RUTA PRINCIPAL CON SISTEMA DE PROTECCIÓN CAPA V15 GARANTIZADA Y TOTALMENTE EJECUTABLE
 app.get("/raw/:id", async (req, res) => {
     try {
         const clientIp = req.ip || req.connection.remoteAddress;
@@ -170,15 +173,15 @@ app.get("/raw/:id", async (req, res) => {
             const c2 = obf.chunks[2] || "";
 
             const secureLuaPayload = `--[[
-   â€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ“Ã³ â€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ“Ã³ â€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ“Ã³ â€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ“Ã³â€šÄ–Ä…â€šÄ–Ä…â€šÄ“Ã³   â€šÄ–Ä…â€šÄ–Ä…â€šÄ“Ã³ â€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ“Ã³ â€šÄ–Ä…â€šÄ–Ä…â€šÄ“Ã³   â€šÄ–Ä…â€šÄ–Ä…â€šÄ“Ã³â€šÄ–Ä…â€šÄ–Ä…â€šÄ“Ã³  â€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ“Ã³
-  â€šÄ–Ä…â€šÄ–Ä…â€šÄ“Ä’â€šÄ“Åºâ€šÄ“Åºâ€šÄ“Åºâ€šÄ“Åºâ€šÄ“Äšâ€šÄ–Ä…â€šÄ–Ä…â€šÄ“Ä’â€šÄ“Åºâ€šÄ“Åºâ€šÄ“Åºâ€šÄ–Ä…â€šÄ–Ä…â€šÄ“Ã³â€šÄ–Ä…â€šÄ–Ä…â€šÄ“Ä’â€šÄ“Åºâ€šÄ“Åºâ€šÄ–Ä…â€šÄ–Ä…â€šÄ“Ã³â€šÄ–Ä…â€šÄ–Ä…â€šÄ“Ä’â€šÄ“Åºâ€šÄ“Åºâ€šÄ“Åºâ€šÄ“Åºâ€šÄ“Äšâ€šÄ–Ä…â€šÄ–Ä…â€šÄ“ÄŽ   â€šÄ–Ä…â€šÄ–Ä…â€šÄ“ÄŽâ€šÄ–Ä…â€šÄ–Ä…â€šÄ“Ä’â€šÄ“Åºâ€šÄ“Åºâ€šÄ–Ä…â€šÄ–Ä…â€šÄ“Ã³â€šÄ–Ä…â€šÄ–Ä…â€šÄ“ÄŽ   â€šÄ–Ä…â€šÄ–Ä…â€šÄ“ÄŽâ€šÄ–Ä…â€šÄ–Ä…â€šÄ“ÄŽ  â€šÄ“Ã¶â€šÄ“Åºâ€šÄ“Åºâ€šÄ–Ä…â€šÄ–Ä…â€šÄ“Ä’â€šÄ“Åºâ€šÄ“Åºâ€šÄ“Äš
-  â€šÄ–Ä…â€šÄ–Ä…â€šÄ“ÄŽ     â€šÄ–Ä…â€šÄ–Ä…â€šÄ“ÄŽ   â€šÄ–Ä…â€šÄ–Ä…â€šÄ“ÄŽâ€šÄ–Ä…â€šÄ–Ä…â€šÄ“ÄŽ  â€šÄ–Ä…â€šÄ–Ä…â€šÄ“ÄŽâ€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ“Ã³  â€šÄ–Ä…â€šÄ–Ä…â€šÄ“ÄŽ   â€šÄ–Ä…â€šÄ–Ä…â€šÄ“ÄŽâ€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ“ÄŽâ€šÄ–Ä…â€šÄ–Ä…â€šÄ“ÄŽ   â€šÄ–Ä…â€šÄ–Ä…â€šÄ“ÄŽâ€šÄ–Ä…â€šÄ–Ä…â€šÄ“ÄŽ     â€šÄ–Ä…â€šÄ–Ä…â€šÄ“ÄŽ   
-  â€šÄ–Ä…â€šÄ–Ä…â€šÄ“ÄŽ     â€šÄ–Ä…â€šÄ–Ä…â€šÄ“ÄŽ   â€šÄ–Ä…â€šÄ–Ä…â€šÄ“ÄŽâ€šÄ–Ä…â€šÄ–Ä…â€šÄ“ÄŽ  â€šÄ–Ä…â€šÄ–Ä…â€šÄ“ÄŽâ€šÄ–Ä…â€šÄ–Ä…â€šÄ“Ä’â€šÄ“Åºâ€šÄ“Åºâ€šÄ“Äš  â€šÄ“Ã¶â€šÄ–Ä…â€šÄ–Ä…â€šÄ“Ã³ â€šÄ–Ä…â€šÄ–Ä…â€šÄ“Ä’â€šÄ“Äšâ€šÄ–Ä…â€šÄ–Ä…â€šÄ“Ä’â€šÄ“Åºâ€šÄ“Åºâ€šÄ–Ä…â€šÄ–Ä…â€šÄ“ÄŽâ€šÄ–Ä…â€šÄ–Ä…â€šÄ“ÄŽ   â€šÄ–Ä…â€šÄ–Ä…â€šÄ“ÄŽâ€šÄ–Ä…â€šÄ–Ä…â€šÄ“ÄŽ     â€šÄ–Ä…â€šÄ–Ä…â€šÄ“ÄŽ   
-  â€šÄ“Ã¶â€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ“Ã³â€šÄ“Ã¶â€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ“Ä’â€šÄ“Äšâ€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ“Ä’â€šÄ“Äšâ€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ“Ã³ â€šÄ“Ã¶â€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ“Ä’â€šÄ“Äš â€šÄ–Ä…â€šÄ–Ä…â€šÄ“ÄŽ  â€šÄ–Ä…â€šÄ–Ä…â€šÄ“ÄŽâ€šÄ“Ã¶â€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ“Ä’â€šÄ“Äšâ€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ–Ä…â€šÄ“Ã³â€šÄ–Ä…â€šÄ–Ä…â€šÄ“ÄŽ   
-   â€šÄ“Ã¶â€šÄ“Åºâ€šÄ“Åºâ€šÄ“Åºâ€šÄ“Åºâ€šÄ“Åºâ€šÄ“Äš â€šÄ“Ã¶â€šÄ“Åºâ€šÄ“Åºâ€šÄ“Åºâ€šÄ“Åºâ€šÄ“Åºâ€šÄ“Äš â€šÄ“Ã¶â€šÄ“Åºâ€šÄ“Åºâ€šÄ“Åºâ€šÄ“Åºâ€šÄ“Åºâ€šÄ“Äš â€šÄ“Ã¶â€šÄ“Åºâ€šÄ“Åºâ€šÄ“Åºâ€šÄ“Åºâ€šÄ“Åºâ€šÄ“Åºâ€šÄ“Äš  â€šÄ“Ã¶â€šÄ“Åºâ€šÄ“Åºâ€šÄ“Åºâ€šÄ“Äš  â€šÄ“Ã¶â€šÄ“Åºâ€šÄ“Äš  â€šÄ“Ã¶â€šÄ“Åºâ€šÄ“Äš â€šÄ“Ã¶â€šÄ“Åºâ€šÄ“Åºâ€šÄ“Åºâ€šÄ“Åºâ€šÄ“Åºâ€šÄ“Äš â€šÄ“Ã¶â€šÄ“Åºâ€šÄ“Åºâ€šÄ“Åºâ€šÄ“Åºâ€šÄ“Åºâ€šÄ“Åºâ€šÄ“Äšâ€šÄ“Ã¶â€šÄ“Åºâ€šÄ“Äš   
+   ██████╗ ██████╗ ██████╗ ███████╗██╗   ██╗ █████╗ ██╗   ██╗██╗  ████████╗
+  ██╔════╝██╔═══██╗██╔══██╗██╔════╝██║   ██║██╔══██╗██║   ██║██║  ╚══██╔══╝
+  ██║     ██║   ██║██║  ██║█████╗  ██║   ██║███████║██║   ██║██║     ██║   
+  ██║     ██║   ██║██║  ██║██╔══╝  ╚██╗ ██╔╝██╔══██║██║   ██║██║     ██║   
+  ╚██████╗╚██████╔╝██████╔╝███████╗ ╚████╔╝ ██║  ██║╚██████╔╝███████╗██║   
+   ╚═════╝ ╚═════╝ ╚═════╝ ╚══════╝  ╚═══╝  ╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝   
    
-   [ PREMIUM SECURITY SHIELD V15.0 â€šÃ„Ä’ BRANDING: CODEVAULT SYSTEM ]
-   [ STATE MACHINE ARCHITECTURE â€šÃ„Ä’ FRAGMENTED EXECUTION PIPELINE ACTIVE ]
+   [ PREMIUM SECURITY SHIELD V15.0 — BRANDING: CODEVAULT SYSTEM ]
+   [ STATE MACHINE ARCHITECTURE — FRAGMENTED EXECUTION PIPELINE ACTIVE ]
 ]]
 
 ${obf.decoys}
@@ -192,49 +195,25 @@ local _pcall = pcall
 local _bxor = (bit32 and bit32.bxor)
 
 local function ${vTrap}()
-    if not game or not game.GetService then
-        return false
-    end
+    if not game or not game.GetService then return false end
     local targetLoad = loadstring
-    if not targetLoad then
-        return false
-    end
+    if not targetLoad then return false end
     local loadStr = tostring(targetLoad)
     if loadStr:match("custom") or loadStr:match("hook") or loadStr:match("proxy") or loadStr:match("wrapper") then
         return false
     end
-    local envTest = getfenv and getfenv()
-    if envTest and type(envTest) == "table" then
-        if envTest.print ~= print then
-            return false
-        end
-    end
     if debug and debug.getinfo then
         local info = _pcall(debug.getinfo, targetLoad)
-        if info and type(info) == "table" and (info.what == "C" or info.what == "Lua") then
-        else
+        if not (info and type(info) == "table" and (info.what == "C" or info.what == "Lua")) then
             return false
         end
-    else
-        return false
     end
-    local executorGlobals = {"syn", "krnl", "script_context", "secure_load", "getexecutorname", "identifyexecutor"}
+    local executorGlobals = {"syn", "krnl", "script_context", "secure_load"}
     for _, name in ipairs(executorGlobals) do
-        if _g[name] ~= nil then
-            return false
-        end
+        if _g[name] ~= nil then return false end
     end
     local success, uis = _pcall(function() return game:GetService("UserInputService") end)
-    if not success or not uis then
-        return false
-    end
-    local success2, http = _pcall(function() return game:GetService("HttpService") end)
-    if not success2 or not http or not http.GetAsync then
-        return false
-    end
-    if math.sin(1) * math.cos(1) == 0 then
-        return false
-    end
+    if not success or not uis then return false end
     return true
 end
 
@@ -242,15 +221,14 @@ if not ${vTrap}() then
     while true do
         local x = 0
         for i = 1, 100000 do x = x + i end
-        _g.collectgarbage and _g.collectgarbage("collect")
     end
 end
 
--- Almacenamiento en matriz indexada asimâˆšÂ©trica
+-- CORRECCIÓN: Los tres vectores de inicialización quedan en init = 0 para emparejar con el cifrado de Node
 local ${vData} = {
     [1] = { s = "${c0}", k = ${obf.keys[0]}, init = 0 },
-    [2] = { s = "${c1}", k = ${obf.keys[1]}, init = 7 },
-    [3] = { s = "${c2}", k = ${obf.keys[2]}, init = 14 }
+    [2] = { s = "${c1}", k = ${obf.keys[1]}, init = 0 },
+    [3] = { s = "${c2}", k = ${obf.keys[2]}, init = 0 }
 }
 
 local function ${vRunner}(block)
@@ -285,14 +263,13 @@ local function ${vRunner}(block)
     local codeStr = _t_concat(out)
     local engine = loadstring or _g.loadstring
     if engine and #codeStr > 0 then
-        -- MANTIENE LA EJECUCIâˆšÄN PURA DE TU VERSIâˆšÄN ORIGINAL (MATABOTS)
         return engine(codeStr)
     else
         error("[CODEVAULT]: Execution segment missing.")
     end
 end
 
--- MâˆšÂ°quina de estados no lineal para ejecutar el câˆšâ‰¥digo de forma fragmentada
+-- Máquina de estados fragmentada
 local ${vState} = 1
 while ${vState} <= 3 do
     if ${vData}[${vState}] and #${vData}[${vState}].s > 0 then
@@ -301,7 +278,7 @@ while ${vState} <= 3 do
         end)
         
         if success and segmentFunc then
-            -- Se ejecuta como un cierre (closure) aislado. Cero unificaciâˆšâ‰¥n de strings en memoria.
+            -- Se ejecuta de forma aislada en memoria. El bot deobf se queda sin nada que interceptar.
             segmentFunc()
         else
             warn("[CODEVAULT]: Segment integrity verification failed.")
@@ -311,24 +288,21 @@ while ${vState} <= 3 do
     ${vState} = ${vState} + 1
 end
 
--- Limpieza agresiva de memoria al finalizar el ciclo de estados
 ${vData} = nil
-if _g.collectgarbage then
-    _g.collectgarbage("collect")
-end`;
+if _g.collectgarbage then _g.collectgarbage("collect") end`;
 
             res.setHeader('Content-Type', 'text/plain');
             return res.send(secureLuaPayload);
         } 
         
-        // --- INTERFAZ DE BLOQUEO WEB CYBERPUNK 2.0 (ULTRA-GLOW LUXURY STYLE) ---
+        // --- INTERFAZ DE BLOQUEO WEB CYBERPUNK 2.0 (ULTRA-GLOW LUXURY STYLE CORREGIDA) ---
         return res.send(`
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CodeVault â€šÃ„Ä’ Secure Core</title>
+    <title>CodeVault — Secure Core</title>
     <style>
         * { box-sizing: border-box; }
         body { 
@@ -433,7 +407,7 @@ end`;
             <span style="color: #444854;">&gt; NET_ACCESS:</span> <span class="red">EXTERNAL_WEB_DENIED</span>
         </div>
         <p class="info-desc">
-            ${code ? "La descarga directa por navegador web estâˆšÂ° restringida para mitigar dumper remotos. Ejecuta el script directamente desde tu cargador en el juego." : "El identificador proporcionado no coincide con ningâˆšÄ¼n buffer activo en nuestra base de datos."}
+            ${code ? "La descarga directa por navegador web está restringida para mitigar dumper remotos. Ejecuta el script directamente desde tu cargador en el juego." : "El identificador proporcionado no coincide con ningún buffer activo en nuestra base de datos."}
         </p>
         <a href="https://leeh10.github.io/CodeVault/index.html" class="btn-action">ACCEDER AL PANEL</a>
     </div>
