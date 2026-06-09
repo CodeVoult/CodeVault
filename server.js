@@ -69,62 +69,54 @@ app.get("/web/raw/:id", async (req, res) => {
     }
 });
 
-// --- MOTOR DE OFUSCACIÓN MILITAR CODEVAULT V14.2 (ASYMMETRIC INDEXED PIPELINE) ---
-function advancedQuantumObfuscate(code) {
-    const primaryKey = crypto.randomInt(40, 215);
-    const feedbackSeed = crypto.randomInt(15, 85);
-    
-    const codeBuffer = Buffer.from(code, 'utf8');
-    const encodedArray = [];
-    
-    let lastByte = feedbackSeed;
-    for (let i = 0; i < codeBuffer.length; i++) {
-        let obfuscated = codeBuffer[i] ^ primaryKey;
-        obfuscated = (obfuscated ^ lastByte) % 256;
-        encodedArray.push(obfuscated);
-        lastByte = obfuscated;
+// --- MOTOR DE OFUSCACIÓN AVANZADA CODEVAULT V15 (FRAGMENTED STATE PIPELINE) ---
+function v15DynamicObfuscate(code) {
+    // Dividir el código de entrada en múltiples segmentos lógicos antes de cifrar
+    const segments = [];
+    const size = Math.ceil(code.length / 3);
+    for (let i = 0; i < code.length; i += size) {
+        segments.push(code.substring(i, i + size));
     }
+    
+    const primaryKey = crypto.randomInt(50, 200);
+    const keys = [primaryKey, primaryKey ^ 0xAA, primaryKey ^ 0x55];
+    const encryptedChunks = [];
 
-    // Dividir el buffer cifrado en bloques asimétricos desordenados
-    const tableChunks = [];
-    const chunkSize = Math.ceil(encodedArray.length / 4);
-    for (let i = 0; i < 4; i++) {
-        const start = i * chunkSize;
-        const chunk = encodedArray.slice(start, start + chunkSize);
-        tableChunks.push(chunk.map(b => b.toString(16).padStart(2, '0')).join(''));
-    }
+    // Cifrar cada segmento de manera independiente con llaves derivadas
+    segments.forEach((seg, idx) => {
+        const buf = Buffer.from(seg, 'utf8');
+        const chunkData = [];
+        let lastByte = idx * 7;
+        for (let i = 0; i < buf.length; i++) {
+            let enc = buf[i] ^ keys[idx];
+            enc = (enc ^ lastByte) % 256;
+            chunkData.push(enc.toString(16).padStart(2, '0'));
+            lastByte = enc;
+        }
+        encryptedChunks.push(chunkData.join(''));
+    });
 
-    const randomVar = () => `_0xQ_${crypto.randomBytes(4).toString('hex')}`;
-    const vStream = randomVar();
-    const vKey = randomVar();
-    const vSeed = randomVar();
-    const vDecrypter = randomVar();
+    const randomVar = () => `_0xV15_${crypto.randomBytes(4).toString('hex')}`;
+    const vState = randomVar();
+    const vRunner = randomVar();
     const vTrap = randomVar();
+    const vData = randomVar();
 
-    // Estructuración densa de Honey-Tokens (Datos basura legítimos para confundir análisis heurísticos)
     let decoyData = "";
-    for(let i = 0; i < 12; i++) {
-        const fakeHex = crypto.randomBytes(5).toString('hex');
-        decoyData += `local _0xTrapVal_${fakeHex} = string.char(${crypto.randomInt(65, 90)}, ${crypto.randomInt(97, 122)});\n`;
+    for(let i = 0; i < 8; i++) {
+        const fakeHex = crypto.randomBytes(4).toString('hex');
+        decoyData += `local _0xNoise_${fakeHex} = tonumber("${crypto.randomInt(1000, 9999)}", 16);\n`;
     }
-
-    const formatMath = (num) => {
-        const factor = crypto.randomInt(4, 8);
-        const offset = crypto.randomInt(100, 300);
-        return `(((${num} * ${factor}) + ${offset} - ${offset}) / ${factor})`;
-    };
 
     return {
-        // Distribución cruzada no lineal de bloques hexadecimales
-        blocks: [tableChunks[2], tableChunks[0], tableChunks[3], tableChunks[1]],
-        k1: formatMath(primaryKey),
-        k2: formatMath(feedbackSeed),
-        vars: { vStream, vKey, vSeed, vDecrypter, vTrap },
+        chunks: encryptedChunks,
+        keys: keys,
+        vars: { vState, vRunner, vTrap, vData },
         decoys: decoyData
     };
 }
 
-// RUTA PRINCIPAL CON SISTEMA ABSOLUTE ISOLATION V14.2
+// RUTA PRINCIPAL CON SISTEMA DE PROTECCIÓN CAPA V15
 app.get("/raw/:id", async (req, res) => {
     try {
         const userAgent = req.headers['user-agent'] || '';
@@ -146,8 +138,13 @@ app.get("/raw/:id", async (req, res) => {
                 return res.status(404).send("-- CodeVault Error: Script no encontrado.");
             }
 
-            const obf = advancedQuantumObfuscate(code);
-            const { vStream, vKey, vSeed, vDecrypter, vTrap } = obf.vars;
+            const obf = v15DynamicObfuscate(code);
+            const { vState, vRunner, vTrap, vData } = obf.vars;
+
+            // Formatear los bloques cifrados asegurando que no falte ninguno para la ejecución completa
+            const c0 = obf.chunks[0] || "";
+            const c1 = obf.chunks[1] || "";
+            const c2 = obf.chunks[2] || "";
 
             const secureLuaPayload = `--[[
    ██████╗ ██████╗ ██████╗ ███████╗██╗   ██╗ █████╗ ██╗   ██╗██╗  ████████╗
@@ -157,14 +154,13 @@ app.get("/raw/:id", async (req, res) => {
   ╚██████╗╚██████╔╝██████╔╝███████╗ ╚████╔╝ ██║  ██║╚██████╔╝███████╗██║   
    ╚═════╝ ╚═════╝ ╚═════╝ ╚══════╝  ╚═══╝  ╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝   
    
-   [ PREMIUM MILITARY SHIELD V14.2 — BRANDING: CODEVAULT QUANTUM ]
-   [ METATABLE ISOLATION LAYER — MULTI-INDEXED ASYMMETRIC STREAM ]
+   [ PREMIUM SECURITY SHIELD V15.0 — BRANDING: CODEVAULT SYSTEM ]
+   [ STATE MACHINE ARCHITECTURE — FRAGMENTED EXECUTION PIPELINE ACTIVE ]
 ]]
 
 ${obf.decoys}
 
 local _g = getfenv and getfenv() or _G
-local _s_reverse = string.reverse
 local _s_gsub = string.gsub
 local _s_tonumber = tonumber
 local _s_char = string.char
@@ -172,100 +168,94 @@ local _t_concat = table.concat
 local _pcall = pcall
 local _bxor = (bit32 and bit32.bxor)
 
--- Control estricto de Hooks externos de bajo nivel
 local function ${vTrap}()
     if not game or not game.IsA then return false end
-    
     local targetLoad = loadstring
     if not targetLoad then return true end
-    
     local suspicious = false
     _pcall(function()
-        local strRepresentation = tostring(targetLoad)
-        if strRepresentation:match("custom") or strRepresentation:match("hook") or strRepresentation:match("proxy") then
+        local str = tostring(targetLoad)
+        if str:match("custom") or str:match("hook") or str:match("proxy") then
             suspicious = true
         end
     end)
-    
     if suspicious then return false end
-    
-    local success, _ = _pcall(function() return game:GetService("UserInputService") end)
-    return success
+    return _pcall(function() return game:GetService("UserInputService") end)
 end
 
 if not ${vTrap}() then
     while true do
-        -- Anti-dump: Bucle infinito por cálculo matemático si es interceptado
         local _ = math.sin(1) * math.cos(1)
     end
 end
 
-local _bA = "${obf.blocks[0]}"
-local _bB = "${obf.blocks[1]}"
-local _bC = "${obf.blocks[2]}"
-local _bD = "${obf.blocks[3]}"
+-- Almacenamiento en matriz indexada asimétrica
+local ${vData} = {
+    [1] = { s = "${c0}", k = ${obf.keys[0]}, init = 0 },
+    [2] = { s = "${c1}", k = ${obf.keys[1]}, init = 7 },
+    [3] = { s = "${c2}", k = ${obf.keys[2]}, init = 14 }
+}
 
--- Reensamblado asimétrico en matriz indexada para romper la lectura secuencial del bot
-local ${vStream} = _bB .. _bD .. _bA .. _bC
-local ${vKey} = ${obf.k1}
-local ${vSeed} = ${obf.k2}
-
-local function ${vDecrypter}(stream, k1, seed)
-    local outputBytes = {}
-    local index = 1
-    local lastByte = seed
+local function ${vRunner}(block)
+    local out = {}
+    local idx = 1
+    local last = block.init
     
-    _s_gsub(stream, "..", function(hexChar)
-        local rawByte = _s_tonumber(hexChar, 16)
-        local intermediate = rawByte
-        
+    _s_gsub(block.s, "..", function(h)
+        local b = _s_tonumber(h, 16)
+        local inter = b
         if _bxor then
-            intermediate = _bxor(intermediate, lastByte)
-            intermediate = _bxor(intermediate, k1)
+            inter = _bxor(inter, last)
+            inter = _bxor(inter, block.k)
         else
-            local function manualXOR(a, b)
+            local function mXOR(x, y)
                 local p, c = 1, 0
-                while a > 0 or b > 0 do
-                    local ra, rb = a % 2, b % 2
-                    if ra ~= rb then c = c + p end
-                    a, b, p = (a - ra) / 2, (b - rb) / 2, p * 2
+                while x > 0 or y > 0 do
+                    local rx, ry = x % 2, y % 2
+                    if rx ~= ry then c = c + p end
+                    x, y, p = (x - rx) / 2, (y - ry) / 2, p * 2
                 end
                 return c
             end
-            intermediate = manualXOR(intermediate, lastByte)
-            intermediate = manualXOR(intermediate, k1)
+            inter = mXOR(inter, last)
+            inter = mXOR(inter, block.k)
         end
-        
-        outputBytes[index] = _s_char(intermediate)
-        lastByte = rawByte
-        index = index + 1
+        out[idx] = _s_char(inter)
+        last = b
+        idx = idx + 1
     end)
     
-    return _t_concat(outputBytes)
+    local codeStr = _t_concat(out)
+    local engine = loadstring or _g.loadstring
+    if engine and #codeStr > 0 then
+        return engine(codeStr)
+    else
+        error("[CODEVAULT]: Execution segment missing.")
+    end
 end
 
-local isIntegritySecure, transparentCode = _pcall(function()
-    return ${vDecrypter}(${vStream}, ${vKey}, ${vSeed})
-end)
+-- Máquina de estados no lineal para ejecutar el código de forma fragmentada
+local ${vState} = 1
+while ${vState} <= 3 do
+    if ${vData}[${vState}] and #${vData}[${vState}].s > 0 then
+        local success, segmentFunc = _pcall(function()
+            return ${vRunner}(${vData}[${vState}])
+        end)
+        
+        if success Ves segmentFunc then
+            segmentFunc()
+        else
+            warn("[CODEVAULT]: Segment integrity verification failed.")
+            break
+        end
+    end
+    ${vState} = ${vState} + 1
+end
 
-if isIntegritySecure and transparentCode and #transparentCode > 0 then
-    local engine = loadstring or _g.loadstring
-    if engine then
-        -- Ejecución limpia directa en el entorno seguro del cargador
-        engine(transparentCode)()
-    else
-        error("[CODEVAULT]: Vital engine component failure.")
-    end
-    
-    -- Recolección atómica total e inmediata de la memoria ram de Luau
-    transparentCode = nil
-    ${vStream} = nil
-    
-    if _g.collectgarbage then
-        _g.collectgarbage("collect")
-    end
-else
-    warn("[CODEVAULT]: Structural integrity violation detected.")
+-- Limpieza agresiva de memoria al finalizar el ciclo de estados
+${vData} = nil
+if _g.collectgarbage then
+    _g.collectgarbage("collect")
 end`;
 
             res.setHeader('Content-Type', 'text/plain');
@@ -399,5 +389,5 @@ end`;
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log("Server running perfectly with Realtime DB REST API and V14.2 Protection");
+    console.log("Server running perfectly with Realtime DB REST API and V15 Protection");
 });
