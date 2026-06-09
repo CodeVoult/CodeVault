@@ -236,4 +236,29 @@ end`;
         .card { width: 90%; max-width: 450px; background: #000; border: 1px solid #222; padding: 30px; border-radius: 4px; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
         .title { font-size: 24px; font-weight: bold; letter-spacing: 2px; margin-bottom: 5px; color: #fff; }
         .subtitle { font-size: 10px; color: #555; letter-spacing: 4px; margin-bottom: 20px; }
-        .status { padding: 10px; background: #111; border-left: 3px solid ${code ? '#00ff88' : '#ff3b
+        .status { padding: 10px; background: #111; border-left: 3px solid ${code ? '#00ff88' : '#ff3b3b'}; font-size: 12px; margin-bottom: 20px; }
+        .green { color: #00ff88; } .red { color: #ff3b3b; }
+        .desc { font-size: 12px; color: #888; line-height: 1.6; margin-bottom: 25px; }
+        .btn { display: block; background: #fff; color: #000; text-align: center; padding: 12px; text-decoration: none; font-size: 11px; font-weight: bold; letter-spacing: 1px; border-radius: 2px; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="title">CODEVAULT</div>
+        <div class="subtitle">SECURITY INTERFACE</div>
+        <div class="status">> STATUS: <span class="${code ? 'green' : 'red'}">${code ? "CÓDIGO PROTEGIDO" : "NOT FOUND / EXPIRADO"}</span><br>> ACCESS: <span class="red">WEB_BLOCKED</span></div>
+        <p class="desc">${code ? "Este script se encuentra protegido legítimamente bajo el entorno de CodeVault. El acceso web al código plano está deshabilitado para evitar su filtración." : "El identificador de script solicitado no existe."}</p>
+        <a href="https://leeh10.github.io/CodeVault/index.html" class="btn">IR AL PANEL PRINCIPAL</a>
+    </div>
+</body>
+</html>
+        `);
+    } catch (error) {
+        return res.status(500).send("Security Shield Error");
+    }
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log("Server running perfectly with Realtime DB REST API");
+});
