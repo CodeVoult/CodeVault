@@ -13,7 +13,6 @@
   const esRawMode = urlParams.get('raw') === 'true';
 
   if (esRawMode && idScript) {
-    // CORREGIDO: Apunta al subdominio activo vlv1 en lugar del antiguo gvyn
     fetch('https://codevault-vlv1.onrender.com/raw/' + idScript)
       .then(res => res.text())
       .then(luaCode => {
@@ -640,7 +639,7 @@ function updateLineCount(val) {
   document.getElementById('lineCount').textContent = `${lines} line${lines === 1 ? '' : 's'}`;
 }
 
-/* ── DATA FETCH OPTIMIZADO CON AUTO-REINTENTO ── */
+/* ── DATA FETCH OPTIMIZADO CON VALIDACIÓN DE PAYLOAD ── */
 async function loadScript() {
   scriptId = getId();
   
@@ -669,12 +668,21 @@ async function loadScript() {
 
       setStatus('loading', intentos > 0 ? `Waking up server (Attempt ${intentos + 1})...` : 'Synchronizing pipeline...');
 
-      // CORREGIDO: Se removió la sección inválida '/web' intermedia de la ruta para que coincida exactamente con tu backend V10
       const res = await fetch('https://codevault-vlv1.onrender.com/raw/' + scriptId, { signal: controller.signal });
       clearTimeout(timeoutId);
 
       if (!res.ok) throw new Error();
       const code = await res.text();
+      
+      // INTERCEPTOR ANTI-HTML: Si viene estructurado como web, detiene el proceso y avisa
+      if (code.trim().startsWith('<!DOCTYPE') || code.trim().startsWith('<html')) {
+        setStatus('error', 'Database payload corrupted');
+        document.getElementById('code').value = '';
+        document.getElementById('code').placeholder = "-- Error: El servidor devolvió la interfaz web (HTML) en lugar de un script de Lua. Por favor, edita este script y guarda un código Lua válido.";
+        updateLineCount('');
+        showToast('⚠ Error: Estructura HTML detectada');
+        return;
+      }
       
       document.getElementById('code').value = code;
       originalCode = code;
@@ -729,11 +737,17 @@ function cancelEdit() {
   showToast('Modifications discarded');
 }
 
-/* ── SAVE API PIPELINE CORREGIDO PARA ACTUALIZAR EL MISMO ID ── */
+/* ── SAVE API PIPELINE CON FILTRO PREVENTIVO ── */
 async function saveChanges() {
   const ta = document.getElementById('code');
   const updated = ta.value;
   if (!updated.trim()) { showToast('⚠ Working layout cannot be empty'); return; }
+
+  // FILTRO PREVENTIVO: Evita romper la base de datos subiendo código web por error
+  if (updated.trim().startsWith('<!DOCTYPE') || updated.trim().startsWith('<html')) {
+    showToast('⚠ Cancelado: No puedes guardar código HTML como script');
+    return;
+  }
 
   setStatus('loading', 'Pushing database patch...');
 
