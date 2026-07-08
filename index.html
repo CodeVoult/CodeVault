@@ -3,37 +3,36 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>CodeVault — Dashboard</title>
-<link href="https://fonts.googleapis.com/css2%2Ffamily=JetBrains+Mono:wght@300;400;600;700&family=Space+Grotesk:wght@300;400;600;700&display=swap" rel="stylesheet">
+<title>CodeVault — Ultra Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Space+Grotesk:wght@300;400;600;700&display=swap" rel="stylesheet">
 
 <script>
-  // ── VALIDACIÓN INTELIGENTE DE ACCESO SEGURO MAX ──
+  // ── VALIDACIÓN DE ACCESO SEGURO ──
   const activeUser = localStorage.getItem("logged_user");
   const urlParams = new URLSearchParams(window.location.search);
   const vieneDeFila = urlParams.get('from') === 'dashboard';
 
-  // Si no hay una sesión activa en el celular, directo al Login sin escalas
   if (!activeUser) {
     window.location.href = "login.html";
-  }
-  // Si está logueado pero entró escribiendo "index.html" a secas (sin venir a agregar un script de carpeta)
-  else if (!vieneDeFila) {
+  } else if (!vieneDeFila) {
     window.location.href = "dashboard.html";
   }
 </script>
 
-
 <style>
 :root {
-  --bg: #080808;
-  --surface: #0f0f0f;
-  --surface2: #161616;
-  --border: #242424;
-  --border2: #2e2e2e;
-  --text: #f0f0f0;
-  --muted: #555;
-  --accent: #ffffff;
-  --accent2: #c8c8c8;
+  --bg: #030303;
+  --surface: #0a0a0c;
+  --surface2: #101014;
+  --border: #161a22;
+  --border2: #22293a;
+  --text: #ffffff;
+  --muted: #525a6c;
+  
+  /* Cyberpunk Neon Theme (Cyan/Blue) */
+  --neon: #00f0ff;
+  --neon-glow: rgba(0, 240, 255, 0.15);
+  --neon-dim: #00a8b5;
 }
 
 * { margin:0; padding:0; box-sizing:border-box; }
@@ -48,92 +47,127 @@ body {
   position: relative;
 }
 
-#canvas {
+/* Fondo de cuadrícula Cyberpunk */
+.bg-grid {
   position: fixed;
   inset: 0;
-  z-index: 0;
+  z-index: 1;
+  background-image: 
+    linear-gradient(to right, rgba(0, 240, 255, 0.015) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 240, 255, 0.015) 1px, transparent 1px);
+  background-size: 40px 40px;
   pointer-events: none;
 }
 
-body::before {
-  content:'';
-  position:fixed;
-  inset:0;
-  z-index:1;
-  pointer-events:none;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-  background-size: 200px;
-  opacity: 0.5;
+/* Resplandor superior */
+.bg-glow {
+  position: fixed;
+  top: -150px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(0, 240, 255, 0.06) 0%, transparent 70%);
+  z-index: 1;
+  pointer-events: none;
+}
+
+#canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
 }
 
 .container {
   position: relative;
-  z-index: 2;
+  z-index: 10;
   max-width: 860px;
   margin: 0 auto;
-  padding: 60px 24px 80px;
+  padding: 50px 20px 80px;
 }
 
-/* HEADER */
+/* HEADER STYLE */
 header {
-  margin-bottom: 56px;
-  animation: fadeUp 0.8s cubic-bezier(.16,1,.3,1) both;
+  margin-bottom: 40px;
+  animation: neonFadeUp 0.8s cubic-bezier(.16,1,.3,1) both;
 }
 
 .logo-wrap {
   display: flex;
   align-items: center;
-  gap: 14px;
-  margin-bottom: 10px;
+  gap: 16px;
+  margin-bottom: 6px;
 }
 
 .logo-icon {
-  width: 38px;
-  height: 38px;
-  background: var(--surface2);
+  width: 42px;
+  height: 42px;
+  background: var(--surface);
   border: 1px solid var(--border2);
-  border-radius: 10px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
+  font-size: 20px;
+  color: var(--neon);
+  box-shadow: 0 0 15px var(--neon-glow);
+  position: relative;
+}
+
+.logo-icon::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 12px;
+  background: linear-gradient(45deg, var(--neon), transparent);
+  z-index: -1;
+  opacity: 0.4;
 }
 
 .logo {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 32px;
+  font-size: 34px;
   font-weight: 700;
   letter-spacing: -1px;
   color: var(--text);
 }
 
-.logo span { color: var(--muted); }
+.logo span { 
+  color: var(--neon);
+  text-shadow: 0 0 10px rgba(0, 240, 255, 0.4);
+}
 
 .subtitle {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
+  font-size: 12px;
   color: var(--muted);
   letter-spacing: 0.05em;
-  padding-left: 52px;
+  padding-left: 58px;
+  text-transform: uppercase;
 }
 
-/* EDITOR CARD */
+/* NEON EDITOR CARD */
 .editor-card {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: 20px;
   overflow: hidden;
-  animation: fadeUp 0.8s 0.1s cubic-bezier(.16,1,.3,1) both;
-  transition: border-color 0.3s;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+  animation: neonFadeUp 0.8s 0.1s cubic-bezier(.16,1,.3,1) both;
+  transition: all 0.4s cubic-bezier(.16,1,.3,1);
 }
 
-.editor-card:focus-within { border-color: var(--border2); }
+.editor-card:hover, .editor-card:focus-within { 
+  border-color: rgba(0, 240, 255, 0.3);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.6), 0 0 20px rgba(0, 240, 255, 0.03);
+}
 
 .topbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 20px;
+  padding: 16px 24px;
   border-bottom: 1px solid var(--border);
   background: var(--surface2);
 }
@@ -141,113 +175,124 @@ header {
 .topbar-left {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
-.dot { width: 10px; height: 10px; border-radius: 50%; }
-.dot.r { background: #3d1c1c; }
-.dot.y { background: #3d351c; }
-.dot.g { background: #1c3d29; }
+.dots {
+  display: flex;
+  gap: 6px;
+}
+.dot { width: 8px; height: 8px; border-radius: 50%; background: #222; }
+.dot.active-glow { background: var(--neon); box-shadow: 0 0 8px var(--neon); }
 
 .lang-badge {
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
-  color: var(--muted);
-  background: var(--border);
-  padding: 3px 10px;
-  border-radius: 20px;
+  color: var(--neon);
+  font-weight: 600;
+  background: rgba(0, 240, 255, 0.06);
+  border: 1px solid rgba(0, 240, 255, 0.15);
+  padding: 3px 12px;
+  border-radius: 6px;
+  letter-spacing: 0.05em;
 }
 
 .line-count {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
+  font-size: 12px;
   color: var(--muted);
 }
 
+/* TEXTAREA CYBERPUNK */
 textarea {
   width: 100%;
-  height: 420px;
+  height: 440px;
   background: transparent;
-  color: var(--text);
+  color: #e2e8f0;
   border: none;
   outline: none;
   padding: 24px;
   resize: none;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 13.5px;
-  line-height: 1.75;
-  caret-color: white;
+  font-size: 14px;
+  line-height: 1.8;
+  caret-color: var(--neon);
 }
 
-textarea::placeholder { color: #333; }
+textarea::placeholder { color: #2e3545; }
 textarea::-webkit-scrollbar { width: 6px; }
 textarea::-webkit-scrollbar-track { background: transparent; }
-textarea::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+textarea::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 20px; }
+textarea::-webkit-scrollbar-thumb:hover { background: var(--muted); }
 
 .actions {
   display: flex;
-  gap: 10px;
-  padding: 16px 20px;
+  gap: 12px;
+  padding: 18px 24px;
   border-top: 1px solid var(--border);
   background: var(--surface2);
 }
 
-/* BUTTONS */
+/* PREMIUM BUTTONS */
 .btn {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: 8px;
   border: none;
-  border-radius: 9px;
-  padding: 10px 18px;
+  border-radius: 10px;
+  padding: 12px 22px;
   font-family: 'Space Grotesk', sans-serif;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.25s cubic-bezier(.16,1,.3,1);
   position: relative;
   overflow: hidden;
 }
 
-.btn::after {
-  content:'';
-  position:absolute;
-  inset:0;
-  background:white;
-  opacity:0;
-  transition:opacity 0.15s;
-  border-radius:inherit;
+.btn-primary { 
+  background: var(--text); 
+  color: #000; 
 }
 
-.btn:active::after { opacity: 0.1; }
-.btn svg { width:14px; height:14px; flex-shrink:0; }
-
-.btn-primary { background: var(--text); color: #080808; }
-.btn-primary:hover { background: var(--accent2); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(255,255,255,0.1); }
+.btn-primary:hover { 
+  background: var(--neon); 
+  transform: translateY(-2px); 
+  box-shadow: 0 8px 20px rgba(0, 240, 255, 0.25); 
+}
 
 .btn-ghost {
-  background: transparent;
-  color: var(--muted);
+  background: var(--surface);
+  color: #94a3b8;
   border: 1px solid var(--border2);
 }
-.btn-ghost:hover { color: var(--text); border-color: #444; transform: translateY(-1px); }
 
-/* RESULT PANEL */
+.btn-ghost:hover { 
+  color: var(--text); 
+  border-color: rgba(0, 240, 255, 0.4);
+  transform: translateY(-2px);
+  background: rgba(255,255,255,0.01);
+}
+
+.btn svg { width: 15px; height: 15px; flex-shrink: 0; }
+
+/* THE GLOWING RESULT PANEL */
 .result {
-  margin-top: 20px;
+  margin-top: 24px;
   background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 14px;
+  border: 1px solid rgba(0, 240, 255, 0.2);
+  border-radius: 18px;
   overflow: hidden;
   display: none;
-  animation: fadeUp 0.4s cubic-bezier(.16,1,.3,1) both;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.6), 0 0 30px rgba(0, 240, 255, 0.02);
+  animation: neonFadeUp 0.5s cubic-bezier(.16,1,.3,1) both;
 }
 
 .result-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 20px;
+  padding: 16px 24px;
   border-bottom: 1px solid var(--border);
   background: var(--surface2);
   font-size: 12px;
@@ -258,60 +303,66 @@ textarea::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3
 .status-row {
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 8px;
+  color: var(--neon);
+  font-weight: 600;
+  letter-spacing: 0.05em;
 }
 
 .status-dot {
-  width: 7px;
-  height: 7px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
-  background: #4caf50;
-  box-shadow: 0 0 8px #4caf5066;
-  animation: pulse-dot 2s infinite;
+  background: var(--neon);
+  box-shadow: 0 0 10px var(--neon);
+  animation: pulse-dot 1.8s infinite;
 }
 
 @keyframes pulse-dot {
-  0%,100% { box-shadow: 0 0 8px #4caf5066; }
-  50%      { box-shadow: 0 0 16px #4caf5099; }
+  0%, 100% { transform: scale(1); opacity: 0.8; box-shadow: 0 0 8px var(--neon); }
+  50% { transform: scale(1.2); opacity: 1; box-shadow: 0 0 16px var(--neon); }
 }
 
-.result-body { padding: 20px; }
-
-.info-row { margin-bottom: 14px; }
+.result-body { padding: 24px; }
+.info-row { margin-bottom: 18px; }
 
 .row-label {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
+  font-size: 11px;
   color: var(--muted);
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  margin-bottom: 7px;
+  margin-bottom: 8px;
 }
 
 .code-block {
-  background: var(--surface2);
-  border: 1px solid var(--border2);
-  border-radius: 10px;
+  background: #060608;
+  border: 1px solid var(--border);
+  border-radius: 12px;
   overflow: hidden;
+  transition: border-color 0.2s;
+}
+
+.code-block:hover {
+  border-color: var(--border2);
 }
 
 .code-block-text {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 12.5px;
-  color: #aaa;
-  padding: 14px 16px;
+  font-size: 13px;
+  color: #cbd5e1;
+  padding: 16px;
   word-break: break-all;
   line-height: 1.6;
-  user-select: all;
 }
 
 .code-block-copy {
   width: 100%;
-  background: transparent;
+  background: var(--surface2);
   border: none;
   border-top: 1px solid var(--border);
   color: var(--muted);
-  padding: 11px;
+  padding: 12px;
   font-family: 'Space Grotesk', sans-serif;
   font-size: 12px;
   font-weight: 600;
@@ -320,64 +371,67 @@ textarea::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 7px;
+  gap: 8px;
 }
 
-.code-block-copy:hover { background: var(--border); color: var(--text); }
-.code-block-copy.copied { color: #4caf50; }
-.code-block-copy svg { width: 13px; height: 13px; }
+.code-block-copy:hover { background: var(--border); color: var(--neon); }
+.code-block-copy.copied { color: var(--neon); background: rgba(0, 240, 255, 0.03); }
 
 .view-link-btn {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  margin-top: 12px;
+  gap: 8px;
+  margin-top: 8px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 12px;
   color: var(--muted);
   text-decoration: none;
   transition: color 0.2s;
 }
-.view-link-btn:hover { color: var(--text); }
+.view-link-btn:hover { color: var(--neon); }
 
-/* TOAST */
+/* TOAST CYBER */
 .toast {
   position: fixed;
-  bottom: 30px;
+  bottom: 32px;
   left: 50%;
   transform: translateX(-50%) translateY(20px);
-  background: var(--text);
-  color: #080808;
+  background: #fff;
+  color: #000;
   font-family: 'Space Grotesk', sans-serif;
   font-size: 13px;
-  font-weight: 600;
-  padding: 12px 22px;
-  border-radius: 10px;
+  font-weight: 700;
+  padding: 14px 28px;
+  border-radius: 12px;
   pointer-events: none;
   opacity: 0;
-  transition: all 0.35s cubic-bezier(.16,1,.3,1);
-  z-index: 100;
-  white-space: nowrap;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  transition: all 0.4s cubic-bezier(.16,1,.3,1);
+  z-index: 1000;
 }
-.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-@keyframes fadeUp {
-  from { opacity:0; transform: translateY(20px); }
-  to   { opacity:1; transform: translateY(0); }
+/* ANIMATIONS */
+@keyframes neonFadeUp {
+  from { opacity: 0; transform: translateY(16px); filter: blur(2px); }
+  to { opacity: 1; transform: translateY(0); filter: blur(0); }
 }
 
 footer {
-  margin-top: 48px;
+  margin-top: 60px;
   text-align: center;
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
-  color: #2a2a2a;
-  animation: fadeUp 0.8s 0.3s cubic-bezier(.16,1,.3,1) both;
+  color: #242936;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 </style>
 </head>
 <body>
 
+<div class="bg-grid"></div>
+<div class="bg-glow"></div>
 <canvas id="canvas"></canvas>
 
 <div class="container">
@@ -386,21 +440,23 @@ footer {
       <div class="logo-icon">⬡</div>
       <div class="logo">Code<span>Vault</span></div>
     </div>
-    <div class="subtitle">// store &amp; share lua scripts</div>
+    <div class="subtitle">// Matrix Storage &amp; Encryption</div>
   </header>
 
   <div class="editor-card">
     <div class="topbar">
       <div class="topbar-left">
-        <div class="dot r"></div>
-        <div class="dot y"></div>
-        <div class="dot g"></div>
+        <div class="dots">
+          <div class="dot active-glow"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
         <span class="lang-badge">LUA</span>
       </div>
       <span class="line-count" id="lineCount">0 lines</span>
     </div>
 
-    <textarea id="code" placeholder="-- Paste your Lua script here..." spellcheck="false"></textarea>
+    <textarea id="code" placeholder="-- Drop your Roblox/Minecraft script execution thread here..." spellcheck="false"></textarea>
 
     <div class="actions">
       <button class="btn btn-primary" id="btnSaveScript" onclick="saveScript()">
@@ -418,20 +474,20 @@ footer {
     </div>
   </div>
 
-  <!-- RESULT PANEL -->
+  <!-- PANELS DE RESULTADOS CYBER -->
   <div id="result" class="result">
     <div class="result-header">
       <div class="status-row">
         <div class="status-dot"></div>
-        <span>Script saved</span>
+        <span>SAFE PROTOCOL DEPLOYED</span>
       </div>
-      <span id="scriptIdLabel"></span>
+      <span id="scriptIdLabel" style="color: var(--neon); font-family: 'JetBrains Mono';"></span>
     </div>
     <div class="result-body">
 
       <!-- RAW URL -->
       <div class="info-row">
-        <div class="row-label">Raw URL</div>
+        <div class="row-label">Raw Redirect URL</div>
         <div class="code-block">
           <div class="code-block-text" id="rawUrlText"></div>
           <button class="code-block-copy" id="copyUrlBtn" onclick="copyRawUrl()">
@@ -443,9 +499,9 @@ footer {
 
       <!-- LOADSTRING -->
       <div class="info-row">
-        <div class="row-label">Loadstring · executor ready</div>
+        <div class="row-label">Executor Loadstring Structure</div>
         <div class="code-block">
-          <div class="code-block-text" id="loadstringText"></div>
+          <div class="code-block-text" id="loadstringText" style="color: var(--neon);"></div>
           <button class="code-block-copy" id="copyLsBtn" onclick="copyLoadstring()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
             Copy Loadstring
@@ -455,7 +511,7 @@ footer {
 
       <!-- VIEW URL -->
       <div class="info-row">
-        <div class="row-label">View URL</div>
+        <div class="row-label">Public View Link</div>
         <div class="code-block">
           <div class="code-block-text" id="viewUrlText"></div>
           <button class="code-block-copy" id="copyViewBtn" onclick="copyViewUrl()">
@@ -465,21 +521,20 @@ footer {
         </div>
       </div>
 
-      <!-- VIEW LINK -->
       <a id="viewLink" class="view-link-btn" href="#" target="_blank">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15,3 21,3 21,9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-        Open script page
+        Launch viewer interface
       </a>
     </div>
   </div>
 
-  <footer>© 2026 CodeVault — all scripts encrypted </footer>
+  <footer>System secure // Powered by CodeVault 2026</footer>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-/* ── PARTICLES SYSTEM ── */
+/* ── ULTRA DEEP PARTICLES SYSTEM ── */
 const canvas = document.getElementById('canvas');
 const ctx    = canvas.getContext('2d');
 let W, H;
@@ -493,12 +548,12 @@ class Particle {
   reset(init) {
     this.x = Math.random() * W;
     this.y = init ? Math.random() * H : H + 10;
-    this.vx = (Math.random() - 0.5) * 0.25;
-    this.vy = -(Math.random() * 0.3 + 0.05);
-    this.r  = Math.random() * 1.2 + 0.3;
-    this.alpha = Math.random() * 0.35 + 0.05;
+    this.vx = (Math.random() - 0.5) * 0.2;
+    this.vy = -(Math.random() * 0.25 + 0.05);
+    this.r  = Math.random() * 1 + 0.4;
+    this.alpha = Math.random() * 0.2 + 0.05;
     this.life  = 0;
-    this.maxLife = Math.random() * 600 + 300;
+    this.maxLife = Math.random() * 500 + 400;
   }
   update() {
     this.x += this.vx; this.y += this.vy; this.life++;
@@ -509,12 +564,12 @@ class Particle {
     const fade = p < 0.1 ? p/0.1 : p > 0.8 ? 1-(p-0.8)/0.2 : 1;
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.r, 0, Math.PI*2);
-    ctx.fillStyle = 'rgba(255,255,255,' + (this.alpha * fade) + ')';
+    ctx.fillStyle = 'rgba(0, 240, 255,' + (this.alpha * fade) + ')'; // Cyan particles
     ctx.fill();
   }
 }
 
-const particles = Array.from({length:130}, () => new Particle());
+const particles = Array.from({length: 60}, () => new Particle()); // Menos partículas para mejor performance móvil
 
 (function animate() {
   ctx.clearRect(0,0,W,H);
@@ -523,11 +578,11 @@ const particles = Array.from({length:130}, () => new Particle());
       const dx = particles[i].x - particles[j].x;
       const dy = particles[i].y - particles[j].y;
       const d = Math.sqrt(dx*dx + dy*dy);
-      if(d < 100){
+      if(d < 90){
         ctx.beginPath();
         ctx.moveTo(particles[i].x, particles[i].y);
         ctx.lineTo(particles[j].x, particles[j].y);
-        ctx.strokeStyle = 'rgba(255,255,255,' + (1 - d/100) * 0.04 + ')';
+        ctx.strokeStyle = 'rgba(0, 240, 255,' + (1 - d/90) * 0.03 + ')';
         ctx.lineWidth = 0.5; ctx.stroke();
       }
     }
@@ -554,13 +609,12 @@ function showToast(msg) {
 /* ── BUTTON ANIMATION ── */
 function animateCopyBtn(btn, orig) {
   btn.classList.add('copied');
-  btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg> Copied!';
+  btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg> SECURED IN CLIPBOARD';
   setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('copied'); }, 2000);
 }
 
-/* ── MODIFICACIÓN: ALMACENAMIENTO DE ARCHIVOS FÍSICOS LOCALES ── */
+/* ── ALMACENAMIENTO LOCAL MANDATORIO ── */
 async function guardarArchivoLocal(idScript, contenido) {
-  // Comprobamos si el navegador del celular soporta acceso al sistema de archivos
   if ('showSaveFilePicker' in window) {
     try {
       const opciones = {
@@ -574,34 +628,29 @@ async function guardarArchivoLocal(idScript, contenido) {
       const writable = await handle.createWritable();
       await writable.write(contenido);
       await writable.close();
-      showToast('✓ Archivo .lua guardado localmente');
+      showToast('✓ Archivo guardado con éxito');
     } catch (err) {
-      console.log('Guardado cancelado o no soportado en este flujo.');
+      console.log('Cancelado.');
     }
   } else {
-    // Alternativa compatible 100% con CUALQUIER celular (Android/iOS): Descarga forzada automática en descargas/documentos
     const blob = new Blob([contenido], { type: 'text/plain' });
     const enlace = document.createElement('a');
     enlace.href = URL.createObjectURL(blob);
-    enlace.download = `CodeVault Storage/script_${idScript}.lua`; 
+    enlace.download = `script_${idScript}.lua`; 
     document.body.appendChild(enlace);
     enlace.click();
     document.body.removeChild(enlace);
-    showToast('✓ Script guardado en CodeVault Storage');
+    showToast('✓ Descargado en memoria interna');
   }
 }
 
-/* ── CORE FUNCTIONS ── */
+/* ── SAVE ENGINE CORE ── */
 async function saveScript() {
   const code = codeEl.value.trim();
-  if (!code) { showToast('Paste a script first'); return; }
+  if (!code) { showToast('Type or paste a string first'); return; }
 
- const sizeKB = new Blob([code]).size / 1024;
- console.log("Size:", sizeKB, "KB");
-
-  
   const btn = document.getElementById('btnSaveScript');
-  btn.textContent = 'Saving...';
+  btn.textContent = 'ENCRYPTING...';
   btn.disabled = true;
 
   try {
@@ -611,57 +660,40 @@ async function saveScript() {
       body: JSON.stringify({ code: code })
     });
 
-    if (!res.ok) throw new Error('save failed');
+    if (!res.ok) throw new Error('Network cluster error');
 
     const data = await res.json();
-    const id   = data.id; // La ID única que genera tu backend en Render
+    const id   = data.id;
 
-    // Guardado automático del ID en el LocalStorage de usuario
     localStorage.setItem('idUsuario', id);
-
-    // LLAMADA AL SISTEMA FÍSICO: Guarda el archivo .lua localmente
     await guardarArchivoLocal(id, code);
 
-    // =========================================================================
-    // VÍNCULO INTERNO CON LAS FILAS DEL DASHBOARD
-    // =========================================================================
-    // Obtenemos la carpeta desde donde el usuario hizo clic en "+ Add Script"
     const targetFolder = localStorage.getItem("active_folder_target");
     
     if (targetFolder) {
-      // Le pedimos un título al usuario para la tarjeta de la fila
-      let scriptTitle = prompt("Enter a title for this script in your dashboard:", "Untitled Script");
+      let scriptTitle = prompt("Asigna un nombre para el Dashboard:", "Mod Script");
       if (!scriptTitle || !scriptTitle.trim()) {
-        scriptTitle = "Script #" + id.substring(0, 5).toUpperCase();
+        scriptTitle = "Script-" + id.substring(0, 5).toUpperCase();
       }
 
-      // Leemos la base de datos de scripts del Dashboard
       let currentLocalScripts = JSON.parse(localStorage.getItem("vault_scripts")) || [];
-      
-      // Insertamos el nuevo script en el arreglo asociándolo a la fila de la carpeta activa
       currentLocalScripts.push({
         id: id,
         title: scriptTitle.trim(),
-        folderId: targetFolder // <--- Crucial: esto hace que aparezca en la fila correcta
+        folderId: targetFolder
       });
       
-      // Guardamos en el LocalStorage común
       localStorage.setItem("vault_scripts", JSON.stringify(currentLocalScripts));
-      
-      // Limpiamos el trigger temporal de guardado
       localStorage.removeItem("active_folder_target");
       
       showToast('✓ Synced to dashboard folder!');
       
-      // Redirección automática inmediata al dashboard para ver el script cargado en su fila
       setTimeout(() => {
         window.location.href = "dashboard.html";
       }, 1000);
       return; 
     }
-    // =========================================================================
 
-    // Generación de Enlaces Limpios (Modo suelto si entran a index.html sin carpeta)
     const viewUrl = 'https://leeh10.github.io/CodeVault/view.html?id=' + id;
     const rawUrl  = 'https://codevault-vlv1.onrender.com/raw/' + id;
     const ls      = 'loadstring(game:HttpGet("' + rawUrl + '"))()';
@@ -669,15 +701,15 @@ async function saveScript() {
     document.getElementById('rawUrlText').textContent      = rawUrl;
     document.getElementById('loadstringText').textContent  = ls;
     document.getElementById('viewUrlText').textContent     = viewUrl;
-    document.getElementById('scriptIdLabel').textContent   = '#' + id.toUpperCase();
+    document.getElementById('scriptIdLabel').textContent   = 'ID: ' + id.toUpperCase();
     document.getElementById('viewLink').href               = viewUrl;
 
     document.getElementById('result').style.display = 'block';
     document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    showToast('✓ Script encrypted & saved!');
+    showToast('✓ Database updated successfully');
 
   } catch(e) {
-    showToast('⚠ Error saving script on Render');
+    showToast('⚠ Cluster Render connection dropped');
   } finally {
     btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17,21 17,13 7,13 7,21"/><polyline points="7,3 7,8 15,8"/></svg> Save Script';
     btn.disabled = false;
@@ -688,43 +720,34 @@ function copyRawUrl() {
   const url  = document.getElementById('rawUrlText').textContent;
   const btn  = document.getElementById('copyUrlBtn');
   const orig = btn.innerHTML;
-  navigator.clipboard.writeText(url).then(() => {
-    animateCopyBtn(btn, orig);
-    showToast('Raw URL copied');
-  });
+  navigator.clipboard.writeText(url).then(() => { animateCopyBtn(btn, orig); });
 }
 
 function copyViewUrl() {
   const url  = document.getElementById('viewUrlText').textContent;
   const btn  = document.getElementById('copyViewBtn');
   const orig = btn.innerHTML;
-  navigator.clipboard.writeText(url).then(() => {
-    animateCopyBtn(btn, orig);
-    showToast('View URL copied');
-  });
+  navigator.clipboard.writeText(url).then(() => { animateCopyBtn(btn, orig); });
 }
 
 function copyLoadstring() {
   const ls   = document.getElementById('loadstringText').textContent;
   const btn  = document.getElementById('copyLsBtn');
   const orig = btn.innerHTML;
-  navigator.clipboard.writeText(ls).then(() => {
-    animateCopyBtn(btn, orig);
-    showToast('Loadstring copied');
-  });
+  navigator.clipboard.writeText(ls).then(() => { animateCopyBtn(btn, orig); });
 }
 
 function copyCode() {
   const code = codeEl.value;
-  if (!code.trim()) { showToast('Nothing to copy'); return; }
-  navigator.clipboard.writeText(code).then(() => { showToast('Code copied'); });
+  if (!code.trim()) { showToast('Buffer empty'); return; }
+  navigator.clipboard.writeText(code).then(() => { showToast('Code block copied'); });
 }
 
 function clearEditor() {
   codeEl.value = '';
   document.getElementById('lineCount').textContent = '0 lines';
   document.getElementById('result').style.display = 'none';
-  showToast('Editor cleared');
+  showToast('Workspace reset');
 }
 </script>
 </body>
