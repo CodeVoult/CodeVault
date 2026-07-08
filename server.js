@@ -241,7 +241,7 @@ end`;
         <div class="subtitle">SECURITY INTERFACE</div>
         <div class="status">> STATUS: <span class="${code ? 'green' : 'red'}">${code ? "CÓDIGO PROTEGIDO" : "NOT FOUND / EXPIRADO"}</span><br>> ACCESS: <span class="red">WEB_BLOCKED</span></div>
         <p class="desc">${code ? "Este script se encuentra protegido legítimamente bajo el entorno de CodeVault. El acceso web al código plano está deshabilitado para evitar su filtración." : "El identificador de script solicitado no existe."}</p>
-        <a href="https://leeh10.github.io/CodeVault/index.html" class="btn">IR AL PANEL PRINCIPAL</a>
+        <a href="https://CodeVoult.github.io/CodeVault/index.html" class="btn">IR AL PANEL PRINCIPAL</a>
     </div>
 </body>
 </html>
