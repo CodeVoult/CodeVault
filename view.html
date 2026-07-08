@@ -13,7 +13,6 @@
   const esRawMode = urlParams.get('raw') === 'true';
 
   if (esRawMode && idScript) {
-    // Apunta al subdominio activo sin corromper la interfaz visual si se solicita raw externo
     fetch('https://codevault-vlv1.onrender.com/raw/' + idScript)
       .then(res => res.text())
       .then(luaCode => {
@@ -38,9 +37,10 @@
   --border2: #222225;
   --text: #ffffff;
   --muted: #4a4a52;
-  --silver-glow: rgba(255, 255, 255, 0.07);
-  --silver-border: rgba(255, 255, 255, 0.16);
-  --ease-premium: cubic-bezier(.16, 1, .3, 1);
+  --silver-glow: rgba(255, 255, 255, 0.06);
+  --silver-border: rgba(255, 255, 255, 0.18);
+  --danger-glow: rgba(239, 68, 68, 0.08);
+  --ease-premium: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 * { margin:0; padding:0; box-sizing:border-box; }
@@ -70,7 +70,7 @@ body::before {
   pointer-events:none;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.015'/%3E%3C/svg%3E");
   background-size: 200px;
-  opacity: 0.3;
+  opacity: 0.25;
 }
 
 .container {
@@ -81,7 +81,7 @@ body::before {
   padding: 40px 20px 80px;
 }
 
-/* BACK LINK CORREGIDO AL DASHBOARD */
+/* ENLACES Y ANIMACIONES MEJORADAS */
 .back-link {
   display: inline-flex;
   align-items: center;
@@ -90,22 +90,21 @@ body::before {
   font-size: 11px;
   color: var(--muted);
   text-decoration: none;
-  transition: all 0.3s var(--ease-premium);
+  transition: all 0.4s var(--ease-premium);
   margin-bottom: 24px;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  animation: fadeUpPremium 0.6s var(--ease-premium) both;
+  letter-spacing: 0.06em;
+  animation: fadeUpPremium 0.7s var(--ease-premium) both;
 }
-.back-link:hover { color: var(--text); transform: translateX(-2px); }
+.back-link:hover { color: var(--text); transform: translateX(-4px); }
 .back-link svg { width: 12px; height: 12px; }
 
-/* HEADER */
 header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 32px;
-  animation: fadeUpPremium 0.8s var(--ease-premium) both;
+  animation: fadeUpPremium 0.9s 0.05s var(--ease-premium) both;
 }
 
 .logo-wrap {
@@ -126,12 +125,13 @@ header {
   justify-content: center;
   font-size: 15px;
   color: var(--text);
-  transition: all 0.3s var(--ease-premium);
+  transition: all 0.4s var(--ease-premium);
 }
 
 .logo-wrap:hover .logo-icon {
   border-color: #fff;
-  box-shadow: 0 0 15px var(--silver-glow);
+  box-shadow: 0 0 20px var(--silver-glow);
+  transform: rotate(6deg);
 }
 
 .logo {
@@ -141,7 +141,6 @@ header {
   color: var(--text);
   letter-spacing: -0.5px;
 }
-
 .logo span { color: var(--muted); font-weight: 400; }
 
 .header-actions {
@@ -156,7 +155,7 @@ header {
   align-items: center;
   justify-content: space-between;
   margin-bottom: 20px;
-  animation: fadeUpPremium 0.8s 0.05s var(--ease-premium) both;
+  animation: fadeUpPremium 0.9s 0.1s var(--ease-premium) both;
 }
 
 .status-pill {
@@ -170,7 +169,7 @@ header {
   border: 1px solid var(--border);
   padding: 6px 14px;
   border-radius: 20px;
-  transition: all 0.3s;
+  transition: all 0.4s var(--ease-premium);
 }
 
 .status-pill .dot {
@@ -178,16 +177,16 @@ header {
   height: 6px;
   border-radius: 50%;
   background: #222;
-  transition: background 0.4s;
+  transition: background 0.4s var(--ease-premium);
 }
 
-.status-pill.loading .dot { background: #8e8e93; animation: blink 1s infinite; }
-.status-pill.ready .dot   { background: #ffffff; box-shadow: 0 0 10px rgba(255,255,255,0.7); animation: pulse-dot 2.5s infinite; }
-.status-pill.editing .dot { background: #f5a623; box-shadow: 0 0 10px rgba(245,166,35,0.6); }
-.status-pill.error .dot   { background: #ef4444; box-shadow: 0 0 10px rgba(239,68,68,0.6); }
+.status-pill.loading .dot { background: #a1a1aa; animation: blink 1s infinite; }
+.status-pill.ready .dot   { background: #ffffff; box-shadow: 0 0 10px rgba(255,255,255,0.8); animation: pulse-dot 2s infinite; }
+.status-pill.editing .dot { background: #f5a623; box-shadow: 0 0 10px rgba(245,166,35,0.5); }
+.status-pill.error .dot   { background: #ef4444; box-shadow: 0 0 10px rgba(239,68,68,0.5); }
 
 @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
-@keyframes pulse-dot { 0%,100%{box-shadow:0 0 8px rgba(255,255,255,0.3)} 50%{box-shadow:0 0 16px rgba(255,255,255,0.6)} }
+@keyframes pulse-dot { 0%,100%{box-shadow:0 0 8px rgba(255,255,255,0.2)} 50%{box-shadow:0 0 16px rgba(255,255,255,0.5)} }
 
 .script-id {
   font-family: 'Geist Mono', monospace;
@@ -195,19 +194,19 @@ header {
   color: var(--muted);
 }
 
-/* EDITOR CARD CON EFECTOS PLATEADOS */
+/* CARDS CON ANIMACIONES AVANZADAS DE BORDE */
 .editor-card {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 14px;
   overflow: hidden;
-  animation: fadeUpPremium 0.8s 0.1s var(--ease-premium) both;
-  transition: border-color 0.4s var(--ease-premium), box-shadow 0.4s var(--ease-premium);
+  animation: fadeUpPremium 1s 0.15s var(--ease-premium) both;
+  transition: border-color 0.5s var(--ease-premium), box-shadow 0.5s var(--ease-premium), transform 0.5s var(--ease-premium);
 }
 
 .editor-card:hover, .editor-card.edit-mode {
   border-color: var(--silver-border);
-  box-shadow: 0 24px 60px rgba(0,0,0,0.8), 0 0 30px var(--silver-glow);
+  box-shadow: 0 30px 70px rgba(0,0,0,0.85), 0 0 40px var(--silver-glow);
 }
 
 .topbar {
@@ -224,7 +223,6 @@ header {
   align-items: center;
   gap: 10px;
 }
-
 .dot-d { width: 8px; height: 8px; border-radius: 50%; background: var(--border2); }
 
 .lang-badge {
@@ -242,11 +240,10 @@ header {
   padding: 3px 9px;
   border-radius: 6px;
   font-weight: 500;
-  transition: all 0.3s;
+  transition: all 0.4s var(--ease-premium);
 }
-
 .mode-badge.readonly { color: var(--muted); background: transparent; border: 1px solid var(--border); }
-.mode-badge.editing  { color: #f5a623; background: rgba(245,166,35,0.03); border: 1px solid rgba(245,166,35,0.2); }
+.mode-badge.editing  { color: #f5a623; background: rgba(245,166,35,0.02); border: 1px solid rgba(245,166,35,0.2); }
 
 .line-count {
   font-family: 'Geist Mono', monospace;
@@ -267,17 +264,9 @@ textarea {
   font-size: 13px;
   line-height: 1.8;
   caret-color: white;
-  transition: color 0.3s var(--ease-premium);
+  transition: all 0.4s var(--ease-premium);
 }
-
-textarea[readonly] {
-  color: #8a8a93;
-  cursor: default;
-}
-
-textarea::-webkit-scrollbar { width: 6px; }
-textarea::-webkit-scrollbar-track { background: transparent; }
-textarea::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+textarea[readonly] { color: #8a8a93; cursor: default; }
 
 .bottombar {
   display: flex;
@@ -289,7 +278,7 @@ textarea::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3
   flex-wrap: wrap;
 }
 
-/* BUTTONS PLATINO PRESTIGE */
+/* BOTONES MEJORADOS */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -301,7 +290,7 @@ textarea::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s var(--ease-premium);
+  transition: all 0.4s var(--ease-premium);
   position: relative;
   overflow: hidden;
   white-space: nowrap;
@@ -313,49 +302,40 @@ textarea::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3
   inset:0;
   background:white;
   opacity:0;
-  transition:opacity 0.15s;
+  transition:opacity 0.2s;
   border-radius:inherit;
 }
-
 .btn:active::after { opacity:0.08; }
 .btn svg { width:14px; height:14px; flex-shrink:0; }
 
 .btn-primary { background: var(--text); color: #000000; }
-.btn-primary:hover { background: #e1e1e6; transform: translateY(-1px); box-shadow: 0 10px 25px rgba(255,255,255,0.1); }
+.btn-primary:hover { background: #e1e1e6; transform: translateY(-2px); box-shadow: 0 12px 28px rgba(255,255,255,0.12); }
 
-.btn-ghost {
-  background: transparent;
-  color: #a1a1aa;
-  border: 1px solid var(--border2);
-}
-.btn-ghost:hover { color: var(--text); border-color: #ffffff; transform: translateY(-1px); box-shadow: 0 0 15px var(--silver-glow); }
+.btn-ghost { background: transparent; color: #a1a1aa; border: 1px solid var(--border2); }
+.btn-ghost:hover { color: var(--text); border-color: #ffffff; transform: translateY(-2px); box-shadow: 0 0 18px var(--silver-glow); }
 
-.btn-edit-mode {
+/* BOTÓN CLEAR SCRIPT DINÁMICO */
+.btn-clear {
   background: transparent;
-  color: #a1a1aa;
+  color: #71717a;
   border: 1px solid var(--border);
+  display: none; /* Solo visible en modo edición */
 }
-.btn-edit-mode:hover { color: var(--text); border-color: var(--border2); transform: translateY(-1px); }
+.btn-clear:hover { color: #ef4444; border-color: rgba(239, 68, 68, 0.3); background: rgba(239, 68, 68, 0.02); transform: translateY(-2px); box-shadow: 0 0 15px var(--danger-glow); }
 
-.btn-save {
-  background: var(--text);
-  color: #000000;
-  display: none;
-}
-.btn-save:hover { background: #e1e1e6; transform: translateY(-1px); }
+.btn-edit-mode { background: transparent; color: #a1a1aa; border: 1px solid var(--border); }
+.btn-edit-mode:hover { color: var(--text); border-color: var(--border2); transform: translateY(-2px); }
 
-.btn-danger {
-  background: transparent;
-  color: var(--muted);
-  border: 1px solid var(--border);
-  display: none;
-}
-.btn-danger:hover { color: #ef4444; border-color: rgba(239,68,68,0.4); background: rgba(239,68,68,0.02); transform: translateY(-1px); }
+.btn-save { background: var(--text); color: #000000; display: none; }
+.btn-save:hover { background: #e1e1e6; transform: translateY(-2px); }
 
-/* LOADSTRING SECTION */
+.btn-danger { background: transparent; color: var(--muted); border: 1px solid var(--border); display: none; }
+.btn-danger:hover { color: #ef4444; border-color: rgba(239,68,68,0.4); transform: translateY(-2px); }
+
+/* LOADSTRING CONTAINER */
 .ls-section {
   margin-top: 20px;
-  animation: fadeUpPremium 0.5s var(--ease-premium) both;
+  animation: fadeUpPremium 0.6s var(--ease-premium) both;
   display: none;
 }
 
@@ -377,41 +357,11 @@ textarea::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3
   background: var(--surface2);
 }
 
-.ls-label {
-  font-family: 'Geist Mono', monospace;
-  font-size: 10px;
-  color: var(--muted);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
+.ls-label { font-family: 'Geist Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; }
+.ls-ready { font-family: 'Geist Mono', monospace; font-size: 10px; color: #ffffff; display: flex; align-items: center; gap: 6px; }
+.ls-ready::before { content:''; display:inline-block; width:5px; height:5px; background:#ffffff; border-radius:50%; box-shadow: 0 0 8px #ffffff; }
 
-.ls-ready {
-  font-family: 'Geist Mono', monospace;
-  font-size: 10px;
-  color: #ffffff;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.ls-ready::before {
-  content:'';
-  display:inline-block;
-  width:5px; height:5px;
-  background:#ffffff;
-  border-radius:50%;
-  box-shadow: 0 0 8px #ffffff;
-}
-
-.ls-code {
-  font-family: 'Geist Mono', monospace;
-  font-size: 12px;
-  color: #a1a1aa;
-  padding: 18px 20px;
-  word-break: break-all;
-  line-height: 1.7;
-  user-select: all;
-}
+.ls-code { font-family: 'Geist Mono', monospace; font-size: 12px; color: #a1a1aa; padding: 18px 20px; word-break: break-all; line-height: 1.7; user-select: all; }
 
 .ls-copy-btn {
   width: 100%;
@@ -424,18 +374,15 @@ textarea::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s var(--ease-premium);
+  transition: all 0.4s var(--ease-premium);
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
 }
-
 .ls-copy-btn:hover { background: var(--surface2); color: var(--text); }
-.ls-copy-btn.copied { color: #ffffff; background: rgba(255,255,255,0.01); }
-.ls-copy-btn svg { width:14px; height:14px; }
 
-/* TOAST ULTRA CLEAN */
+/* TOAST PANELS */
 .toast {
   position: fixed;
   bottom: 30px;
@@ -450,17 +397,17 @@ textarea::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3
   border-radius: 8px;
   pointer-events: none;
   opacity: 0;
-  transition: all 0.4s var(--ease-premium);
+  transition: all 0.5s var(--ease-premium);
   z-index: 100;
   white-space: nowrap;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.6);
 }
 .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
 
-/* ANIMACIÓN MEJORADA CON BLUR DIFUMINADO */
+/* SISTEMA DINÁMICO DE FADE ULTRA PRESTIGE */
 @keyframes fadeUpPremium {
-  from { opacity:0; transform: translateY(16px); filter: blur(4px); }
-  to   { opacity:1; transform: translateY(0); filter: blur(0); }
+  from { opacity: 0; transform: translateY(24px); filter: blur(6px); }
+  to   { opacity: 1; transform: translateY(0); filter: blur(0); }
 }
 
 footer {
@@ -469,7 +416,7 @@ footer {
   font-family: 'Geist Mono', monospace;
   font-size: 11px;
   color: #18181b;
-  animation: fadeUpPremium 0.8s 0.3s var(--ease-premium) both;
+  animation: fadeUpPremium 1s 0.3s var(--ease-premium) both;
 }
 </style>
 </head>
@@ -535,6 +482,10 @@ footer {
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 17 l6-6-6-6"/><path d="M12 19h8"/></svg>
         Copy Loadstring
       </button>
+      <button id="btnClear" class="btn btn-clear" onclick="clearCode()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+        Clear Code
+      </button>
     </div>
   </div>
 
@@ -558,7 +509,7 @@ footer {
 <div class="toast" id="toast"></div>
 
 <script>
-/* ── BACKGROUND PARTICLES (MINIMALIST & SMOOTH) ── */
+/* ── BACKGROUND PARTICLES ── */
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 let W, H, particles = [];
@@ -592,7 +543,6 @@ class Particle {
     ctx.fill();
   }
 }
-
 for (let i = 0; i < 35; i++) particles.push(new Particle());
 
 (function animate() {
@@ -601,15 +551,13 @@ for (let i = 0; i < 35; i++) particles.push(new Particle());
   requestAnimationFrame(animate);
 })();
 
-/* ── UI CORE STATE & LOGIC COMPLETAS ── */
+/* ── UI CORE STATE & LOGIC ── */
 let scriptId = '';
 let originalCode = '';
 
 function getId() {
   let id = new URLSearchParams(window.location.search).get('id');
-  if (!id) {
-    id = localStorage.getItem('idUsuario');
-  }
+  if (!id) { id = localStorage.getItem('idUsuario'); }
   return id;
 }
 
@@ -632,7 +580,7 @@ function updateLineCount(val) {
   document.getElementById('lineCount').textContent = `${lines} line${lines === 1 ? '' : 's'}`;
 }
 
-/* ── DATA FETCH OPTIMIZADO: SIN INTERFERENCIAS EN TU BACKEND ── */
+/* ── DATA FETCH OPTIMIZADO CON PROTECCIÓN DE RUTA DEVOLUCIÓN HTML ── */
 async function loadScript() {
   scriptId = getId();
   
@@ -667,6 +615,14 @@ async function loadScript() {
       if (!res.ok) throw new Error();
       const code = await res.text();
       
+      // Control de errores en caso de que el backend mande la plantilla HTML de error en vez de texto plano Lua
+      if (code.trim().startsWith('<!DOCTYPE html>')) {
+        setStatus('error', 'Safe Scope Blocked');
+        document.getElementById('code').value = "-- [Server Restriction]: Web access disabled or record empty for this ID.";
+        showToast('⚠ Received secure wrapper instead of Lua raw string');
+        return;
+      }
+
       document.getElementById('code').value = code;
       originalCode = code;
       updateLineCount(code);
@@ -691,7 +647,7 @@ document.getElementById('code').addEventListener('input', function() {
   updateLineCount(this.value);
 });
 
-/* ── INTERFACES & CONTROLS INTERNOS COMPLETOS ── */
+/* ── INTERFACES & CONTROLS INTERNOS ── */
 function enableEdit() {
   const ta = document.getElementById('code');
   ta.readOnly = false;
@@ -699,6 +655,7 @@ function enableEdit() {
   document.getElementById('btnEdit').style.display = 'none';
   document.getElementById('btnSave').style.display = 'inline-flex';
   document.getElementById('btnCancel').style.display = 'inline-flex';
+  document.getElementById('btnClear').style.display = 'inline-flex'; // Despliega Clear
   document.getElementById('editorCard').classList.add('edit-mode');
   document.getElementById('modeBadge').className = 'mode-badge editing';
   document.getElementById('modeBadge').textContent = 'EDITING';
@@ -713,11 +670,22 @@ function cancelEdit() {
   document.getElementById('btnEdit').style.display = 'inline-flex';
   document.getElementById('btnSave').style.display = 'none';
   document.getElementById('btnCancel').style.display = 'none';
+  document.getElementById('btnClear').style.display = 'none'; // Esconde Clear
   document.getElementById('editorCard').classList.remove('edit-mode');
   document.getElementById('modeBadge').className = 'mode-badge readonly';
   document.getElementById('modeBadge').textContent = 'READ-ONLY';
   setStatus('ready', 'Synchronized — Safe Scope');
   showToast('Modifications discarded');
+}
+
+/* FUNCIÓN DE BORRADO DE BÚFER */
+function clearCode() {
+  const ta = document.getElementById('code');
+  if (ta.readOnly) return; 
+  ta.value = '';
+  ta.focus();
+  updateLineCount('');
+  showToast('✓ Workspace buffer cleared');
 }
 
 async function saveChanges() {
@@ -747,6 +715,7 @@ async function saveChanges() {
     document.getElementById('btnEdit').style.display = 'inline-flex';
     document.getElementById('btnSave').style.display = 'none';
     document.getElementById('btnCancel').style.display = 'none';
+    document.getElementById('btnClear').style.display = 'none';
     document.getElementById('editorCard').classList.remove('edit-mode');
     document.getElementById('modeBadge').className = 'mode-badge readonly';
     document.getElementById('modeBadge').textContent = 'READ-ONLY';
@@ -785,7 +754,6 @@ function copyLoadstringFromPanel() {
   });
 }
 
-// Inicialización de la secuencia de datos sin interrupción
 loadScript();
 </script>
 </body>
