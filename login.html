@@ -7,64 +7,155 @@
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #040404; --surface: #0a0a0a; --surface2: #121212;
-  --border: #1c1c1c; --border2: #282828; --text: #f5f5f5;
-  --muted: #666666; --accent: #ffffff;
+  --bg: #020202; 
+  --surface: #070708; 
+  --surface2: #0f0f11;
+  --border: #1a1a1e; 
+  --border2: #ffffff; 
+  --text: #ffffff;
+  --muted: #52525a; 
 }
+
 * { margin:0; padding:0; box-sizing:border-box; }
+
 body {
   background: var(--bg); color: var(--text); font-family: 'Space Grotesk', sans-serif;
-  min-height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative;
+  min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; position: relative;
 }
+
+/* Canvas para partículas lentas y fluidas */
+#particleCanvas {
+  position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1;
+}
+
 body::before {
   content:''; position:fixed; inset:0; pointer-events:none;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-  opacity: 0.4; z-index: 1;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.02'/%3E%3C/svg%3E");
+  opacity: 0.4; z-index: 2;
 }
+
+/* Banner del Tutorial con Animación */
+.tutorial-banner {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--border2);
+  padding: 14px 22px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 3;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+  animation: slideDown 0.6s cubic-bezier(.25, 1, .2, 1) both;
+}
+
+.tutorial-pulse {
+  width: 6px; height: 6px; background: var(--text); border-radius: 50%;
+  box-shadow: 0 0 8px var(--text);
+  animation: pulse 2s infinite ease-in-out;
+}
+
+#tutorialText {
+  animation: textGlitch 0.4s ease-out;
+}
+
 .auth-box {
   width: 100%; max-width: 400px; background: var(--surface); border: 1px solid var(--border);
-  border-radius: 16px; padding: 40px 32px; box-shadow: 0 30px 60px rgba(0,0,0,0.8); z-index: 2;
-  animation: fadeUp 0.6s cubic-bezier(.16,1,.3,1) both;
+  border-radius: 16px; padding: 40px 32px; box-shadow: 0 40px 80px rgba(0,0,0,0.9); z-index: 3;
+  display: none;
 }
-h2 { font-family: 'JetBrains Mono', monospace; font-size: 20px; font-weight: 600; margin-bottom: 24px; letter-spacing: -0.5px; }
+
+.auth-box.active {
+  display: block;
+  animation: formReveal 0.6s cubic-bezier(.25, 1, .2, 1) both;
+}
+
+h2 { font-family: 'JetBrains Mono', monospace; font-size: 20px; font-weight: 600; margin-bottom: 24px; letter-spacing: -0.5px; display: flex; align-items: center; justify-content: space-between; }
+h2::after { content: '//PROTECT'; font-size: 10px; color: var(--muted); letter-spacing: 1px; }
+
 input {
-  width: 100%; padding: 14px 16px; margin-bottom: 16px; background: var(--surface2);
-  border: 1px solid var(--border); border-radius: 8px; color: white;
-  font-family: 'JetBrains Mono', monospace; font-size: 13px; transition: all 0.2s;
+  width: 100%; padding: 16px; margin-bottom: 16px; background: var(--surface2);
+  border: 1px solid var(--border); border-radius: 10px; color: white;
+  font-family: 'JetBrains Mono', monospace; font-size: 13px; transition: all 0.25s cubic-bezier(.25, 1, .2, 1);
 }
-input:focus { border-color: var(--border2); background: #161616; outline: none; }
+
+input:focus { 
+  border-color: var(--border2); 
+  background: #121215; 
+  outline: none;
+  box-shadow: 0 0 20px rgba(255,255,255,0.03);
+  transform: translateX(2px);
+}
+
 .btn {
-  width: 100%; padding: 14px; background: var(--text); color: #040404; border: none;
-  border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s;
+  width: 100%; padding: 16px; background: var(--text); color: #000000; border: none;
+  border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; 
+  font-family: 'Space Grotesk', sans-serif; transition: all 0.25s cubic-bezier(.25, 1, .2, 1);
 }
-.btn:hover { background: #a3a3a3; transform: translateY(-1px); }
-.auth-link { color: var(--muted); font-size: 13px; cursor: pointer; text-decoration: none; margin-top: 18px; display: inline-block; }
-.auth-link:hover { color: var(--text); text-decoration: underline; }
+
+.btn:hover { background: #e1e1e6; transform: translateY(-2px); box-shadow: 0 10px 20px rgba(255,255,255,0.08); }
+.btn:active { transform: translateY(0); }
+
+.auth-link { color: var(--muted); font-size: 13px; cursor: pointer; text-decoration: none; margin-top: 20px; display: inline-block; transition: color 0.2s; font-family: 'JetBrains Mono', monospace; }
+.auth-link:hover { color: var(--text); }
+
+/* Toast Animado Minimalista */
 .toast {
-  position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(20px);
-  background: var(--text); color: #040404; padding: 12px 22px; border-radius: 8px;
-  font-size: 13px; font-weight: 600; opacity: 0; transition: all 0.3s ease; z-index: 100;
+  position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(30px);
+  background: #ffffff; color: #000000; padding: 14px 24px; border-radius: 10px;
+  font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 600; opacity: 0; pointer-events: none;
+  transition: all 0.4s cubic-bezier(.25, 1, .2, 1); z-index: 100; box-shadow: 0 20px 40px rgba(0,0,0,0.5);
 }
-.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
-@keyframes fadeUp { from { opacity:0; transform: translateY(15px); } to { opacity:1; transform: translateY(0); } }
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* Animaciones */
+@keyframes formReveal { 
+  from { opacity: 0; transform: scale(0.97) translateY(15px); filter: blur(4px); } 
+  to { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); } 
+}
+@keyframes slideDown { 
+  from { opacity: 0; transform: translateY(-25px); filter: blur(2px); } 
+  to { opacity: 1; transform: translateY(0); filter: blur(0); } 
+}
+@keyframes textGlitch {
+  0% { opacity: 0; transform: translateX(-4px); }
+  50% { opacity: 0.5; transform: translateX(2px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+@keyframes pulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
 </style>
 </head>
 <body>
 
-<div id="boxLogin" class="auth-box">
-  <h2>Device Login</h2>
-  <input type="text" id="loginUser" placeholder="Username">
-  <input type="password" id="loginPass" placeholder="Password">
-  <button class="btn" onclick="login()">Unlock Vault</button>
-  <span class="auth-link" onclick="toggleAuth('Reg')">Create a new account profile</span>
+<canvas id="particleCanvas"></canvas>
+
+<!-- Banner del Tutorial de Flujo -->
+<div class="tutorial-banner" id="tutorialBox">
+  <div class="tutorial-pulse"></div>
+  <span id="tutorialText">PASO 1: Inicializa tu perfil de acceso local en el sistema.</span>
 </div>
 
-<div id="boxRegister" class="auth-box" style="display: none;">
+<!-- Registro (Primero en el orden visual) -->
+<div id="boxRegister" class="auth-box active">
   <h2>Create Profile</h2>
-  <input type="text" id="regUser" placeholder="Choose Username">
+  <input type="text" id="regUser" placeholder="Choose Username" autocomplete="off">
   <input type="password" id="regPass" placeholder="Choose Password">
-  <button class="btn" onclick="register()">Sign Up</button>
-  <span class="auth-link" onclick="toggleAuth('Log')">Back to Login</span>
+  <button class="btn" onclick="register()">Sign Up & Initialize</button>
+  <span class="auth-link" onclick="toggleAuth('Log')">Skip to Login →</span>
+</div>
+
+<!-- Login -->
+<div id="boxLogin" class="auth-box">
+  <h2>Device Login</h2>
+  <input type="text" id="loginUser" placeholder="Username" autocomplete="off">
+  <input type="password" id="loginPass" placeholder="Password">
+  <button class="btn" onclick="login()">Unlock Vault</button>
+  <span class="auth-link" onclick="toggleAuth('Reg')">← Back to Registration</span>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -73,31 +164,122 @@ input:focus { border-color: var(--border2); background: #161616; outline: none; 
 if(!localStorage.getItem("vault_users")) localStorage.setItem("vault_users", JSON.stringify({}));
 if(localStorage.getItem("logged_user")) window.location.href = "dashboard.html";
 
-function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2200); }
+// Fondo de partículas fluidas y lentas
+const canvas = document.getElementById('particleCanvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+class Particle {
+  constructor() {
+    this.x = Math.random() * canvas.width;
+    this.y = Math.random() * canvas.height;
+    this.size = Math.random() * 1.5 + 0.5;
+    this.speedX = (Math.random() - 0.5) * 0.25; // Súper lento
+    this.speedY = (Math.random() - 0.5) * 0.25;
+    this.opacity = Math.random() * 0.4 + 0.1;
+  }
+  update() {
+    this.x += this.speedX;
+    this.y += this.speedY;
+    if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+    if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+  }
+  draw() {
+    ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+function initParticles() {
+  particles = [];
+  const count = Math.min(60, Math.floor((canvas.width * canvas.height) / 25000));
+  for (let i = 0; i < count; i++) {
+    particles.push(new Particle());
+  }
+}
+initParticles();
+
+function animateParticles() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  particles.forEach(p => {
+    p.update();
+    p.draw();
+  });
+  requestAnimationFrame(animateParticles);
+}
+animateParticles();
+
+// Sistema de Notificaciones e Interfaz
+function showToast(msg) { 
+  const t = document.getElementById('toast'); 
+  t.textContent = msg; 
+  t.classList.add('show'); 
+  setTimeout(() => t.classList.remove('show'), 2500); 
+}
 
 function toggleAuth(mode) {
-  document.getElementById("boxLogin").style.display = mode === 'Reg' ? 'none' : 'block';
-  document.getElementById("boxRegister").style.display = mode === 'Reg' ? 'block' : 'none';
+  const loginBox = document.getElementById("boxLogin");
+  const regBox = document.getElementById("boxRegister");
+  const tutText = document.getElementById("tutorialText");
+
+  // Animación de reinicio para el texto del tutorial
+  tutText.style.animation = 'none';
+  void tutText.offsetWidth; 
+  tutText.style.animation = 'textGlitch 0.4s ease-out';
+
+  if(mode === 'Reg') {
+    loginBox.classList.remove('active');
+    regBox.classList.add('active');
+    tutText.textContent = "PASO 1: Registra tu cuenta local para inicializar el pipeline.";
+  } else {
+    regBox.classList.remove('active');
+    loginBox.classList.add('active');
+    tutText.textContent = "PASO 2: Autentica tus credenciales para desbloquear la bóveda.";
+  }
 }
 
 function register() {
-  const user = document.getElementById("regUser").value.trim(); const pass = document.getElementById("regPass").value.trim();
-  if(!user || !pass) return showToast("⚠️ Fill all fields");
+  const user = document.getElementById("regUser").value.trim(); 
+  const pass = document.getElementById("regPass").value.trim();
+  
+  if(!user || !pass) return showToast("⚠️ Escribe un usuario y contraseña válidos.");
+  
   let users = JSON.parse(localStorage.getItem("vault_users"));
-  if(users[user]) return showToast("⚠️ Username taken");
+  if(users[user]) return showToast("⚠️ Este usuario ya está registrado.");
   
   users[user] = { password: pass, displayName: user, avatarUrl: "" };
   localStorage.setItem("vault_users", JSON.stringify(users));
-  showToast("✓ Registered successfully!"); toggleAuth('Log');
+  
+  showToast("✓ Perfil creado con éxito.");
+  
+  setTimeout(() => {
+    toggleAuth('Log');
+  }, 600);
 }
 
 function login() {
-  const user = document.getElementById("loginUser").value.trim(); const pass = document.getElementById("loginPass").value.trim();
+  const user = document.getElementById("loginUser").value.trim(); 
+  const pass = document.getElementById("loginPass").value.trim();
+  
   let users = JSON.parse(localStorage.getItem("vault_users"));
   if(users[user] && users[user].password === pass) {
     localStorage.setItem("logged_user", user);
-    window.location.href = "dashboard.html";
-  } else { showToast("⚠️ Invalid credentials"); }
+    showToast("✓ Acceso concedido. Redireccionando...");
+    setTimeout(() => {
+      window.location.href = "dashboard.html";
+    }, 800);
+  } else { 
+    showToast("⚠️ Error de autenticación. Credenciales incorrectas."); 
+  }
 }
 </script>
 </body>
