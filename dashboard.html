@@ -3,28 +3,27 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>CodeVault — Premium Executive Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<title>CodeVault — Ultra Executive Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@300;400;500;600;700&family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #040404;
-  --surface: #0a0a0a;
-  --surface2: #121212;
-  --border: #1c1c1c;
-  --border2: #282828;
-  --text: #f5f5f5;
-  --muted: #666666;
-  --accent: #ffffff;
-  --accent-dim: #a3a3a3;
-  --danger: #ef4444;
-  --danger-bg: rgba(239, 68, 68, 0.07);
+  --bg: #000000;
+  --surface: #060607;
+  --surface2: #0c0c0e;
+  --border: #141416;
+  --border2: #222225;
+  --text: #ffffff;
+  --muted: #4a4a52;
+  --accent-dim: #8e8e93;
+  --danger-bg: #0f0f11;
+  --ease-premium: cubic-bezier(.16, 1, .3, 1);
 }
 
 * { margin:0; padding:0; box-sizing:border-box; }
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Geist', sans-serif;
   min-height: 100vh;
   overflow-x: hidden;
   position: relative;
@@ -33,160 +32,210 @@ body {
 #canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
 body::before {
   content:''; position:fixed; inset:0; z-index:1; pointer-events:none;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-  background-size: 200px; opacity: 0.4;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.015'/%3E%3C/svg%3E");
+  background-size: 200px; opacity: 0.3;
 }
 
 .container { position: relative; z-index: 2; max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
 
-/* HEADER PREMIUM RESPONSIVO */
+/* HEADER PREMIUM */
 header {
   display: flex; justify-content: space-between; align-items: center;
-  margin-bottom: 24px; animation: fadeUp 0.6s cubic-bezier(.16,1,.3,1) both;
-  background: rgba(10, 10, 10, 0.75); padding: 14px 20px; border-radius: 14px;
-  border: 1px solid var(--border); backdrop-filter: blur(12px); gap: 12px;
+  margin-bottom: 24px; animation: initialFadeUp 0.8s var(--ease-premium) both;
+  background: rgba(6, 6, 7, 0.75); padding: 14px 20px; border-radius: 14px;
+  border: 1px solid var(--border); backdrop-filter: blur(16px); gap: 12px;
 }
-.logo-wrap { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text); }
+.logo-wrap { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--text); }
 .logo-icon {
-  width: 32px; height: 32px; background: var(--surface2); border: 1px solid var(--border2);
-  border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; color: var(--text);
+  width: 34px; height: 34px; background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 14px; color: var(--text);
+  transition: transform 0.3s var(--ease-premium);
 }
-.logo { font-family: 'JetBrains Mono', monospace; font-size: 20px; font-weight: 700; letter-spacing: -1px; }
-.logo span { color: var(--muted); }
+.logo-wrap:hover .logo-icon { transform: rotate(90deg); border-color: var(--text); }
 
-/* BARRA DE BÚSQUEDA AJUSTADA */
+/* ANIMACIÓN BRILLO PLATEADO PREMIUM PARA EL LOGO */
+.logo {
+  font-family: 'Geist Mono', monospace; font-size: 21px; font-weight: 700; letter-spacing: -1.2px;
+  background: linear-gradient(75deg, #444 0%, #fff 45%, #fff 55%, #444 100%);
+  background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  animation: silverShine 4.5s linear infinite;
+}
+
+/* BARRA DE BÚSQUEDA */
 .search-box-container { position: relative; flex: 1; max-width: 280px; }
 .search-box-container input {
   width: 100%; background: var(--surface2); border: 1px solid var(--border); padding: 10px 12px 10px 36px;
-  border-radius: 8px; color: #fff; font-size: 13px; font-family: 'Space Grotesk'; transition: border-color 0.2s;
+  border-radius: 8px; color: #fff; font-size: 13px; font-family: 'Geist'; transition: all 0.3s var(--ease-premium);
 }
-.search-box-container input:focus { border-color: var(--border2); outline: none; }
-.search-box-container::before { content: '🔍'; position: absolute; left: 12px; top: 11px; font-size: 12px; opacity: 0.4; }
+.search-box-container input:focus { border-color: var(--text); outline: none; background: #101012; box-shadow: 0 0 0 1px var(--text); }
+.search-box-container::before { content: '🔍'; position: absolute; left: 12px; top: 11px; font-size: 11px; opacity: 0.25; }
 
-.header-right { display: flex; gap: 10px; align-items: center; }
+.header-right { display: flex; gap: 12px; align-items: center; }
+
+/* REDISEÑO ICONO / AVATAR DE USUARIO */
 .user-avatar-btn {
-  width: 38px; height: 38px; border-radius: 50%; object-fit: cover;
-  background: var(--surface2); border: 1px solid var(--border2); cursor: pointer; transition: transform 0.2s;
+  width: 36px; height: 36px; border-radius: 50%; object-fit: cover;
+  background: var(--surface2); border: 1px solid var(--border); cursor: pointer;
+  display: flex; align-items: center; justify-content: center; font-family: 'Geist Mono';
+  font-size: 11px; font-weight: 600; color: var(--accent-dim);
+  transition: all 0.3s var(--ease-premium);
 }
-.user-avatar-btn:hover { transform: scale(1.05); }
+.user-avatar-btn:hover { border-color: var(--text); color: var(--text); transform: scale(1.04); }
 
-/* CONTENEDOR PRINCIPAL DESAMONTONADO */
-.dashboard-layout { display: grid; grid-template-columns: 280px 1fr; gap: 24px; animation: fadeUp 0.7s 0.1s cubic-bezier(.16,1,.3,1) both; }
+/* LAYOUT GENERAL */
+.dashboard-layout { display: grid; grid-template-columns: 290px 1fr; gap: 24px; animation: initialFadeUp 0.9s 0.05s var(--ease-premium) both; }
 
-/* SECCIONES FLUIDAS Y AMPLIAS */
-.sidebar { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); height: max-content; }
-.sidebar h3 { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.15em; font-weight: 600; margin-bottom: 4px; }
+/* SECCIÓN LATERAL DE CARPETAS */
+.sidebar { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 20px; box-shadow: 0 20px 45px rgba(0,0,0,0.5); height: max-content; }
+.sidebar h3 { font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.15em; font-weight: 600; margin-bottom: 2px; }
 
-.folder-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.folder-list { list-style: none; display: flex; flex-direction: column; gap: 4px; }
+
+/* RE-DISEÑO TOTAL FLUIDO EN CARPETAS */
 .folder-item {
-  padding: 14px; background: var(--surface2); border: 1px solid var(--border);
-  border-radius: 10px; cursor: pointer;
-  display: flex; justify-content: space-between; align-items: center; font-size: 14px; transition: all 0.2s ease;
+  position: relative; padding: 12px 14px 12px 18px; background: transparent; border-radius: 8px; 
+  cursor: pointer; display: flex; justify-content: space-between; align-items: center; 
+  font-size: 13.5px; transition: all 0.25s var(--ease-premium);
 }
-.folder-item:hover { border-color: var(--border2); background: rgba(255,255,255,0.01); }
-.folder-item.active { border-color: var(--accent-dim); background: rgba(255,255,255,0.02); font-weight: 600; }
-.folder-item span { display: flex; align-items: center; gap: 10px; width: 100%; user-select: none; }
+.folder-item::before {
+  content: ''; position: absolute; left: 4px; top: 50%; transform: translateY(-50%) scaleY(0.3);
+  width: 2px; height: 14px; background: var(--text); opacity: 0; transition: all 0.3s var(--ease-premium);
+}
+.folder-item:hover { background: var(--surface2); }
+.folder-item:hover span { color: var(--text); }
+.folder-item.active { background: #0c0c0e; }
+.folder-item.active::before { opacity: 1; transform: translateY(-50%) scaleY(1); }
+.folder-item span { display: flex; align-items: center; gap: 10px; width: 100%; user-select: none; color: var(--accent-dim); transition: color 0.25s var(--ease-premium); }
+.folder-item.active span { color: var(--text); font-weight: 500; }
 
-.delete-btn { background: transparent; color: #555; border: none; cursor: pointer; font-size: 14px; padding: 6px 10px; border-radius: 6px; transition: all 0.2s; }
-.delete-btn:hover { color: var(--danger); background: var(--danger-bg); }
+.delete-btn { background: transparent; color: var(--muted); border: none; cursor: pointer; font-size: 12px; padding: 6px 10px; border-radius: 6px; transition: all 0.2s; opacity: 0; }
+.folder-item:hover .delete-btn { opacity: 1; }
+.delete-btn:hover { color: var(--text); background: var(--danger-bg); }
 
-.main-content { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 24px; min-height: 450px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+/* CONTENEDOR PRINCIPAL CONTENIDO */
+.main-content { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 24px; min-height: 465px; box-shadow: 0 20px 45px rgba(0,0,0,0.5); }
 .content-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; border-bottom: 1px solid var(--border); padding-bottom: 16px; gap: 10px; }
 .script-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 16px; }
 
-/* RE-DISEÑO TOTAL DEL MENÚ LATERAL DE TRES RAYAS */
+/* NUEVA ANIMACIÓN DE ENTRADA INTERNA FLUIDA AL SELECCIONAR CARPETA */
+.script-grid.animate-in { animation: contentStaggerIn 0.5s var(--ease-premium) both; }
+
+/* PANELS INTERNOS / HAMBURGER EXTRA FLUIDO */
 .hamburger-sidebar {
   position: fixed; top: 0; right: -340px; width: 320px; height: 100vh;
-  background: #070707; border-left: 1px solid var(--border); z-index: 999;
+  background: #040405; border-left: 1px solid var(--border); z-index: 999;
   padding: 32px 24px; display: flex; flex-direction: column;
-  transition: right 0.35s cubic-bezier(.16,1,.3,1); box-shadow: -20px 0 50px rgba(0,0,0,0.85);
+  transition: transform 0.45s cubic-bezier(.16, 1, .3, 1); box-shadow: -30px 0 60px rgba(0,0,0,0.9);
 }
-.hamburger-sidebar.open { right: 0; }
+.hamburger-sidebar.open { transform: translateX(-340px); }
 
-.menu-top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; }
-.menu-top-title { font-family: 'JetBrains Mono'; font-size: 13px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
+.menu-top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; }
+.menu-top-title { font-family: 'Geist Mono'; font-size: 11px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; }
 
-/* Botón X Rediseñado */
 .close-menu-btn {
   width: 36px; height: 36px; background: var(--surface2); border: 1px solid var(--border);
-  color: var(--text); font-size: 14px; border-radius: 50%; cursor: pointer;
-  display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+  color: var(--text); font-size: 13px; border-radius: 50%; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; transition: all 0.25s var(--ease-premium);
 }
-.close-menu-btn:hover { background: var(--border); color: #fff; }
+.close-menu-btn:hover { border-color: var(--text); transform: scale(1.05); }
 
-.menu-links-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
+.menu-links-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
 .menu-link-item {
   width: 100%; text-align: left; background: var(--surface); border: 1px solid var(--border); color: var(--text);
-  padding: 14px 16px; font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 500;
-  cursor: pointer; border-radius: 10px; display: flex; align-items: center; gap: 12px; transition: all 0.2s;
+  padding: 14px 16px; font-family: 'Geist', sans-serif; font-size: 14px; font-weight: 500;
+  cursor: pointer; border-radius: 10px; display: flex; align-items: center; gap: 12px; transition: all 0.3s var(--ease-premium);
 }
-.menu-link-item:hover { background: var(--surface2); border-color: var(--border2); transform: translateX(2px); }
+.menu-link-item:hover { background: var(--surface2); border-color: var(--text); transform: translateX(4px); }
 
-/* Sección de Cuentas Vinculadas */
-.account-section {
-  border-top: 1px solid var(--border); padding-top: 20px; margin-top: 10px;
+/* MÓDULO DE IDIOMAS */
+.lang-section {
+  border-top: 1px solid var(--border); padding-top: 20px; margin-top: 10px; margin-bottom: 20px;
   display: flex; flex-direction: column; gap: 10px;
 }
-.account-section h3 { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
-#accountProfilesList { display: flex; flex-direction: column; gap: 6px; max-height: 180px; overflow-y: auto; }
+.lang-section h3 { font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.15em; }
+.lang-switch-container { display: grid; grid-template-columns: 1fr 1fr; background: var(--surface2); padding: 4px; border-radius: 10px; border: 1px solid var(--border); }
+.lang-btn {
+  background: transparent; border: none; color: var(--muted); padding: 10px; font-family: 'Geist Mono', monospace;
+  font-size: 12px; font-weight: 600; cursor: pointer; border-radius: 7px; transition: all 0.25s var(--ease-premium);
+}
+.lang-btn.active-lang { background: var(--surface); color: var(--text); border: 1px solid var(--border); box-shadow: 0 4px 14px rgba(0,0,0,0.6); }
+
+/* VENTANA MINIMIZABLE DE CUENTAS VINCULADAS */
+.account-section { display: flex; flex-direction: column; gap: 6px; }
+.account-toggle-hdr {
+  display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 6px 0;
+  user-select: none;
+}
+.account-toggle-hdr h3 { font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.15em; }
+.account-chevron { font-size: 10px; color: var(--muted); transition: transform 0.3s var(--ease-premium); }
+.account-toggle-hdr:hover h3, .account-toggle-hdr:hover .account-chevron { color: var(--text); }
+
+/* Contenedor colapsable con altura dinámica fluida */
+.account-collapse-wrapper {
+  display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.35s var(--ease-premium); overflow: hidden;
+}
+.account-collapse-wrapper.expanded { grid-template-rows: 1fr; }
+.account-collapse-inner { min-height: 0; display: flex; flex-direction: column; gap: 6px; padding: 4px 0; }
+
+#accountProfilesList { display: flex; flex-direction: column; gap: 6px; max-height: 160px; overflow-y: auto; padding-right: 2px; }
 
 .account-item-btn {
   width: 100%; text-align: left; background: transparent; border: 1px solid transparent;
-  color: var(--accent-dim); font-family: 'Space Grotesk', sans-serif; font-size: 13px;
-  padding: 12px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 10px;
-  transition: all 0.2s;
+  color: var(--accent-dim); font-family: 'Geist', sans-serif; font-size: 13px;
+  padding: 12px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: all 0.2s;
 }
 .account-item-btn:hover { background: var(--surface2); color: var(--text); }
-.account-item-btn.active-acc { border-color: var(--border2); background: rgba(255,255,255,0.03); color: #fff; font-weight: 600; }
-.account-badge-current { font-size: 9px; background: var(--text); color: #000; padding: 3px 6px; border-radius: 4px; font-weight: bold; margin-left: auto; font-family: 'JetBrains Mono'; }
+.account-item-btn.active-acc { border-color: var(--border2); background: rgba(255,255,255,0.02); color: #fff; font-weight: 600; }
+.account-badge-current { font-size: 9px; background: var(--text); color: #000; padding: 3px 6px; border-radius: 4px; font-weight: bold; margin-left: auto; font-family: 'Geist Mono'; }
 
 /* CARDS DE SCRIPTS */
 .script-card {
   background: var(--surface2); border: 1px solid var(--border); border-radius: 12px;
-  padding: 20px; display: flex; flex-direction: column; justify-content: space-between; min-height: 160px; transition: all 0.25s cubic-bezier(.16,1,.3,1);
+  padding: 20px; display: flex; flex-direction: column; justify-content: space-between; min-height: 160px; transition: all 0.3s var(--ease-premium);
 }
-.script-card:hover { border-color: var(--border2); transform: translateY(-2px); box-shadow: 0 12px 24px rgba(0,0,0,0.4); }
-.script-card h4 { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; }
-.script-card p { font-family: 'JetBrains Mono', monospace; color: var(--muted); font-size: 11px; margin-top: 4px; }
+.script-card:hover { border-color: var(--text); transform: translateY(-4px); box-shadow: 0 16px 36px rgba(0,0,0,0.7); }
+.script-card h4 { font-family: 'Geist Mono', monospace; font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; }
+.script-card p { font-family: 'Geist Mono', monospace; color: var(--muted); font-size: 11px; margin-top: 4px; }
 .card-actions { display: flex; gap: 8px; margin-top: 16px; }
 
 /* MODAL LOADER */
 .loader-overlay {
-  position: fixed; inset: 0; background: rgba(4,4,4,0.94); backdrop-filter: blur(16px);
+  position: fixed; inset: 0; background: rgba(0,0,0,0.97); backdrop-filter: blur(20px);
   z-index: 9999; display: none; align-items: center; justify-content: center; flex-direction: column; gap: 20px;
 }
 .cyber-spinner {
-  width: 44px; height: 44px; border: 2px solid var(--border2); border-top-color: var(--accent);
-  border-radius: 50%; animation: spin 0.8s linear infinite;
+  width: 38px; height: 38px; border: 2px solid var(--border); border-top-color: var(--text);
+  border-radius: 50%; animation: spin 0.65s linear infinite;
 }
-.loader-text { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent-dim); letter-spacing: 0.05em; }
+.loader-text { font-family: 'Geist Mono', monospace; font-size: 12px; color: var(--accent-dim); letter-spacing: 0.05em; }
 
-/* INTERFAZ DE BOTONES */
+/* BOTONES */
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: none; border-radius: 8px;
-  padding: 12px 18px; font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s ease;
+  padding: 12px 18px; font-family: 'Geist', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s var(--ease-premium);
 }
-.btn-primary { background: var(--text); color: #040404; }
-.btn-primary:hover { background: var(--accent-dim); transform: translateY(-1px); }
-.btn-ghost { background: transparent; color: var(--accent-dim); border: 1px solid var(--border2); }
-.btn-ghost:hover { color: var(--text); border-color: #666; background: rgba(255,255,255,0.01); }
+.btn-primary { background: var(--text); color: #000000; }
+.btn-primary:hover { background: #e1e1e6; transform: translateY(-1px); box-shadow: 0 12px 24px rgba(255,255,255,0.08); }
+.btn-ghost { background: transparent; color: var(--accent-dim); border: 1px solid var(--border); }
+.btn-ghost:hover { color: var(--text); border-color: var(--text); background: rgba(255,255,255,0.01); }
 .btn-danger { background: transparent; color: var(--muted); border: 1px solid var(--border); }
-.btn-danger:hover { color: var(--danger); border-color: rgba(239, 68, 68, 0.2); background: var(--danger-bg); }
+.btn-danger:hover { color: var(--text); border-color: var(--text); background: var(--danger-bg); }
 
-.menu-trigger-btn { background: transparent; border: none; color: var(--text); font-size: 24px; cursor: pointer; display: flex; align-items: center; padding: 6px; }
+.menu-trigger-btn { background: transparent; border: none; color: var(--text); font-size: 24px; cursor: pointer; display: flex; align-items: center; padding: 6px; transition: opacity 0.2s; }
+.menu-trigger-btn:hover { opacity: 0.65; }
+
 .toast {
-  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px);
-  background: var(--text); color: #040404; font-family: 'Space Grotesk', sans-serif;
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(30px);
+  background: var(--text); color: #000000; font-family: 'Geist', sans-serif;
   font-size: 13px; font-weight: 600; padding: 12px 22px; border-radius: 8px;
-  pointer-events: none; opacity: 0; transition: all 0.3s cubic-bezier(.16,1,.3,1); z-index: 1000;
+  pointer-events: none; opacity: 0; transition: all 0.35s var(--ease-premium); z-index: 1000; box-shadow: 0 20px 40px rgba(0,0,0,0.6);
 }
 .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
 
-/* OPTIMIZACIÓN CRUCIAL PARA SMARTPHONES (ANTI-AMONTONADO) */
 @media (max-width: 768px) {
   .container { padding: 16px 12px; }
   header { padding: 12px 14px; margin-bottom: 20px; }
-  .logo { font-size: 18px; }
+  .logo { font-size: 19px; }
   .search-box-container { max-width: 140px; }
   .search-box-container input { padding: 8px 10px 8px 28px; font-size: 12px; }
   .search-box-container::before { left: 10px; top: 9px; font-size: 10px; }
@@ -194,10 +243,15 @@ header {
   .dashboard-layout { grid-template-columns: 1fr; gap: 20px; }
   .sidebar { padding: 18px; gap: 14px; }
   .main-content { padding: 20px; min-height: 380px; }
-  .folder-item { padding: 12px; }
+  .folder-item { padding: 12px 12px 12px 16px; }
+  .delete-btn { opacity: 1; }
 }
-@keyframes fadeUp { from { opacity:0; transform: translateY(12px); } to { opacity:1; transform: translateY(0); } }
+
+/* KEYFRAMES ACELERADOS POR HARDWARE */
+@keyframes initialFadeUp { from { opacity:0; transform: translateY(20px); filter: blur(6px); } to { opacity:1; transform: translateY(0); filter: blur(0); } }
+@keyframes contentStaggerIn { from { opacity:0; transform: translateY(14px); filter: blur(3px); } to { opacity:1; transform: translateY(0); filter: blur(0); } }
 @keyframes spin { to { transform: rotate(360deg); } }
+@keyframes silverShine { 0% { background-position: -100% 0; } 100% { background-position: 100% 0; } }
 </style>
 </head>
 <body>
@@ -213,7 +267,7 @@ header {
   <header>
     <a class="logo-wrap" href="#">
       <div class="logo-icon">⬡</div>
-      <div class="logo">Code<span>Vault</span></div>
+      <div class="logo">CodeVault</div>
     </a>
     
     <div class="search-box-container">
@@ -221,21 +275,21 @@ header {
     </div>
     
     <div class="header-right">
-      <img id="headerUserAvatar" class="user-avatar-btn" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23666'%3E%3Cpath d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5-3.33-8-3.33z'/%3E%3C/svg%3E" onclick="toggleHamburgerMenu(true)">
+      <div id="headerUserAvatar" class="user-avatar-btn" onclick="toggleHamburgerMenu(true)">CV</div>
       <button class="menu-trigger-btn" onclick="toggleHamburgerMenu(true)">☰</button>
     </div>
   </header>
 
   <div class="dashboard-layout">
     <div class="sidebar">
-      <h3>📂 Folders</h3>
+      <h3 id="lblFolders">📂 Folders</h3>
       <ul id="folderList" class="folder-list"></ul>
-      <button class="btn btn-ghost" style="width: 100%;" onclick="createNewFolder()">+ New Folder</button>
+      <button id="btnNewFolder" class="btn btn-ghost" style="width: 100%;" onclick="createNewFolder()">+ New Folder</button>
     </div>
 
     <div class="main-content">
       <div class="content-header">
-        <h3 id="currentFolderName" style="font-family:'JetBrains Mono'; font-size:13px; color:var(--muted); font-weight:500;">Select a folder layout</h3>
+        <h3 id="currentFolderName" style="font-family:'Geist Mono'; font-size:13px; color:var(--muted); font-weight:500;">Select a folder layout</h3>
         <button id="newScriptBtn" class="btn btn-primary" style="display: none; padding: 8px 14px; font-size: 12px;" onclick="goToEditorForNewScript()">+ Add Script</button>
       </div>
       <div id="scriptGrid" class="script-grid"></div>
@@ -245,66 +299,162 @@ header {
 
 <div id="hamburgerMenu" class="hamburger-sidebar">
   <div class="menu-top-nav">
-    <div class="menu-top-title">Navigation Hub</div>
+    <div id="lblNavHub" class="menu-top-title">Navigation Hub</div>
     <button class="close-menu-btn" onclick="toggleHamburgerMenu(false)">✕</button>
   </div>
   
   <div class="menu-links-group">
-    <button class="menu-link-item" onclick="window.location.href='dashboard.html'">📂 Dashboard Hub</button>
-    <button class="menu-link-item" onclick="window.location.href='profile.html'">⚙️ Edit My Profile</button>
+    <button id="lnkProfile" class="menu-link-item" onclick="window.location.href='profile.html'">⚙️ Edit My Profile</button>
+  </div>
+
+  <div class="lang-section">
+    <h3 id="lblLanguage">🌐 Language</h3>
+    <div class="lang-switch-container">
+      <button id="langBtnEs" class="lang-btn" onclick="setLanguage('es')">ES</button>
+      <button id="langBtnEn" class="lang-btn" onclick="setLanguage('en')">EN</button>
+    </div>
   </div>
   
   <div class="account-section">
-    <h3>👤 Linked Vault Profiles</h3>
-    <div id="accountProfilesList"></div>
-    <button class="btn btn-ghost" style="width:100%; font-size:11px; padding:8px 12px;" onclick="linkAnotherProfile()">+ Link Another Profile</button>
+    <div class="account-toggle-hdr" onclick="toggleAccountCollapse()">
+      <h3 id="lblLinkedProfiles">👤 Linked Vault Profiles</h3>
+      <span id="accountChevron" class="account-chevron">▼</span>
+    </div>
+    
+    <div id="accountCollapseWrapper" class="account-collapse-wrapper">
+      <div class="account-collapse-inner">
+        <div id="accountProfilesList"></div>
+        <button id="btnLinkProfile" class="btn btn-ghost" style="width:100%; font-size:11px; padding:8px 12px;" onclick="linkAnotherProfile()">+ Link Another Profile</button>
+      </div>
+    </div>
   </div>
   
-  <button class="menu-link-item" style="color: var(--danger); margin-top: auto; border: 1px solid rgba(239, 68, 68, 0.15); background: var(--danger-bg);" onclick="logout()">➔ Log Out Account</button>
+  <button id="btnLogout" class="menu-link-item" style="color: var(--text); margin-top: auto; border: 1px solid var(--border); background: var(--danger-bg);" onclick="logout()">➔ Log Out Account</button>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-/* Particle Engine */
+/* Partículas */
 const canvas = document.getElementById('canvas'); const ctx = canvas.getContext('2d'); let W, H;
 function resize() { W = canvas.width = innerWidth; H = canvas.height = innerHeight; } resize(); addEventListener('resize', resize);
 class Particle {
   constructor() { this.reset(true); }
   reset(init) {
     this.x = Math.random() * W; this.y = init ? Math.random() * H : H + 10;
-    this.vx = (Math.random() - 0.5) * 0.15; this.vy = -(Math.random() * 0.2 + 0.05);
-    this.r = Math.random() * 0.8 + 0.4; this.alpha = Math.random() * 0.25 + 0.05; this.life = 0; this.maxLife = Math.random() * 600 + 300;
+    this.vx = (Math.random() - 0.5) * 0.15; this.vy = -(Math.random() * 0.18 + 0.05);
+    this.r = Math.random() * 1.0 + 0.4; this.alpha = Math.random() * 0.2 + 0.05; this.life = 0; this.maxLife = Math.random() * 600 + 300;
   }
   update() { this.x += this.vx; this.y += this.vy; this.life++; if (this.life > this.maxLife || this.y < -10) this.reset(false); }
   draw() { const p = this.life / this.maxLife; const fade = p < 0.1 ? p/0.1 : p > 0.8 ? 1-(p-0.8)/0.2 : 1; ctx.beginPath(); ctx.arc(this.x, this.y, this.r, 0, Math.PI*2); ctx.fillStyle = 'rgba(255,255,255,' + (this.alpha * fade) + ')'; ctx.fill(); }
 }
-const particles = Array.from({length:45}, () => new Particle());
+const particles = Array.from({length:40}, () => new Particle());
 (function animate() {
   ctx.clearRect(0,0,W,H);
   particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate);
 })();
 
-/* Vault Core System */
-/* Vault Core System */
+/* Diccionario Localización */
+const translations = {
+  es: {
+    lblFolders: "📂 Carpetas",
+    btnNewFolder: "+ Nueva Carpeta",
+    defaultFolderLayout: "Selecciona una carpeta del sistema",
+    addScript: "+ Añadir Script",
+    lblNavHub: "Centro de Navegación",
+    lnkProfile: "⚙️ Editar mi Perfil",
+    lblLanguage: "🌐 Idioma",
+    lblLinkedProfiles: "👤 Perfiles Vinculados",
+    btnLinkProfile: "+ Vincular otro Perfil",
+    btnLogout: "➔ Cerrar Sesión",
+    searchPlaceholder: "Buscar...",
+    confirmDeleteFolder: "¿Eliminar carpeta y todo su contenido?",
+    confirmDeleteScript: "¿Eliminar este script?",
+    toastScriptDeleted: "✓ Script eliminado",
+    promptFolderName: "Introduce el nombre de la carpeta:",
+    decryptText: "> DESENCRIPTANDO INSTANCIA DEL VAULT...",
+    decoupleText: "> DESACOPLANDO INSTANCIA..."
+  },
+  en: {
+    lblFolders: "📂 Folders",
+    btnNewFolder: "+ New Folder",
+    defaultFolderLayout: "Select a folder layout",
+    addScript: "+ Add Script",
+    lblNavHub: "Navigation Hub",
+    lnkProfile: "⚙️ Edit My Profile",
+    lblLanguage: "🌐 Language",
+    lblLinkedProfiles: "👤 Linked Vault Profiles",
+    btnLinkProfile: "+ Link Another Profile",
+    btnLogout: "➔ Log Out Account",
+    searchPlaceholder: "Search...",
+    confirmDeleteFolder: "Delete folder and content?",
+    confirmDeleteScript: "Delete this script?",
+    toastScriptDeleted: "✓ Script deleted",
+    promptFolderName: "Enter folder name:",
+    decryptText: "> DECRYPTING VAULT INSTANCE...",
+    decoupleText: "> DECOUPLING INSTANCE..."
+  }
+};
+
+let currentLang = localStorage.getItem("vault_lang") || "es";
 let currentFolderId = null;
 const activeUser = localStorage.getItem("logged_user");
 
-// ── SISTEMA DE INTEGRIDAD PREMIUM (DETECTA EL BORRADO EN CALIENTE) ──
+function applyLanguage() {
+  const t = translations[currentLang];
+  document.getElementById("lblFolders").innerText = t.lblFolders;
+  document.getElementById("btnNewFolder").innerText = t.btnNewFolder;
+  document.getElementById("newScriptBtn").innerText = t.addScript;
+  document.getElementById("lblNavHub").innerText = t.lblNavHub;
+  document.getElementById("lnkProfile").innerText = t.lnkProfile;
+  document.getElementById("lblLanguage").innerText = t.lblLanguage;
+  document.getElementById("lblLinkedProfiles").innerText = t.lblLinkedProfiles;
+  document.getElementById("btnLinkProfile").innerText = t.btnLinkProfile;
+  document.getElementById("btnLogout").innerText = t.btnLogout;
+  document.getElementById("dashboardSearch").placeholder = t.searchPlaceholder;
+  document.getElementById("loaderText").innerText = t.decryptText;
+  
+  if(!currentFolderId) {
+    document.getElementById("currentFolderName").innerText = t.defaultFolderLayout;
+  }
+
+  document.getElementById("langBtnEs").classList.toggle("active-lang", currentLang === "es");
+  document.getElementById("langBtnEn").classList.toggle("active-lang", currentLang === "en");
+}
+
+function setLanguage(lang) {
+  currentLang = lang;
+  localStorage.setItem("vault_lang", lang);
+  applyLanguage();
+  if(currentFolderId) {
+    const folders = JSON.parse(localStorage.getItem("vault_folders")) || [];
+    const targeted = folders.find(f => f.id === currentFolderId);
+    if(targeted) document.getElementById("currentFolderName").innerText = `📁 ${targeted.name}`;
+  }
+}
+
+/* Control Acordeón Minimizable de Cuentas */
+function toggleAccountCollapse() {
+  const wrapper = document.getElementById("accountCollapseWrapper");
+  const chevron = document.getElementById("accountChevron");
+  const isExpanded = wrapper.classList.toggle("expanded");
+  chevron.style.transform = isExpanded ? "rotate(180deg)" : "rotate(0deg)";
+}
+
+/* Pipeline Integridad */
 function verifyAccountIntegrity() {
   const users = JSON.parse(localStorage.getItem("vault_users")) || {};
   const wasDeleted = localStorage.getItem("vault_account_deleted");
 
   if (wasDeleted || !activeUser || !users[activeUser]) {
-    localStorage.removeItem("vault_account_deleted"); // Limpiamos la bandera temporal
+    localStorage.removeItem("vault_account_deleted");
     const availableUsers = Object.keys(users);
-    
     if (availableUsers.length > 0) {
-      localStorage.setItem("logged_user", availableUsers[0]); // Saltamos al siguiente perfil
+      localStorage.setItem("logged_user", availableUsers[0]);
       window.location.reload(); 
       return false;
     } else {
-      localStorage.removeItem("logged_user"); // Sin cuentas restantes, limpieza total
+      localStorage.removeItem("logged_user");
       window.location.href = "login.html";
       return false;
     }
@@ -312,26 +462,18 @@ function verifyAccountIntegrity() {
   return true;
 }
 
-// Ejecutamos la comprobación de inmediato antes de seguir cargando el script
 if (!verifyAccountIntegrity()) {
-  // Si retorna false, detenemos por completo la ejecución del resto del script de la página
-  throw new Error("> Redirigiendo instancia por cambio de credenciales...");
+  throw new Error("> Interceptando ejecución por seguridad.");
 }
 
 function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2200); }
 function toggleHamburgerMenu(open) { document.getElementById("hamburgerMenu").classList.toggle("open", open); }
-
 function logout() { localStorage.removeItem("logged_user"); window.location.href = "login.html"; }
 function linkAnotherProfile() { localStorage.removeItem("logged_user"); window.location.href = "login.html"; }
 
-
 function loadUserAvatarHeader() {
-  const users = JSON.parse(localStorage.getItem("vault_users")) || {};
-  
-  if(users[activeUser]) {
-    if(users[activeUser].avatarUrl) {
-      document.getElementById("headerUserAvatar").src = users[activeUser].avatarUrl;
-    }
+  if (activeUser) {
+    document.getElementById("headerUserAvatar").innerText = activeUser.substring(0, 2).toUpperCase();
   }
 }
 
@@ -344,8 +486,6 @@ function renderAccountProfiles() {
     const isCurrent = user === activeUser;
     const btn = document.createElement("button");
     btn.className = `account-item-btn ${isCurrent ? 'active-acc' : ''}`;
-    
-    // CONTROL TOTAL ANTE CUENTAS VIEJAS: Si no existe el nodo interno o el displayName, usa su ID/nombre de usuario original
     const displayAlias = (usersObj[user] && usersObj[user].displayName) ? usersObj[user].displayName : user;
     
     btn.innerHTML = `👤 <span>${displayAlias}</span> ${isCurrent ? '<span class="account-badge-current">ACTIVE</span>' : ''}`;
@@ -354,14 +494,12 @@ function renderAccountProfiles() {
   });
 }
 
-
-
 function switchAccountSimulation(targetUser) {
   toggleHamburgerMenu(false);
   const overlay = document.getElementById("loaderOverlay");
   const loaderText = document.getElementById("loaderText");
   overlay.style.display = "flex";
-  loaderText.textContent = `> DECOUPLING INSTANCE...`;
+  loaderText.textContent = translations[currentLang].decoupleText;
   setTimeout(() => {
     localStorage.setItem("logged_user", targetUser);
     location.reload();
@@ -381,29 +519,39 @@ function renderFolders() {
 }
 
 function createNewFolder() {
-  const name = prompt("Enter folder name:"); if(!name || !name.trim()) return;
+  const name = prompt(translations[currentLang].promptFolderName); if(!name || !name.trim()) return;
   const folders = JSON.parse(localStorage.getItem("vault_folders")) || [];
   folders.push({ id: "fold_" + Date.now(), name: name.trim(), username: activeUser });
   localStorage.setItem("vault_folders", JSON.stringify(folders)); renderFolders();
 }
 
 function deleteFolder(id, event) {
-  event.stopPropagation(); if(!confirm("Delete folder and content?")) return;
+  event.stopPropagation(); if(!confirm(translations[currentLang].confirmDeleteFolder)) return;
   let folders = JSON.parse(localStorage.getItem("vault_folders")) || [];
   localStorage.setItem("vault_folders", JSON.stringify(folders.filter(f => f.id !== id)));
   let scripts = JSON.parse(localStorage.getItem("vault_scripts")) || [];
   localStorage.setItem("vault_scripts", JSON.stringify(scripts.filter(s => s.folderId !== id)));
-  if(currentFolderId === id) { currentFolderId = null; document.getElementById("currentFolderName").innerText = "Select a folder layout"; document.getElementById("newScriptBtn").style.display = "none"; }
+  if(currentFolderId === id) { currentFolderId = null; document.getElementById("currentFolderName").innerText = translations[currentLang].defaultFolderLayout; document.getElementById("newScriptBtn").style.display = "none"; }
   renderFolders(); renderScripts();
 }
 
 function selectFolder(id, name) {
   currentFolderId = id; document.getElementById("currentFolderName").innerText = `📁 ${name}`;
-  document.getElementById("newScriptBtn").style.display = "inline-flex"; renderFolders(); renderScripts();
+  document.getElementById("newScriptBtn").style.display = "inline-flex"; 
+  renderFolders(); 
+  renderScripts();
 }
 
 function renderScripts() {
-  const grid = document.getElementById("scriptGrid"); grid.innerHTML = ""; if(!currentFolderId) return;
+  const grid = document.getElementById("scriptGrid"); 
+  grid.innerHTML = ""; 
+  if(!currentFolderId) return;
+
+  // Intercepta para reiniciar animación de entrada fluida
+  grid.classList.remove("animate-in");
+  void grid.offsetWidth; 
+  grid.classList.add("animate-in");
+
   const scripts = JSON.parse(localStorage.getItem("vault_scripts")) || [];
   const searchVal = document.getElementById("dashboardSearch").value.toLowerCase().trim();
   const folderScripts = scripts.filter(s => s.folderId === currentFolderId && (s.title.toLowerCase().includes(searchVal) || s.id.toLowerCase().includes(searchVal)));
@@ -428,14 +576,14 @@ function goToEditorForNewScript() {
 function viewScript(id) { window.location.href = `view.html?id=${id}`; }
 
 function deleteScript(id) {
-  if(!confirm("Delete this script?")) return;
+  if(!confirm(translations[currentLang].confirmDeleteScript)) return;
   let scripts = JSON.parse(localStorage.getItem("vault_scripts")) || [];
   localStorage.setItem("vault_scripts", JSON.stringify(scripts.filter(s => s.id !== id)));
-  renderScripts(); showToast("✓ Script deleted");
+  renderScripts(); showToast(translations[currentLang].toastScriptDeleted);
 }
 
-// ── DISPARADOR ESTRUCTURADO DE CARGA SEGURA DE INTERFAZ ──
 document.addEventListener("DOMContentLoaded", () => {
+  applyLanguage();
   loadUserAvatarHeader();
   renderFolders(); 
   renderAccountProfiles();
