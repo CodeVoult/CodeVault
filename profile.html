@@ -4,155 +4,223 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>CodeVault — Edit Profile Settings</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@300;400;500;600;700&family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
 <style>
 :root {
-  --bg: #040404; --surface: #0a0a0a; --surface2: #121212;
-  --border: #1c1c1c; --border2: #282828; --text: #f5f5f5; --muted: #666666;
-  --accent: #ffffff; --danger: #ef4444; --danger-bg: rgba(239, 68, 68, 0.1);
+  --bg: #000000;
+  --surface: #060607;
+  --surface2: #0c0c0e;
+  --border: #141416;
+  --border2: #222225;
+  --text: #ffffff;
+  --muted: #4a4a52;
+  --accent-dim: #8e8e93;
+  --danger: #ef4444;
+  --danger-bg: #0f0f11;
+  --ease-premium: cubic-bezier(.16, 1, .3, 1);
 }
+
 * { margin:0; padding:0; box-sizing:border-box; }
-body { background: var(--bg); color: var(--text); font-family: 'Space Grotesk', sans-serif; padding: 40px 20px; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Geist', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+  padding: 40px 16px;
+}
+
+#canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+body::before {
+  content:''; position:fixed; inset:0; z-index:1; pointer-events:none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.015'/%3E%3C/svg%3E");
+  background-size: 200px; opacity: 0.3;
+}
+
+.profile-container {
+  position: relative; z-index: 2; max-width: 540px; margin: 0 auto;
+}
 
 .profile-card {
-  max-width: 500px; margin: 40px auto; background: var(--surface); border: 1px solid var(--border);
-  border-radius: 14px; padding: 32px; box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 16px; padding: 32px; box-shadow: 0 20px 45px rgba(0,0,0,0.5);
+  animation: initialFadeUp 0.8s var(--ease-premium) both;
 }
-h2 { font-family: 'JetBrains Mono'; font-size: 18px; font-weight: 600; margin-bottom: 24px; }
-h3 { font-family: 'JetBrains Mono'; font-size: 14px; font-weight: 600; margin-top: 10px; margin-bottom: 16px; color: var(--text); border-bottom: 1px solid var(--border); padding-bottom: 8px; }
 
-.section-separator { border: 0; height: 1px; background: var(--border); margin: 32px 0; }
+h2 { font-family: 'Geist Mono', monospace; font-size: 20px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 24px; }
+h3 { font-family: 'Geist Mono', monospace; font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.15em; font-weight: 600; margin-bottom: 14px; }
 
-/* CONTENEDOR DE AVATAR DETECTAR CLICS */
+.section-separator { border: 0; height: 1px; background: var(--border); margin: 28px 0; }
+
+/* CONTENEDOR DE AVATAR */
 .avatar-preview-box { display: flex; align-items: center; gap: 20px; margin-bottom: 28px; }
-.avatar-wrapper { position: relative; width: 76px; height: 76px; cursor: pointer; }
-.p-avatar { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; background: #222; border: 2px solid var(--border2); transition: filter 0.2s; }
-.avatar-wrapper:hover .p-avatar { filter: brightness(0.6); }
+.avatar-wrapper { position: relative; width: 78px; height: 78px; cursor: pointer; border-radius: 50%; overflow: hidden; }
+.p-avatar { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; background: var(--surface2); border: 1px solid var(--border); transition: all 0.3s var(--ease-premium); }
+.avatar-wrapper:hover .p-avatar { filter: brightness(0.4) scale(1.05); border-color: var(--text); }
 .avatar-wrapper::after {
-  content: ':3'; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-  font-size: 16px; opacity: 0; transition: opacity 0.2s; pointer-events: none;
+  content: '⚡'; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  font-size: 18px; opacity: 0; transition: opacity 0.3s var(--ease-premium); pointer-events: none;
 }
 .avatar-wrapper:hover::after { opacity: 1; }
 
 #fileInput { display: none; }
 
-label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+label { display: block; font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
 input[type="text"], input[type="password"] {
   width: 100%; padding: 12px 14px; margin-bottom: 20px; background: var(--surface2);
-  border: 1px solid var(--border); border-radius: 6px; color: white; font-family: 'Space Grotesk'; font-size: 14px;
+  border: 1px solid var(--border); border-radius: 8px; color: white; font-family: 'Geist'; font-size: 14px;
+  transition: all 0.3s var(--ease-premium);
 }
-input[type="text"]:focus, input[type="password"]:focus { border-color: var(--border2); outline: none; }
+input[type="text"]:focus, input[type="password"]:focus { border-color: var(--text); outline: none; background: #101012; box-shadow: 0 0 0 1px var(--text); }
 
 .actions { display: flex; justify-content: flex-end; gap: 12px; }
-.btn { padding: 10px 18px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; font-family: 'Space Grotesk'; display: inline-flex; align-items: center; gap: 8px; }
-.btn-save { background: var(--text); color: #040404; }
-.btn-cancel { background: transparent; color: var(--muted); border: 1px solid var(--border); text-decoration: none; }
-.btn-danger { background: var(--danger-bg); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); }
-.btn-danger:hover { background: var(--danger); color: #000; }
 
-/* MODAL / MENÚ DE AJUSTE DE FOTO (CROPPER) */
+/* BOTONES PREMIUM */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: none; border-radius: 8px;
+  padding: 12px 18px; font-family: 'Geist', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s var(--ease-premium);
+}
+.btn-primary { background: var(--text); color: #000000; }
+.btn-primary:hover { background: #e1e1e6; transform: translateY(-1px); box-shadow: 0 12px 24px rgba(255,255,255,0.08); }
+.btn-ghost { background: transparent; color: var(--accent-dim); border: 1px solid var(--border); text-decoration: none; }
+.btn-ghost:hover { color: var(--text); border-color: var(--text); background: rgba(255,255,255,0.01); }
+.btn-danger { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+.btn-danger:hover { color: #fff; border-color: var(--danger); background: var(--danger-bg); }
+
+/* SISTEMA ANIMACIÓN COLAPSABLE (CONTRASEÑA MELA) */
+.password-collapse-wrapper {
+  display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.4s var(--ease-premium); overflow: hidden;
+  background: var(--surface2); border-radius: 12px; border: 0 solid var(--border); margin-top: 12px;
+}
+.password-collapse-wrapper.expanded { grid-template-rows: 1fr; border: 1px solid var(--border); padding: 20px; animation: expandGlitch 0.3s steps(4); }
+.password-collapse-inner { min-height: 0; display: flex; flex-direction: column; }
+
+/* MODALES DE ACCIÓN FLUIDOS */
 .modal-overlay {
-  position: fixed; inset: 0; background: rgba(4,4,4,0.85); backdrop-filter: blur(8px);
+  position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(16px);
   z-index: 1000; display: none; align-items: center; justify-content: center; padding: 20px;
 }
 .modal-box {
   background: var(--surface); border: 1px solid var(--border); width: 100%; max-width: 440px;
-  border-radius: 12px; padding: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+  border-radius: 14px; padding: 28px; box-shadow: 0 25px 50px rgba(0,0,0,0.7);
+  animation: modalIn 0.4s var(--ease-premium) both;
 }
-.crop-area { width: 100%; max-height: 280px; background: #000; overflow: hidden; border-radius: 8px; margin-bottom: 20px; }
+.crop-area { width: 100%; max-height: 280px; background: #000; overflow: hidden; border-radius: 8px; margin-bottom: 20px; border: 1px solid var(--border); }
 .crop-area img { max-width: 100%; display: block; }
 
-/* LOADER DE ELIMINACIÓN */
+/* LOADER PURGADO */
 .loader-overlay {
-  position: fixed; inset: 0; background: rgba(4,4,4,0.96); backdrop-filter: blur(12px);
+  position: fixed; inset: 0; background: rgba(0,0,0,0.97); backdrop-filter: blur(20px);
   z-index: 2000; display: none; align-items: center; justify-content: center; flex-direction: column; gap: 20px;
 }
-.spinner {
-  width: 40px; height: 40px; border: 3px solid var(--border2); border-top-color: var(--danger);
-  border-radius: 50%; animation: spin 0.8s linear infinite;
+.cyber-spinner {
+  width: 38px; height: 38px; border: 2px solid var(--border); border-top-color: var(--danger);
+  border-radius: 50%; animation: spin 0.65s linear infinite;
 }
-.loader-text { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--danger); letter-spacing: 0.05em; }
+.loader-text { font-family: 'Geist Mono', monospace; font-size: 12px; color: var(--danger); letter-spacing: 0.05em; }
 
-.toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--text); color: #040404; padding: 12px 22px; border-radius: 6px; font-size: 13px; font-weight: 600; opacity: 0; transition: all 0.3s ease; z-index: 3000; pointer-events: none; }
+.toast {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(30px);
+  background: var(--text); color: #000000; font-family: 'Geist', sans-serif;
+  font-size: 13px; font-weight: 600; padding: 12px 22px; border-radius: 8px;
+  pointer-events: none; opacity: 0; transition: all 0.35s var(--ease-premium); z-index: 3000; box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+}
 .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
 
+/* KEYFRAMES */
+@keyframes initialFadeUp { from { opacity:0; transform: translateY(20px); filter: blur(6px); } to { opacity:1; transform: translateY(0); filter: blur(0); } }
+@keyframes modalIn { from { opacity:0; transform: scale(0.96) translateY(10px); } to { opacity:1; transform: scale(1) translateY(0); } }
 @keyframes spin { to { transform: rotate(360deg); } }
 </style>
 </head>
 <body>
 
-<div class="profile-card">
-  <h2>Edit Profile Settings</h2>
-  
-  <div class="avatar-preview-box">
-    <div class="avatar-wrapper" onclick="triggerFileInput()">
-      <img id="avatarPreview" class="p-avatar" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23666'%3E%3Cpath d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5-3.33-8-3.33z'/%3E%3C/svg%3E">
-    </div>
-    <input type="file" id="fileInput" accept="image/*" onchange="processSelectedFile(this)">
+<canvas id="canvas"></canvas>
+
+<div class="profile-container">
+  <div class="profile-card">
+    <h2>Edit Profile Settings</h2>
     
-    <div>
-      <p style="font-size: 14px; font-weight: 600; margin-bottom: 2px;">Profile Identity Image</p>
-      <p style="font-size: 11px; color: var(--muted);">Click the circle to upload and move/adjust your picture.</p>
+    <div class="avatar-preview-box">
+      <div class="avatar-wrapper" onclick="triggerFileInput()">
+        <img id="avatarPreview" class="p-avatar" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%234a4a52'%3E%3Cpath d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5-3.33-8-3.33z'/%3E%3C/svg%3E" alt="Profile Preview">
+      </div>
+      <input type="file" id="fileInput" accept="image/*" onchange="processSelectedFile(this)">
+      
+      <div>
+        <p style="font-size: 14px; font-weight: 600; margin-bottom: 2px;">Profile Identity Image</p>
+        <p style="font-size: 11px; color: var(--accent-dim);">Click the instance shell avatar to overwrite vector layers.</p>
+      </div>
     </div>
-  </div>
 
-  <label>Profile Display Name</label>
-  <input type="text" id="profileName" placeholder="Enter custom alias">
+    <label>Profile Display Name</label>
+    <input type="text" id="profileName" placeholder="Enter custom identity alias">
 
-  <div class="actions">
-    <a href="dashboard.html" class="btn btn-cancel">Cancel</a>
-    <button class="btn btn-save" onclick="saveProfileChanges()">Save Changes</button>
-  </div>
+    <div class="actions">
+      <a href="dashboard.html" class="btn btn-ghost">Cancel</a>
+      <button class="btn btn-primary" onclick="saveProfileChanges()">Save Changes</button>
+    </div>
 
-  <hr class="section-separator">
+    <hr class="section-separator">
 
-  <h3>🔒 Security Settings</h3>
-  <label>New Password</label>
-  <input type="password" id="newPassword" placeholder="Enter new password">
-  
-  <label>Confirm New Password</label>
-  <input type="password" id="confirmPassword" placeholder="Repeat new password">
-  
-  <div class="actions">
-    <button class="btn btn-save" style="font-size: 12px; padding: 8px 14px;" onclick="updatePassword()">Update Password</button>
-  </div>
+    <h3>🔒 Security Settings</h3>
+    <div id="pwdTriggerContainer" style="display: flex; margin-top: 4px;">
+      <button class="btn btn-ghost" style="width: 100%; border-style: dashed;" onclick="togglePasswordSection(true)">⚙️ Change Vault Access Key Password</button>
+    </div>
 
-  <hr class="section-separator">
+    <div id="passwordCollapseWrapper" class="password-collapse-wrapper">
+      <div class="password-collapse-inner">
+        <label>New Secret Key Password</label>
+        <input type="password" id="newPassword" placeholder="Minimum system length complexity">
+        
+        <label>Confirm Secret Key Password</label>
+        <input type="password" id="confirmPassword" placeholder="Match active sequence buffers">
+        
+        <div class="actions" style="margin-top: 8px;">
+          <button class="btn btn-ghost" style="font-size:12px; padding: 8px 14px;" onclick="togglePasswordSection(false)">Cancel</button>
+          <button class="btn btn-primary" style="font-size:12px; padding: 8px 14px;" onclick="updatePassword()">Update Password</button>
+        </div>
+      </div>
+    </div>
 
-  <h3>⚠️ Danger Zone</h3>
-  <p style="font-size: 12px; color: var(--muted); margin-bottom: 16px;">Once you delete your account, there is no going back. Please be certain.</p>
-  <div class="actions" style="justify-content: flex-start;">
-    <button class="btn btn-danger" onclick="openDeleteModal()">Delete Account Permanently</button>
+    <hr class="section-separator">
+
+    <h3>⚠️ Danger Zone</h3>
+    <p style="font-size: 12px; color: var(--muted); margin-bottom: 16px; font-family: 'Geist Mono';">Once you decouple your system key, data maps will be permanently dropped.</p>
+    <div class="actions" style="justify-content: flex-start;">
+      <button class="btn btn-danger" onclick="openDeleteModal()">Purge Account Permanently</button>
+    </div>
   </div>
 </div>
 
 <div id="cropModal" class="modal-overlay">
   <div class="modal-box">
-    <h3 style="margin-top:0;">📐 Adjust Profile Picture</h3>
+    <h3 style="margin-bottom:12px; font-family:'Geist Mono'; color:#fff;">📐 Crop Configuration Layer</h3>
     <div class="crop-area">
-      <img id="cropImage" src="">
+      <img id="cropImage" src="" alt="To Crop">
     </div>
     <div class="actions">
-      <button class="btn btn-cancel" onclick="closeCropModal()">Cancel</button>
-      <button class="btn btn-save" onclick="applyCroppedImage()">Apply Crop</button>
+      <button class="btn btn-ghost" onclick="closeCropModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="applyCroppedImage()">Apply Crop</button>
     </div>
   </div>
 </div>
 
 <div id="deleteModal" class="modal-overlay">
-  <div class="modal-box" style="border-color: rgba(239, 68, 68, 0.4);">
-    <h3 style="margin-top:0; color: var(--danger);">Are you absolutely sure?</h3>
-    <p style="font-size: 13px; color: var(--muted); margin-bottom: 24px; line-height: 1.5;"> This will completely wipe your linked profile data, folders, and saved scripts from this browser session. This action cannot be undone.</p>
+  <div class="modal-box" style="border-color: rgba(239, 68, 68, 0.3);">
+    <h3 style="margin-bottom:10px; color: var(--danger); font-family:'Geist Mono';">Confirm Terminal Wipe?</h3>
+    <p style="font-size: 13px; color: var(--accent-dim); margin-bottom: 24px; line-height: 1.6;">This will completely wipe your local credentials, script repositories, and custom key buffers from localStorage. Action cannot be patched.</p>
     <div class="actions">
-      <button class="btn btn-cancel" onclick="closeDeleteModal()">No, Keep Account</button>
-      <button class="btn btn-danger" style="background: var(--danger); color: #000;" onclick="executeAccountDestruction()">Yes, Delete Identity</button>
+      <button class="btn btn-ghost" onclick="closeDeleteModal()">Abort Purge</button>
+      <button class="btn btn-danger" style="background: var(--danger); color: #000; font-weight:700;" onclick="executeAccountDestruction()">Execute Purge</button>
     </div>
   </div>
 </div>
 
 <div id="destructionLoader" class="loader-overlay">
-  <div class="spinner"></div>
+  <div class="cyber-spinner"></div>
   <div id="loaderText" class="loader-text">> PURGING VAULT INSTANCE DIRECTORIES...</div>
 </div>
 
@@ -160,6 +228,25 @@ input[type="text"]:focus, input[type="password"]:focus { border-color: var(--bor
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 <script>
+/* Partículas */
+const canvas = document.getElementById('canvas'); const ctx = canvas.getContext('2d'); let W, H;
+function resize() { W = canvas.width = innerWidth; H = canvas.height = innerHeight; } resize(); addEventListener('resize', resize);
+class Particle {
+  constructor() { this.reset(true); }
+  reset(init) {
+    this.x = Math.random() * W; this.y = init ? Math.random() * H : H + 10;
+    this.vx = (Math.random() - 0.5) * 0.12; this.vy = -(Math.random() * 0.15 + 0.04);
+    this.r = Math.random() * 0.9 + 0.3; this.alpha = Math.random() * 0.15 + 0.05; this.life = 0; this.maxLife = Math.random() * 600 + 300;
+  }
+  update() { this.x += this.vx; this.y += this.vy; this.life++; if (this.life > this.maxLife || this.y < -10) this.reset(false); }
+  draw() { const p = this.life / this.maxLife; const fade = p < 0.1 ? p/0.1 : p > 0.8 ? 1-(p-0.8)/0.2 : 1; ctx.beginPath(); ctx.arc(this.x, this.y, this.r, 0, Math.PI*2); ctx.fillStyle = 'rgba(255,255,255,' + (this.alpha * fade) + ')'; ctx.fill(); }
+}
+const particles = Array.from({length:30}, () => new Particle());
+(function animate() {
+  ctx.clearRect(0,0,W,H);
+  particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate);
+})();
+
 const activeUser = localStorage.getItem("logged_user");
 if(!activeUser) { window.location.href = "login.html"; }
 
@@ -167,35 +254,38 @@ let base64ImageString = "";
 let cropperInstance = null;
 
 function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2200); }
-
 function triggerFileInput() { document.getElementById("fileInput").click(); }
 
-// Abre el menú/modal para ajustar la foto cargada
+function togglePasswordSection(expand) {
+  const wrapper = document.getElementById("passwordCollapseWrapper");
+  const triggerBtn = document.getElementById("pwdTriggerContainer");
+  if(expand) {
+    wrapper.classList.add("expanded");
+    triggerBtn.style.display = "none";
+  } else {
+    wrapper.classList.remove("expanded");
+    setTimeout(() => { triggerBtn.style.display = "flex"; }, 300);
+    document.getElementById("newPassword").value = "";
+    document.getElementById("confirmPassword").value = "";
+  }
+}
+
 function processSelectedFile(input) {
   const file = input.files[0];
   if (!file) return;
-
   if (file.size > 1500000) {
-    showToast("⚠️ Image too large. Please select one under 1.5MB.");
+    showToast("⚠️ Image size overloads 1.5MB allocation.");
     input.value = "";
     return;
   }
-
   const reader = new FileReader();
   reader.onload = function(e) {
     document.getElementById("cropImage").src = e.target.result;
     document.getElementById("cropModal").style.display = "flex";
-    
-    // Iniciar Cropper con máscara redonda y movimiento libre
     if (cropperInstance) cropperInstance.destroy();
     setTimeout(() => {
       cropperInstance = new Cropper(document.getElementById("cropImage"), {
-        aspectRatio: 1,
-        viewMode: 1,
-        dragMode: 'move',
-        background: false,
-        autoCropArea: 1,
-        responsive: true
+        aspectRatio: 1, viewMode: 1, dragMode: 'move', background: false, autoCropArea: 1, responsive: true
       });
     }, 50);
   };
@@ -210,21 +300,19 @@ function closeCropModal() {
 
 function applyCroppedImage() {
   if (!cropperInstance) return;
-  // Convierte el fragmento recortado y movido en una imagen comprimida Base64
   const canvas = cropperInstance.getCroppedCanvas({ width: 150, height: 150 });
   base64ImageString = canvas.toDataURL("image/jpeg", 0.85);
   document.getElementById("avatarPreview").src = base64ImageString;
   closeCropModal();
 }
 
-// ── COMPROBACIÓN INTELIGENTE: CUENTAS NUEVAS Y VIEJAS ──
+// Cargar estado inicial seguro desde base de datos local
 const users = JSON.parse(localStorage.getItem("vault_users")) || {};
-
 if (users[activeUser]) {
   document.getElementById("profileName").value = users[activeUser].displayName || activeUser;
-  if (users[activeUser].avatarUrl) {
-    document.getElementById("avatarPreview").src = users[activeUser].avatarUrl;
-    base64ImageString = users[activeUser].avatarUrl;
+  if (users[activeUser].profilePic) {
+    document.getElementById("avatarPreview").src = users[activeUser].profilePic;
+    base64ImageString = users[activeUser].profilePic;
   }
 } else {
   document.getElementById("profileName").value = activeUser;
@@ -232,42 +320,35 @@ if (users[activeUser]) {
 
 function saveProfileChanges() {
   const targetName = document.getElementById("profileName").value.trim();
-  if(!targetName) return showToast("⚠️ Display Name cannot be empty");
+  if(!targetName) return showToast("⚠️ Identity string cannot be null");
 
   let usersObj = JSON.parse(localStorage.getItem("vault_users")) || {};
   if (!usersObj[activeUser]) { usersObj[activeUser] = {}; }
   
   usersObj[activeUser].displayName = targetName;
-  usersObj[activeUser].avatarUrl = base64ImageString; 
+  usersObj[activeUser].profilePic = base64ImageString; 
   
   localStorage.setItem("vault_users", JSON.stringify(usersObj));
-  showToast("✓ Profile changes updated successfully!");
+  showToast("✓ Profile changes mapped successfully!");
   setTimeout(() => { window.location.href = "dashboard.html"; }, 1200);
 }
 
-// ── SISTEMA DE CAMBIO DE CONTRASEÑA ──
 function updatePassword() {
   const newPass = document.getElementById("newPassword").value;
   const confPass = document.getElementById("confirmPassword").value;
-
-  if (!newPass || !confPass) return showToast("⚠️ Fields cannot be empty");
-  if (newPass !== confPass) return showToast("⚠️ Passwords do not match");
+  if (!newPass || !confPass) return showToast("⚠️ Allocation inputs required");
+  if (newPass !== confPass) return showToast("⚠️ Key mismatch detected");
 
   let usersObj = JSON.parse(localStorage.getItem("vault_users")) || {};
   if (!usersObj[activeUser]) { usersObj[activeUser] = {}; }
 
-  // Guardamos la contraseña estructurada
   usersObj[activeUser].password = newPass;
   localStorage.setItem("vault_users", JSON.stringify(usersObj));
-
-  showToast("✓ Password updated successfully!");
-  document.getElementById("newPassword").value = "";
-  document.getElementById("confirmPassword").value = "";
+  showToast("✓ Security credentials patched.");
+  togglePasswordSection(false);
 }
 
-// ── SISTEMA DE ELIMINACIÓN PERMANENTE ──
 function openDeleteModal() { document.getElementById("deleteModal").style.display = "flex"; }
-
 function closeDeleteModal() { document.getElementById("deleteModal").style.display = "none"; }
 
 function executeAccountDestruction() {
@@ -291,25 +372,17 @@ function executeAccountDestruction() {
       loaderText.textContent = phrases[5 - countdown] || phrases[0];
     } else {
       clearInterval(interval);
-      
-      // Eliminación física total en LocalStorage
       let usersObj = JSON.parse(localStorage.getItem("vault_users")) || {};
       delete usersObj[activeUser];
       localStorage.setItem("vault_users", JSON.stringify(usersObj));
 
-      // Limpieza colateral de scripts y carpetas del usuario
       let folders = JSON.parse(localStorage.getItem("vault_folders")) || [];
       localStorage.setItem("vault_folders", JSON.stringify(folders.filter(f => f.username !== activeUser)));
 
       let scripts = JSON.parse(localStorage.getItem("vault_scripts")) || [];
       localStorage.setItem("vault_scripts", JSON.stringify(scripts.filter(s => s.username !== activeUser)));
 
-      // ── TRUCO PREMIUM ──
-      // Dejamos el activeUser logueado un milisegundo más para pasar el filtro del Dashboard,
-      // pero creamos una bandera para avisarle al Dashboard que esta cuenta ya fue purgada.
       localStorage.setItem("vault_account_deleted", "true");
-
-      // Enviamos directo al Dashboard Hub
       window.location.href = "dashboard.html"; 
     }
   }, 1000);
