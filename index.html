@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>CodeVault — Ultra Dashboard</title>
+<title>CodeVault — Black Edition</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Space+Grotesk:wght@300;400;600;700&display=swap" rel="stylesheet">
 
 <script>
@@ -21,18 +21,14 @@
 
 <style>
 :root {
-  --bg: #030303;
-  --surface: #0a0a0c;
-  --surface2: #101014;
-  --border: #161a22;
-  --border2: #22293a;
+  --bg: #000000;
+  --surface: #0a0a0a;
+  --surface2: #121212;
+  --border: #1f1f1f;
+  --border2: #2e2e2e;
   --text: #ffffff;
-  --muted: #525a6c;
-  
-  /* Cyberpunk Neon Theme (Cyan/Blue) */
-  --neon: #00f0ff;
-  --neon-glow: rgba(0, 240, 255, 0.15);
-  --neon-dim: #00a8b5;
+  --muted: #707070;
+  --accent: #ffffff;
 }
 
 * { margin:0; padding:0; box-sizing:border-box; }
@@ -44,123 +40,70 @@ body {
   font-family: 'Space Grotesk', sans-serif;
   min-height: 100vh;
   overflow-x: hidden;
-  position: relative;
-}
-
-/* Fondo de cuadrícula Cyberpunk */
-.bg-grid {
-  position: fixed;
-  inset: 0;
-  z-index: 1;
-  background-image: 
-    linear-gradient(to right, rgba(0, 240, 255, 0.015) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(0, 240, 255, 0.015) 1px, transparent 1px);
-  background-size: 40px 40px;
-  pointer-events: none;
-}
-
-/* Resplandor superior */
-.bg-glow {
-  position: fixed;
-  top: -150px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 600px;
-  height: 400px;
-  background: radial-gradient(circle, rgba(0, 240, 255, 0.06) 0%, transparent 70%);
-  z-index: 1;
-  pointer-events: none;
-}
-
-#canvas {
-  position: fixed;
-  inset: 0;
-  z-index: 2;
-  pointer-events: none;
 }
 
 .container {
   position: relative;
-  z-index: 10;
   max-width: 860px;
   margin: 0 auto;
   padding: 50px 20px 80px;
 }
 
-/* HEADER STYLE */
+/* HEADER STYLE - MONOCHROME */
 header {
   margin-bottom: 40px;
-  animation: neonFadeUp 0.8s cubic-bezier(.16,1,.3,1) both;
+  animation: fadeUp 0.6s cubic-bezier(.16,1,.3,1) both;
 }
 
 .logo-wrap {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
   margin-bottom: 6px;
 }
 
 .logo-icon {
-  width: 42px;
-  height: 42px;
+  width: 38px;
+  height: 38px;
   background: var(--surface);
   border: 1px solid var(--border2);
-  border-radius: 12px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 20px;
-  color: var(--neon);
-  box-shadow: 0 0 15px var(--neon-glow);
-  position: relative;
-}
-
-.logo-icon::after {
-  content: '';
-  position: absolute;
-  inset: -1px;
-  border-radius: 12px;
-  background: linear-gradient(45deg, var(--neon), transparent);
-  z-index: -1;
-  opacity: 0.4;
+  font-size: 18px;
+  color: var(--text);
 }
 
 .logo {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 34px;
+  font-size: 30px;
   font-weight: 700;
   letter-spacing: -1px;
   color: var(--text);
 }
 
-.logo span { 
-  color: var(--neon);
-  text-shadow: 0 0 10px rgba(0, 240, 255, 0.4);
-}
-
 .subtitle {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 12px;
+  font-size: 11px;
   color: var(--muted);
   letter-spacing: 0.05em;
-  padding-left: 58px;
+  padding-left: 52px;
   text-transform: uppercase;
 }
 
-/* NEON EDITOR CARD */
+/* CARDS WITH CLEAN BORDERS */
 .editor-card {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 20px;
+  border-radius: 14px;
   overflow: hidden;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-  animation: neonFadeUp 0.8s 0.1s cubic-bezier(.16,1,.3,1) both;
-  transition: all 0.4s cubic-bezier(.16,1,.3,1);
+  animation: fadeUp 0.6s 0.1s cubic-bezier(.16,1,.3,1) both;
+  transition: border-color 0.25s ease;
 }
 
 .editor-card:hover, .editor-card:focus-within { 
-  border-color: rgba(0, 240, 255, 0.3);
-  box-shadow: 0 20px 50px rgba(0,0,0,0.6), 0 0 20px rgba(0, 240, 255, 0.03);
+  border-color: var(--border2);
 }
 
 .topbar {
@@ -182,19 +125,18 @@ header {
   display: flex;
   gap: 6px;
 }
-.dot { width: 8px; height: 8px; border-radius: 50%; background: #222; }
-.dot.active-glow { background: var(--neon); box-shadow: 0 0 8px var(--neon); }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: #262626; }
+.dot.active { background: #ffffff; }
 
 .lang-badge {
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
-  color: var(--neon);
+  color: var(--text);
   font-weight: 600;
-  background: rgba(0, 240, 255, 0.06);
-  border: 1px solid rgba(0, 240, 255, 0.15);
-  padding: 3px 12px;
-  border-radius: 6px;
-  letter-spacing: 0.05em;
+  background: #161616;
+  border: 1px solid var(--border);
+  padding: 2px 10px;
+  border-radius: 4px;
 }
 
 .line-count {
@@ -203,10 +145,10 @@ header {
   color: var(--muted);
 }
 
-/* TEXTAREA CYBERPUNK */
+/* TEXTAREA */
 textarea {
   width: 100%;
-  height: 440px;
+  height: 420px;
   background: transparent;
   color: #e2e8f0;
   border: none;
@@ -216,76 +158,70 @@ textarea {
   font-family: 'JetBrains Mono', monospace;
   font-size: 14px;
   line-height: 1.8;
-  caret-color: var(--neon);
+  caret-color: var(--text);
 }
 
-textarea::placeholder { color: #2e3545; }
+textarea::placeholder { color: #3a3a3a; }
 textarea::-webkit-scrollbar { width: 6px; }
 textarea::-webkit-scrollbar-track { background: transparent; }
-textarea::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 20px; }
-textarea::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+textarea::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 10px; }
 
 .actions {
   display: flex;
   gap: 12px;
-  padding: 18px 24px;
+  padding: 16px 24px;
   border-top: 1px solid var(--border);
   background: var(--surface2);
 }
 
-/* PREMIUM BUTTONS */
+/* BUTTONS BLACK & WHITE */
 .btn {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   border: none;
-  border-radius: 10px;
-  padding: 12px 22px;
+  border-radius: 8px;
+  padding: 12px 20px;
   font-family: 'Space Grotesk', sans-serif;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.25s cubic-bezier(.16,1,.3,1);
-  position: relative;
-  overflow: hidden;
+  transition: all 0.2s ease;
 }
 
 .btn-primary { 
-  background: var(--text); 
-  color: #000; 
+  background: #ffffff; 
+  color: #000000; 
 }
 
 .btn-primary:hover { 
-  background: var(--neon); 
-  transform: translateY(-2px); 
-  box-shadow: 0 8px 20px rgba(0, 240, 255, 0.25); 
+  background: #e5e5e5;
+  transform: translateY(-1px);
 }
 
 .btn-ghost {
-  background: var(--surface);
-  color: #94a3b8;
-  border: 1px solid var(--border2);
+  background: transparent;
+  color: #a3a3a3;
+  border: 1px solid var(--border);
 }
 
 .btn-ghost:hover { 
-  color: var(--text); 
-  border-color: rgba(0, 240, 255, 0.4);
-  transform: translateY(-2px);
-  background: rgba(255,255,255,0.01);
+  color: #ffffff; 
+  border-color: #ffffff;
+  transform: translateY(-1px);
 }
 
-.btn svg { width: 15px; height: 15px; flex-shrink: 0; }
+.btn svg { width: 14px; height: 14px; }
 
-/* THE GLOWING RESULT PANEL */
+/* PANEL DE RESULTADOS */
 .result {
   margin-top: 24px;
   background: var(--surface);
-  border: 1px solid rgba(0, 240, 255, 0.2);
-  border-radius: 18px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
   overflow: hidden;
   display: none;
-  box-shadow: 0 15px 40px rgba(0,0,0,0.6), 0 0 30px rgba(0, 240, 255, 0.02);
-  animation: neonFadeUp 0.5s cubic-bezier(.16,1,.3,1) both;
+  animation: fadeUp 0.4s ease both;
 }
 
 .result-header {
@@ -304,53 +240,40 @@ textarea::-webkit-scrollbar-thumb:hover { background: var(--muted); }
   display: flex;
   align-items: center;
   gap: 8px;
-  color: var(--neon);
+  color: #ffffff;
   font-weight: 600;
-  letter-spacing: 0.05em;
 }
 
 .status-dot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--neon);
-  box-shadow: 0 0 10px var(--neon);
-  animation: pulse-dot 1.8s infinite;
-}
-
-@keyframes pulse-dot {
-  0%, 100% { transform: scale(1); opacity: 0.8; box-shadow: 0 0 8px var(--neon); }
-  50% { transform: scale(1.2); opacity: 1; box-shadow: 0 0 16px var(--neon); }
+  background: #ffffff;
 }
 
 .result-body { padding: 24px; }
-.info-row { margin-bottom: 18px; }
+.info-row { margin-bottom: 20px; }
 
 .row-label {
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
   color: var(--muted);
-  letter-spacing: 0.1em;
   text-transform: uppercase;
   margin-bottom: 8px;
+  letter-spacing: 0.05em;
 }
 
 .code-block {
-  background: #060608;
+  background: #050505;
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: 8px;
   overflow: hidden;
-  transition: border-color 0.2s;
-}
-
-.code-block:hover {
-  border-color: var(--border2);
 }
 
 .code-block-text {
   font-family: 'JetBrains Mono', monospace;
   font-size: 13px;
-  color: #cbd5e1;
+  color: #d4d4d4;
   padding: 16px;
   word-break: break-all;
   line-height: 1.6;
@@ -374,47 +297,43 @@ textarea::-webkit-scrollbar-thumb:hover { background: var(--muted); }
   gap: 8px;
 }
 
-.code-block-copy:hover { background: var(--border); color: var(--neon); }
-.code-block-copy.copied { color: var(--neon); background: rgba(0, 240, 255, 0.03); }
+.code-block-copy:hover { background: #1a1a1a; color: #ffffff; }
 
 .view-link-btn {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  margin-top: 8px;
+  margin-top: 4px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 12px;
   color: var(--muted);
   text-decoration: none;
-  transition: color 0.2s;
 }
-.view-link-btn:hover { color: var(--neon); }
+.view-link-btn:hover { color: #ffffff; }
 
-/* TOAST CYBER */
+/* TOAST */
 .toast {
   position: fixed;
   bottom: 32px;
   left: 50%;
   transform: translateX(-50%) translateY(20px);
-  background: #fff;
-  color: #000;
+  background: #ffffff;
+  color: #000000;
   font-family: 'Space Grotesk', sans-serif;
   font-size: 13px;
-  font-weight: 700;
-  padding: 14px 28px;
-  border-radius: 12px;
+  font-weight: 600;
+  padding: 12px 24px;
+  border-radius: 8px;
   pointer-events: none;
   opacity: 0;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-  transition: all 0.4s cubic-bezier(.16,1,.3,1);
+  transition: all 0.3s cubic-bezier(.16,1,.3,1);
   z-index: 1000;
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-/* ANIMATIONS */
-@keyframes neonFadeUp {
-  from { opacity: 0; transform: translateY(16px); filter: blur(2px); }
-  to { opacity: 1; transform: translateY(0); filter: blur(0); }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 footer {
@@ -422,7 +341,7 @@ footer {
   text-align: center;
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
-  color: #242936;
+  color: #404040;
   letter-spacing: 0.05em;
   text-transform: uppercase;
 }
@@ -430,24 +349,20 @@ footer {
 </head>
 <body>
 
-<div class="bg-grid"></div>
-<div class="bg-glow"></div>
-<canvas id="canvas"></canvas>
-
 <div class="container">
   <header>
     <div class="logo-wrap">
-      <div class="logo-icon">⬡</div>
-      <div class="logo">Code<span>Vault</span></div>
+      <div class="logo-icon">■</div>
+      <div class="logo">CodeVault</div>
     </div>
-    <div class="subtitle">// Matrix Storage &amp; Encryption</div>
+    <div class="subtitle">// Storage Hub &amp; Encryption</div>
   </header>
 
   <div class="editor-card">
     <div class="topbar">
       <div class="topbar-left">
         <div class="dots">
-          <div class="dot active-glow"></div>
+          <div class="dot active"></div>
           <div class="dot"></div>
           <div class="dot"></div>
         </div>
@@ -456,7 +371,7 @@ footer {
       <span class="line-count" id="lineCount">0 lines</span>
     </div>
 
-    <textarea id="code" placeholder="-- Drop your Roblox/Minecraft script execution thread here..." spellcheck="false"></textarea>
+    <textarea id="code" placeholder="-- Drop your execution thread here..." spellcheck="false"></textarea>
 
     <div class="actions">
       <button class="btn btn-primary" id="btnSaveScript" onclick="saveScript()">
@@ -474,14 +389,14 @@ footer {
     </div>
   </div>
 
-  <!-- PANELS DE RESULTADOS CYBER -->
+  <!-- PANELS DE RESULTADOS MONOCHROME -->
   <div id="result" class="result">
     <div class="result-header">
       <div class="status-row">
         <div class="status-dot"></div>
         <span>SAFE PROTOCOL DEPLOYED</span>
       </div>
-      <span id="scriptIdLabel" style="color: var(--neon); font-family: 'JetBrains Mono';"></span>
+      <span id="scriptIdLabel" style="color: #ffffff; font-family: 'JetBrains Mono';"></span>
     </div>
     <div class="result-body">
 
@@ -501,7 +416,7 @@ footer {
       <div class="info-row">
         <div class="row-label">Executor Loadstring Structure</div>
         <div class="code-block">
-          <div class="code-block-text" id="loadstringText" style="color: var(--neon);"></div>
+          <div class="code-block-text" id="loadstringText" style="color: #ffffff;"></div>
           <button class="code-block-copy" id="copyLsBtn" onclick="copyLoadstring()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
             Copy Loadstring
@@ -534,63 +449,6 @@ footer {
 <div class="toast" id="toast"></div>
 
 <script>
-/* ── ULTRA DEEP PARTICLES SYSTEM ── */
-const canvas = document.getElementById('canvas');
-const ctx    = canvas.getContext('2d');
-let W, H;
-
-function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
-resize();
-window.addEventListener('resize', resize);
-
-class Particle {
-  constructor() { this.reset(true); }
-  reset(init) {
-    this.x = Math.random() * W;
-    this.y = init ? Math.random() * H : H + 10;
-    this.vx = (Math.random() - 0.5) * 0.2;
-    this.vy = -(Math.random() * 0.25 + 0.05);
-    this.r  = Math.random() * 1 + 0.4;
-    this.alpha = Math.random() * 0.2 + 0.05;
-    this.life  = 0;
-    this.maxLife = Math.random() * 500 + 400;
-  }
-  update() {
-    this.x += this.vx; this.y += this.vy; this.life++;
-    if (this.life > this.maxLife || this.y < -10) this.reset(false);
-  }
-  draw() {
-    const p = this.life / this.maxLife;
-    const fade = p < 0.1 ? p/0.1 : p > 0.8 ? 1-(p-0.8)/0.2 : 1;
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.r, 0, Math.PI*2);
-    ctx.fillStyle = 'rgba(0, 240, 255,' + (this.alpha * fade) + ')'; // Cyan particles
-    ctx.fill();
-  }
-}
-
-const particles = Array.from({length: 60}, () => new Particle()); // Menos partículas para mejor performance móvil
-
-(function animate() {
-  ctx.clearRect(0,0,W,H);
-  for (let i=0; i<particles.length; i++) {
-    for (let j=i+1; j<particles.length; j++) {
-      const dx = particles[i].x - particles[j].x;
-      const dy = particles[i].y - particles[j].y;
-      const d = Math.sqrt(dx*dx + dy*dy);
-      if(d < 90){
-        ctx.beginPath();
-        ctx.moveTo(particles[i].x, particles[i].y);
-        ctx.lineTo(particles[j].x, particles[j].y);
-        ctx.strokeStyle = 'rgba(0, 240, 255,' + (1 - d/90) * 0.03 + ')';
-        ctx.lineWidth = 0.5; ctx.stroke();
-      }
-    }
-  }
-  particles.forEach(p => { p.update(); p.draw(); });
-  requestAnimationFrame(animate);
-})();
-
 /* ── LINE COUNT ── */
 const codeEl = document.getElementById('code');
 codeEl.addEventListener('input', function() {
@@ -608,12 +466,13 @@ function showToast(msg) {
 
 /* ── BUTTON ANIMATION ── */
 function animateCopyBtn(btn, orig) {
-  btn.classList.add('copied');
-  btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg> SECURED IN CLIPBOARD';
-  setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('copied'); }, 2000);
+  btn.style.background = '#ffffff';
+  btn.style.color = '#000000';
+  btn.innerHTML = 'COPIED TO CLIPBOARD';
+  setTimeout(() => { btn.innerHTML = orig; btn.style.background = ''; btn.style.color = ''; }, 2000);
 }
 
-/* ── ALMACENAMIENTO LOCAL MANDATORIO ── */
+/* ── GUARDADO LOCAL MANDATORIO ── */
 async function guardarArchivoLocal(idScript, contenido) {
   if ('showSaveFilePicker' in window) {
     try {
@@ -628,7 +487,7 @@ async function guardarArchivoLocal(idScript, contenido) {
       const writable = await handle.createWritable();
       await writable.write(contenido);
       await writable.close();
-      showToast('✓ Archivo guardado con éxito');
+      showToast('✓ Archivo guardado');
     } catch (err) {
       console.log('Cancelado.');
     }
@@ -640,7 +499,7 @@ async function guardarArchivoLocal(idScript, contenido) {
     document.body.appendChild(enlace);
     enlace.click();
     document.body.removeChild(enlace);
-    showToast('✓ Descargado en memoria interna');
+    showToast('✓ Descargado localmente');
   }
 }
 
@@ -650,7 +509,7 @@ async function saveScript() {
   if (!code) { showToast('Type or paste a string first'); return; }
 
   const btn = document.getElementById('btnSaveScript');
-  btn.textContent = 'ENCRYPTING...';
+  btn.textContent = 'SAVING...';
   btn.disabled = true;
 
   try {
@@ -686,7 +545,7 @@ async function saveScript() {
       localStorage.setItem("vault_scripts", JSON.stringify(currentLocalScripts));
       localStorage.removeItem("active_folder_target");
       
-      showToast('✓ Synced to dashboard folder!');
+      showToast('✓ Synced to folder!');
       
       setTimeout(() => {
         window.location.href = "dashboard.html";
@@ -706,10 +565,10 @@ async function saveScript() {
 
     document.getElementById('result').style.display = 'block';
     document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    showToast('✓ Database updated successfully');
+    showToast('✓ Saved successfully');
 
   } catch(e) {
-    showToast('⚠ Cluster Render connection dropped');
+    showToast('⚠ Error connecting to Render');
   } finally {
     btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17,21 17,13 7,13 7,21"/><polyline points="7,3 7,8 15,8"/></svg> Save Script';
     btn.disabled = false;
