@@ -4,25 +4,25 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>CodeVault — View Script</title>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Space+Grotesk:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@300;400;500;600;700&family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <script>
-  // ── INTERCEPTOR AUTOMÁTICO PARA EJECUTORES DE ROBLOX (MODO RAW) ──
+  // ── INTERCEPTOR AUTOMÁTICO PARA EJECUTORES DE ROBLOX (MODO RAW DETECT) ──
   const urlParams = new URLSearchParams(window.location.search);
-  const idScript = urlParams.get('id');
+  const idScript = urlParams.get('id') || localStorage.getItem('idUsuario');
   const esRawMode = urlParams.get('raw') === 'true';
 
   if (esRawMode && idScript) {
-    // CORREGIDO: Apunta al subdominio activo vlv1 en lugar del antiguo gvyn
+    // Apunta al subdominio activo sin corromper la interfaz visual si se solicita raw externo
     fetch('https://codevault-vlv1.onrender.com/raw/' + idScript)
       .then(res => res.text())
       .then(luaCode => {
-        document.open();
+        document.open("text/plain");
         document.write(luaCode);
         document.close();
       })
       .catch(() => {
-        document.open();
+        document.open("text/plain");
         document.write('-- Error: No se pudo conectar con el servidor CodeVault.');
         document.close();
       });
@@ -31,15 +31,16 @@
 
 <style>
 :root {
-  --bg: #080808;
-  --surface: #0f0f0f;
-  --surface2: #161616;
-  --border: #242424;
-  --border2: #2e2e2e;
-  --text: #f0f0f0;
-  --muted: #555;
-  --accent: #ffffff;
-  --accent2: #c8c8c8;
+  --bg: #000000;
+  --surface: #050506;
+  --surface2: #0b0b0d;
+  --border: #131315;
+  --border2: #222225;
+  --text: #ffffff;
+  --muted: #4a4a52;
+  --silver-glow: rgba(255, 255, 255, 0.07);
+  --silver-border: rgba(255, 255, 255, 0.16);
+  --ease-premium: cubic-bezier(.16, 1, .3, 1);
 }
 
 * { margin:0; padding:0; box-sizing:border-box; }
@@ -48,7 +49,7 @@ html { scroll-behavior: smooth; }
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Geist', sans-serif;
   min-height: 100vh;
   overflow-x: hidden;
   position: relative;
@@ -67,33 +68,35 @@ body::before {
   inset:0;
   z-index:1;
   pointer-events:none;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.015'/%3E%3C/svg%3E");
   background-size: 200px;
-  opacity: 0.5;
+  opacity: 0.3;
 }
 
 .container {
   position: relative;
   z-index: 2;
-  max-width: 860px;
+  max-width: 880px;
   margin: 0 auto;
-  padding: 40px 24px 80px;
+  padding: 40px 20px 80px;
 }
 
-/* BACK LINK */
+/* BACK LINK CORREGIDO AL DASHBOARD */
 .back-link {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'Geist Mono', monospace;
   font-size: 11px;
   color: var(--muted);
   text-decoration: none;
-  transition: color 0.2s;
+  transition: all 0.3s var(--ease-premium);
   margin-bottom: 24px;
-  animation: fadeUp 0.6s cubic-bezier(.16,1,.3,1) both;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  animation: fadeUpPremium 0.6s var(--ease-premium) both;
 }
-.back-link:hover { color: var(--text); }
+.back-link:hover { color: var(--text); transform: translateX(-2px); }
 .back-link svg { width: 12px; height: 12px; }
 
 /* HEADER */
@@ -102,7 +105,7 @@ header {
   align-items: center;
   justify-content: space-between;
   margin-bottom: 32px;
-  animation: fadeUp 0.8s cubic-bezier(.16,1,.3,1) both;
+  animation: fadeUpPremium 0.8s var(--ease-premium) both;
 }
 
 .logo-wrap {
@@ -116,50 +119,56 @@ header {
   width: 34px;
   height: 34px;
   background: var(--surface2);
-  border: 1px solid var(--border2);
-  border-radius: 9px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 16px;
+  font-size: 15px;
   color: var(--text);
+  transition: all 0.3s var(--ease-premium);
+}
+
+.logo-wrap:hover .logo-icon {
+  border-color: #fff;
+  box-shadow: 0 0 15px var(--silver-glow);
 }
 
 .logo {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 24px;
+  font-family: 'Geist Mono', monospace;
+  font-size: 22px;
   font-weight: 700;
   color: var(--text);
   letter-spacing: -0.5px;
 }
 
-.logo span { color: var(--muted); }
+.logo span { color: var(--muted); font-weight: 400; }
 
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
 
 /* STATUS BAR */
 .status-bar {
   display: flex;
   align-items: center;
-  gap: 12px;
+  justify-content: space-between;
   margin-bottom: 20px;
-  animation: fadeUp 0.8s 0.05s cubic-bezier(.16,1,.3,1) both;
+  animation: fadeUpPremium 0.8s 0.05s var(--ease-premium) both;
 }
 
 .status-pill {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  font-family: 'JetBrains Mono', monospace;
+  gap: 8px;
+  font-family: 'Geist Mono', monospace;
   font-size: 11px;
   color: var(--muted);
   background: var(--surface2);
   border: 1px solid var(--border);
-  padding: 5px 14px;
+  padding: 6px 14px;
   border-radius: 20px;
   transition: all 0.3s;
 }
@@ -168,37 +177,37 @@ header {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #333;
+  background: #222;
   transition: background 0.4s;
 }
 
-.status-pill.loading .dot { background: #888; animation: blink 1s infinite; }
-.status-pill.ready .dot   { background: #4caf50; box-shadow: 0 0 8px #4caf5066; animation: pulse-dot 2s infinite; }
-.status-pill.editing .dot { background: #f0c040; box-shadow: 0 0 8px #f0c04066; }
-.status-pill.error .dot   { background: #e05555; box-shadow: 0 0 8px #e0555566; }
+.status-pill.loading .dot { background: #8e8e93; animation: blink 1s infinite; }
+.status-pill.ready .dot   { background: #ffffff; box-shadow: 0 0 10px rgba(255,255,255,0.7); animation: pulse-dot 2.5s infinite; }
+.status-pill.editing .dot { background: #f5a623; box-shadow: 0 0 10px rgba(245,166,35,0.6); }
+.status-pill.error .dot   { background: #ef4444; box-shadow: 0 0 10px rgba(239,68,68,0.6); }
 
 @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
-@keyframes pulse-dot { 0%,100%{box-shadow:0 0 8px #4caf5066} 50%{box-shadow:0 0 16px #4caf5099} }
+@keyframes pulse-dot { 0%,100%{box-shadow:0 0 8px rgba(255,255,255,0.3)} 50%{box-shadow:0 0 16px rgba(255,255,255,0.6)} }
 
 .script-id {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'Geist Mono', monospace;
   font-size: 11px;
-  color: #333;
+  color: var(--muted);
 }
 
-/* EDITOR CARD */
+/* EDITOR CARD CON EFECTOS PLATEADOS */
 .editor-card {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: 14px;
   overflow: hidden;
-  animation: fadeUp 0.8s 0.1s cubic-bezier(.16,1,.3,1) both;
-  transition: border-color 0.35s, box-shadow 0.35s;
+  animation: fadeUpPremium 0.8s 0.1s var(--ease-premium) both;
+  transition: border-color 0.4s var(--ease-premium), box-shadow 0.4s var(--ease-premium);
 }
 
-.editor-card.edit-mode {
-  border-color: #383838;
-  box-shadow: 0 0 40px rgba(255,255,255,0.02);
+.editor-card:hover, .editor-card.edit-mode {
+  border-color: var(--silver-border);
+  box-shadow: 0 24px 60px rgba(0,0,0,0.8), 0 0 30px var(--silver-glow);
 }
 
 .topbar {
@@ -216,55 +225,53 @@ header {
   gap: 10px;
 }
 
-.dot-d { width: 10px; height: 10px; border-radius: 50%; }
-.dot-d.r { background: #3d1c1c; }
-.dot-d.y { background: #3d351c; }
-.dot-d.g { background: #1c3d29; }
+.dot-d { width: 8px; height: 8px; border-radius: 50%; background: var(--border2); }
 
 .lang-badge {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'Geist Mono', monospace;
   font-size: 11px;
   color: var(--muted);
   background: var(--border);
   padding: 3px 10px;
-  border-radius: 20px;
+  border-radius: 6px;
 }
 
 .mode-badge {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'Geist Mono', monospace;
   font-size: 10px;
   padding: 3px 9px;
-  border-radius: 20px;
+  border-radius: 6px;
+  font-weight: 500;
   transition: all 0.3s;
 }
 
-.mode-badge.readonly { color: #444; background: transparent; border: 1px solid #222; }
-.mode-badge.editing  { color: #f0c040; background: rgba(240,192,64,0.05); border: 1px solid rgba(240,192,64,0.2); }
+.mode-badge.readonly { color: var(--muted); background: transparent; border: 1px solid var(--border); }
+.mode-badge.editing  { color: #f5a623; background: rgba(245,166,35,0.03); border: 1px solid rgba(245,166,35,0.2); }
 
 .line-count {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'Geist Mono', monospace;
   font-size: 11px;
   color: var(--muted);
 }
 
 textarea {
   width: 100%;
-  height: 440px;
+  height: 460px;
   background: transparent;
   color: var(--text);
   border: none;
   outline: none;
   padding: 24px;
   resize: none;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13.5px;
-  line-height: 1.75;
+  font-family: 'Geist Mono', monospace;
+  font-size: 13px;
+  line-height: 1.8;
   caret-color: white;
-  transition: color 0.3s;
+  transition: color 0.3s var(--ease-premium);
 }
 
 textarea[readonly] {
-  color: #777;
+  color: #8a8a93;
   cursor: default;
 }
 
@@ -275,26 +282,26 @@ textarea::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3
 .bottombar {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   padding: 16px 20px;
   border-top: 1px solid var(--border);
   background: var(--surface2);
   flex-wrap: wrap;
 }
 
-/* BUTTONS */
+/* BUTTONS PLATINO PRESTIGE */
 .btn {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: 8px;
   border: none;
-  border-radius: 9px;
+  border-radius: 8px;
   padding: 10px 18px;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Geist', sans-serif;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s var(--ease-premium);
   position: relative;
   overflow: hidden;
   white-space: nowrap;
@@ -313,51 +320,53 @@ textarea::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3
 .btn:active::after { opacity:0.08; }
 .btn svg { width:14px; height:14px; flex-shrink:0; }
 
-.btn-primary { background: var(--text); color: #080808; }
-.btn-primary:hover { background: var(--accent2); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(255,255,255,0.1); }
+.btn-primary { background: var(--text); color: #000000; }
+.btn-primary:hover { background: #e1e1e6; transform: translateY(-1px); box-shadow: 0 10px 25px rgba(255,255,255,0.1); }
 
 .btn-ghost {
   background: transparent;
-  color: var(--muted);
+  color: #a1a1aa;
   border: 1px solid var(--border2);
 }
-.btn-ghost:hover { color: var(--text); border-color: #444; transform: translateY(-1px); }
+.btn-ghost:hover { color: var(--text); border-color: #ffffff; transform: translateY(-1px); box-shadow: 0 0 15px var(--silver-glow); }
 
 .btn-edit-mode {
   background: transparent;
-  color: #aaa;
-  border: 1px solid #2e2e2e;
+  color: #a1a1aa;
+  border: 1px solid var(--border);
 }
-.btn-edit-mode:hover { color: var(--text); border-color: #555; transform: translateY(-1px); }
+.btn-edit-mode:hover { color: var(--text); border-color: var(--border2); transform: translateY(-1px); }
 
 .btn-save {
   background: var(--text);
-  color: #080808;
+  color: #000000;
   display: none;
 }
-.btn-save:hover { background: var(--accent2); transform: translateY(-1px); }
+.btn-save:hover { background: #e1e1e6; transform: translateY(-1px); }
 
 .btn-danger {
   background: transparent;
-  color: #555;
-  border: 1px solid #2a2a2a;
+  color: var(--muted);
+  border: 1px solid var(--border);
   display: none;
 }
-.btn-danger:hover { color: #e05555; border-color: #e0555544; transform: translateY(-1px); }
+.btn-danger:hover { color: #ef4444; border-color: rgba(239,68,68,0.4); background: rgba(239,68,68,0.02); transform: translateY(-1px); }
 
 /* LOADSTRING SECTION */
 .ls-section {
   margin-top: 20px;
-  animation: fadeUp 0.5s cubic-bezier(.16,1,.3,1) both;
+  animation: fadeUpPremium 0.5s var(--ease-premium) both;
   display: none;
 }
 
 .ls-card {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 14px;
+  border-radius: 12px;
   overflow: hidden;
+  transition: border-color 0.4s var(--ease-premium);
 }
+.ls-card:hover { border-color: var(--border2); }
 
 .ls-header {
   display: flex;
@@ -369,38 +378,38 @@ textarea::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3
 }
 
 .ls-label {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'Geist Mono', monospace;
   font-size: 10px;
   color: var(--muted);
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
 .ls-ready {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'Geist Mono', monospace;
   font-size: 10px;
-  color: #4caf50;
+  color: #ffffff;
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
 }
 
 .ls-ready::before {
   content:'';
   display:inline-block;
   width:5px; height:5px;
-  background:#4caf50;
+  background:#ffffff;
   border-radius:50%;
-  animation: pulse-dot 2s infinite;
+  box-shadow: 0 0 8px #ffffff;
 }
 
 .ls-code {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 12.5px;
-  color: #aaa;
+  font-family: 'Geist Mono', monospace;
+  font-size: 12px;
+  color: #a1a1aa;
   padding: 18px 20px;
   word-break: break-all;
-  line-height: 1.65;
+  line-height: 1.7;
   user-select: all;
 }
 
@@ -410,55 +419,57 @@ textarea::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3
   border: none;
   border-top: 1px solid var(--border);
   color: var(--muted);
-  padding: 13px;
-  font-family: 'Space Grotesk', sans-serif;
+  padding: 14px;
+  font-family: 'Geist', sans-serif;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s var(--ease-premium);
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
 }
 
-.ls-copy-btn:hover { background: var(--border); color: var(--text); }
-.ls-copy-btn.copied { color: #4caf50; }
+.ls-copy-btn:hover { background: var(--surface2); color: var(--text); }
+.ls-copy-btn.copied { color: #ffffff; background: rgba(255,255,255,0.01); }
 .ls-copy-btn svg { width:14px; height:14px; }
 
-/* TOAST */
+/* TOAST ULTRA CLEAN */
 .toast {
   position: fixed;
   bottom: 30px;
   left: 50%;
   transform: translateX(-50%) translateY(20px);
   background: var(--text);
-  color: #080808;
-  font-family: 'Space Grotesk', sans-serif;
+  color: #000000;
+  font-family: 'Geist', sans-serif;
   font-size: 13px;
   font-weight: 600;
   padding: 12px 22px;
-  border-radius: 10px;
+  border-radius: 8px;
   pointer-events: none;
   opacity: 0;
-  transition: all 0.35s cubic-bezier(.16,1,.3,1);
+  transition: all 0.4s var(--ease-premium);
   z-index: 100;
   white-space: nowrap;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
 }
 .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
 
-@keyframes fadeUp {
-  from { opacity:0; transform: translateY(20px); }
-  to   { opacity:1; transform: translateY(0); }
+/* ANIMACIÓN MEJORADA CON BLUR DIFUMINADO */
+@keyframes fadeUpPremium {
+  from { opacity:0; transform: translateY(16px); filter: blur(4px); }
+  to   { opacity:1; transform: translateY(0); filter: blur(0); }
 }
 
 footer {
-  margin-top: 48px;
+  margin-top: 54px;
   text-align: center;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'Geist Mono', monospace;
   font-size: 11px;
-  color: #222;
-  animation: fadeUp 0.8s 0.3s cubic-bezier(.16,1,.3,1) both;
+  color: #18181b;
+  animation: fadeUpPremium 0.8s 0.3s var(--ease-premium) both;
 }
 </style>
 </head>
@@ -468,13 +479,13 @@ footer {
 
 <div class="container">
 
-  <a class="back-link" href="index.html?from=dashboard">
+  <a class="back-link" href="dashboard.html">
     <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="15,18 9,12 15,6"/></svg>
-    back to vault
+    back to dashboard
   </a>
 
   <header>
-    <a class="logo-wrap" href="index.html?from=dashboard">
+    <a class="logo-wrap" href="dashboard.html">
       <div class="logo-icon">⬡</div>
       <div class="logo">Code<span>Vault</span></div>
     </a>
@@ -496,7 +507,7 @@ footer {
   <div class="status-bar">
     <div class="status-pill loading" id="statusPill">
       <div class="dot"></div>
-      <span id="statusText">Loading script...</span>
+      <span id="statusText">Synchronizing pipeline...</span>
     </div>
     <span class="script-id" id="scriptIdLabel"></span>
   </div>
@@ -504,16 +515,16 @@ footer {
   <div class="editor-card" id="editorCard">
     <div class="topbar">
       <div class="topbar-left">
-        <div class="dot-d r"></div>
-        <div class="dot-d y"></div>
-        <div class="dot-d g"></div>
+        <div class="dot-d"></div>
+        <div class="dot-d"></div>
+        <div class="dot-d"></div>
         <span class="lang-badge">LUA</span>
         <span class="mode-badge readonly" id="modeBadge">READ-ONLY</span>
       </div>
       <span class="line-count" id="lineCount">— lines</span>
     </div>
 
-    <textarea id="code" placeholder="Awaiting handshake with server..." readonly spellcheck="false"></textarea>
+    <textarea id="code" placeholder="Awaiting handshake with remote cluster..." readonly spellcheck="false"></textarea>
 
     <div class="bottombar">
       <button class="btn btn-ghost" onclick="copyScript()">
@@ -521,7 +532,7 @@ footer {
         Copy Code
       </button>
       <button class="btn btn-primary" onclick="copyLoadstring()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 17l6-6-6-6"/><path d="M12 19h8"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 17 l6-6-6-6"/><path d="M12 19h8"/></svg>
         Copy Loadstring
       </button>
     </div>
@@ -530,13 +541,13 @@ footer {
   <div class="ls-section" id="lsSection">
     <div class="ls-card">
       <div class="ls-header">
-        <span class="ls-label">loadstring · executor ready</span>
-        <span class="ls-ready">live</span>
+        <span class="ls-label">loadstring · executor deployment</span>
+        <span class="ls-ready">live execution buffer</span>
       </div>
       <div class="ls-code" id="lsCode"></div>
       <button class="ls-copy-btn" id="lsCopyBtn" onclick="copyLoadstringFromPanel()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-        Copy Loadstring
+        Copy Loadstring Payload
       </button>
     </div>
   </div>
@@ -547,7 +558,7 @@ footer {
 <div class="toast" id="toast"></div>
 
 <script>
-/* ── BACKGROUND PARTICLES SYSTEM ── */
+/* ── BACKGROUND PARTICLES (MINIMALIST & SMOOTH) ── */
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 let W, H, particles = [];
@@ -561,10 +572,10 @@ class Particle {
   reset(init) {
     this.x = Math.random() * W;
     this.y = init ? Math.random() * H : H + 10;
-    this.vx = (Math.random() - 0.5) * 0.25;
-    this.vy = -(Math.random() * 0.3 + 0.05);
-    this.r = Math.random() * 1.2 + 0.3;
-    this.alpha = Math.random() * 0.35 + 0.05;
+    this.vx = (Math.random() - 0.5) * 0.12;
+    this.vy = -(Math.random() * 0.18 + 0.04);
+    this.r = Math.random() * 0.8 + 0.3;
+    this.alpha = Math.random() * 0.2 + 0.05;
     this.life = 0;
     this.maxLife = Math.random() * 600 + 300;
   }
@@ -582,34 +593,15 @@ class Particle {
   }
 }
 
-for (let i = 0; i < 130; i++) particles.push(new Particle());
-
-function drawConnections() {
-  for (let i = 0; i < particles.length; i++) {
-    for (let j = i + 1; j < particles.length; j++) {
-      const dx = particles[i].x - particles[j].x;
-      const dy = particles[i].y - particles[j].y;
-      const d = Math.sqrt(dx*dx + dy*dy);
-      if (d < 100) {
-        ctx.beginPath();
-        ctx.moveTo(particles[i].x, particles[i].y);
-        ctx.lineTo(particles[j].x, particles[j].y);
-        ctx.strokeStyle = `rgba(255,255,255,${(1 - d/100) * 0.04})`;
-        ctx.lineWidth = 0.5;
-        ctx.stroke();
-      }
-    }
-  }
-}
+for (let i = 0; i < 35; i++) particles.push(new Particle());
 
 (function animate() {
   ctx.clearRect(0, 0, W, H);
-  drawConnections();
   particles.forEach(p => { p.update(); p.draw(); });
   requestAnimationFrame(animate);
 })();
 
-/* ── UI CORE STATE ── */
+/* ── UI CORE STATE & LOGIC COMPLETAS ── */
 let scriptId = '';
 let originalCode = '';
 
@@ -640,13 +632,13 @@ function updateLineCount(val) {
   document.getElementById('lineCount').textContent = `${lines} line${lines === 1 ? '' : 's'}`;
 }
 
-/* ── DATA FETCH OPTIMIZADO CON AUTO-REINTENTO ── */
+/* ── DATA FETCH OPTIMIZADO: SIN INTERFERENCIAS EN TU BACKEND ── */
 async function loadScript() {
   scriptId = getId();
   
   if (!scriptId) { 
-    setStatus('error', 'No local ID linked'); 
-    document.getElementById('code').placeholder = "-- Create a script in the main dashboard to generate a local synchronization ID...";
+    setStatus('error', 'Handshake aborted: Void Target ID'); 
+    document.getElementById('code').value = "-- [System Error]: No linked execution identifier found in session scope.";
     showToast('⚠ Script identifier missing');
     return; 
   }
@@ -667,9 +659,8 @@ async function loadScript() {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 40000);
 
-      setStatus('loading', intentos > 0 ? `Waking up server (Attempt ${intentos + 1})...` : 'Synchronizing pipeline...');
+      setStatus('loading', intentos > 0 ? `Waking up server (Attempt ${intentos + 1})...` : 'Synchronizing remote clusters...');
 
-      // CORREGIDO: Se removió la sección inválida '/web' intermedia de la ruta para que coincida exactamente con tu backend V10
       const res = await fetch('https://codevault-vlv1.onrender.com/raw/' + scriptId, { signal: controller.signal });
       clearTimeout(timeoutId);
 
@@ -679,7 +670,7 @@ async function loadScript() {
       document.getElementById('code').value = code;
       originalCode = code;
       updateLineCount(code);
-      setStatus('ready', 'Synchronized — Read-Only');
+      setStatus('ready', 'Synchronized — Safe Scope');
       showToast('✓ Pipeline sync successful');
     } catch (err) {
       intentos++;
@@ -687,8 +678,8 @@ async function loadScript() {
         setStatus('loading', `Server cold boot detected. Retrying in 3s...`);
         setTimeout(intentarFetch, 3000);
       } else {
-        setStatus('error', 'Server handshake failed');
-        showToast('⚠ Fetch aborted: Render instance sleeping');
+        setStatus('error', 'Handshake timeout');
+        showToast('⚠ Fetch aborted: Remote cluster sleeping');
       }
     }
   }
@@ -700,7 +691,7 @@ document.getElementById('code').addEventListener('input', function() {
   updateLineCount(this.value);
 });
 
-/* ── INTERFACES & CONTROLS ── */
+/* ── INTERFACES & CONTROLS INTERNOS COMPLETOS ── */
 function enableEdit() {
   const ta = document.getElementById('code');
   ta.readOnly = false;
@@ -711,7 +702,7 @@ function enableEdit() {
   document.getElementById('editorCard').classList.add('edit-mode');
   document.getElementById('modeBadge').className = 'mode-badge editing';
   document.getElementById('modeBadge').textContent = 'EDITING';
-  setStatus('editing', 'Staging modifications');
+  setStatus('editing', 'Staging code modifications');
 }
 
 function cancelEdit() {
@@ -725,17 +716,16 @@ function cancelEdit() {
   document.getElementById('editorCard').classList.remove('edit-mode');
   document.getElementById('modeBadge').className = 'mode-badge readonly';
   document.getElementById('modeBadge').textContent = 'READ-ONLY';
-  setStatus('ready', 'Synchronized — Read-Only');
+  setStatus('ready', 'Synchronized — Safe Scope');
   showToast('Modifications discarded');
 }
 
-/* ── SAVE API PIPELINE CORREGIDO PARA ACTUALIZAR EL MISMO ID ── */
 async function saveChanges() {
   const ta = document.getElementById('code');
   const updated = ta.value;
-  if (!updated.trim()) { showToast('⚠ Working layout cannot be empty'); return; }
+  if (!updated.trim()) { showToast('⚠ Cluster allocation layout cannot be empty'); return; }
 
-  setStatus('loading', 'Pushing database patch...');
+  setStatus('loading', 'Pushing runtime patch...');
 
   try {
     const controller = new AbortController();
@@ -760,8 +750,8 @@ async function saveChanges() {
     document.getElementById('editorCard').classList.remove('edit-mode');
     document.getElementById('modeBadge').className = 'mode-badge readonly';
     document.getElementById('modeBadge').textContent = 'READ-ONLY';
-    setStatus('ready', 'Synchronized — Read-Only');
-    showToast('✓ Remote server updated');
+    setStatus('ready', 'Synchronized — Safe Scope');
+    showToast('✓ Pipeline cloud updated');
   } catch {
     setStatus('error', 'Patch execution failed');
     showToast('⚠ Error committing changes to server');
@@ -772,13 +762,13 @@ async function saveChanges() {
 function copyScript() {
   const code = document.getElementById('code').value;
   if (!code.trim()) { showToast('⚠ Editor buffer empty'); return; }
-  navigator.clipboard.writeText(code).then(() => showToast('✓ Buffer copied'));
+  navigator.clipboard.writeText(code).then(() => showToast('✓ Script text mapped to clipboard'));
 }
 
 function copyLoadstring() {
   const ls = document.getElementById('lsCode').textContent;
   if (!ls) { showToast('⚠ Reference pipeline empty'); return; }
-  navigator.clipboard.writeText(ls).then(() => showToast('✓ Loadstring copied'));
+  navigator.clipboard.writeText(ls).then(() => showToast('✓ Execution payload mapped'));
 }
 
 function copyLoadstringFromPanel() {
@@ -786,16 +776,16 @@ function copyLoadstringFromPanel() {
   const btn = document.getElementById('lsCopyBtn');
   navigator.clipboard.writeText(ls).then(() => {
     btn.classList.add('copied');
-    btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg> Copied!`;
-    showToast('✓ Pipeline payload copied');
+    btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg> Payload Transferred!`;
+    showToast('✓ Loadstring copied');
     setTimeout(() => {
       btn.classList.remove('copied');
-      btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Loadstring`;
+      btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Loadstring Payload`;
     }, 2000);
   });
 }
 
-// Inicialización de la secuencia de datos
+// Inicialización de la secuencia de datos sin interrupción
 loadScript();
 </script>
 </body>
