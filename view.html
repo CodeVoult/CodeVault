@@ -13,7 +13,8 @@
   const esRawMode = urlParams.get('raw') === 'true';
 
   if (esRawMode && idScript) {
-    fetch('https://codevault-vlv1.onrender.com/raw/' + idScript)
+    // Apunta a /web/raw/ para asegurar la lectura limpia desde interfaces web
+    fetch('https://codevault-vlv1.onrender.com/web/raw/' + idScript)
       .then(res => res.text())
       .then(luaCode => {
         document.open("text/plain");
@@ -81,7 +82,6 @@ body::before {
   padding: 40px 20px 80px;
 }
 
-/* ENLACES Y ANIMACIONES MEJORADAS */
 .back-link {
   display: inline-flex;
   align-items: center;
@@ -149,7 +149,6 @@ header {
   gap: 10px;
 }
 
-/* STATUS BAR */
 .status-bar {
   display: flex;
   align-items: center;
@@ -194,7 +193,6 @@ header {
   color: var(--muted);
 }
 
-/* CARDS CON ANIMACIONES AVANZADAS DE BORDE */
 .editor-card {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -278,7 +276,6 @@ textarea[readonly] { color: #8a8a93; cursor: default; }
   flex-wrap: wrap;
 }
 
-/* BOTONES MEJORADOS */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -314,12 +311,11 @@ textarea[readonly] { color: #8a8a93; cursor: default; }
 .btn-ghost { background: transparent; color: #a1a1aa; border: 1px solid var(--border2); }
 .btn-ghost:hover { color: var(--text); border-color: #ffffff; transform: translateY(-2px); box-shadow: 0 0 18px var(--silver-glow); }
 
-/* BOTÓN CLEAR SCRIPT DINÁMICO */
 .btn-clear {
   background: transparent;
   color: #71717a;
   border: 1px solid var(--border);
-  display: none; /* Solo visible en modo edición */
+  display: none;
 }
 .btn-clear:hover { color: #ef4444; border-color: rgba(239, 68, 68, 0.3); background: rgba(239, 68, 68, 0.02); transform: translateY(-2px); box-shadow: 0 0 15px var(--danger-glow); }
 
@@ -332,7 +328,6 @@ textarea[readonly] { color: #8a8a93; cursor: default; }
 .btn-danger { background: transparent; color: var(--muted); border: 1px solid var(--border); display: none; }
 .btn-danger:hover { color: #ef4444; border-color: rgba(239,68,68,0.4); transform: translateY(-2px); }
 
-/* LOADSTRING CONTAINER */
 .ls-section {
   margin-top: 20px;
   animation: fadeUpPremium 0.6s var(--ease-premium) both;
@@ -382,7 +377,6 @@ textarea[readonly] { color: #8a8a93; cursor: default; }
 }
 .ls-copy-btn:hover { background: var(--surface2); color: var(--text); }
 
-/* TOAST PANELS */
 .toast {
   position: fixed;
   bottom: 30px;
@@ -404,7 +398,6 @@ textarea[readonly] { color: #8a8a93; cursor: default; }
 }
 .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
 
-/* SISTEMA DINÁMICO DE FADE ULTRA PRESTIGE */
 @keyframes fadeUpPremium {
   from { opacity: 0; transform: translateY(24px); filter: blur(6px); }
   to   { opacity: 1; transform: translateY(0); filter: blur(0); }
@@ -580,7 +573,7 @@ function updateLineCount(val) {
   document.getElementById('lineCount').textContent = `${lines} line${lines === 1 ? '' : 's'}`;
 }
 
-/* ── DATA FETCH OPTIMIZADO CON PROTECCIÓN DE RUTA DEVOLUCIÓN HTML ── */
+/* ── DATA FETCH EN RUTAS WEB PLANAS EXCLUSIVAS ── */
 async function loadScript() {
   scriptId = getId();
   
@@ -593,6 +586,7 @@ async function loadScript() {
 
   document.getElementById('scriptIdLabel').textContent = `#${scriptId.toUpperCase()}`;
 
+  // La loadstring que copian los ejecutores sigue apuntando a /raw/ para obtener la capa cifrada militar
   const rawUrlForExecutor = 'https://codevault-vlv1.onrender.com/raw/' + scriptId;
   const ls = 'loadstring(game:HttpGet("' + rawUrlForExecutor + '"))()';
 
@@ -609,13 +603,13 @@ async function loadScript() {
 
       setStatus('loading', intentos > 0 ? `Waking up server (Attempt ${intentos + 1})...` : 'Synchronizing remote clusters...');
 
-      const res = await fetch('https://codevault-vlv1.onrender.com/raw/' + scriptId, { signal: controller.signal });
+      // CORRECCIÓN: Se cambió de /raw/ a /web/raw/ para saltarse el escudo perimetral HTML del navegador
+      const res = await fetch('https://codevault-vlv1.onrender.com/web/raw/' + scriptId, { signal: controller.signal });
       clearTimeout(timeoutId);
 
       if (!res.ok) throw new Error();
       const code = await res.text();
       
-      // Control de errores en caso de que el backend mande la plantilla HTML de error en vez de texto plano Lua
       if (code.trim().startsWith('<!DOCTYPE html>')) {
         setStatus('error', 'Safe Scope Blocked');
         document.getElementById('code').value = "-- [Server Restriction]: Web access disabled or record empty for this ID.";
@@ -655,7 +649,7 @@ function enableEdit() {
   document.getElementById('btnEdit').style.display = 'none';
   document.getElementById('btnSave').style.display = 'inline-flex';
   document.getElementById('btnCancel').style.display = 'inline-flex';
-  document.getElementById('btnClear').style.display = 'inline-flex'; // Despliega Clear
+  document.getElementById('btnClear').style.display = 'inline-flex';
   document.getElementById('editorCard').classList.add('edit-mode');
   document.getElementById('modeBadge').className = 'mode-badge editing';
   document.getElementById('modeBadge').textContent = 'EDITING';
@@ -670,7 +664,7 @@ function cancelEdit() {
   document.getElementById('btnEdit').style.display = 'inline-flex';
   document.getElementById('btnSave').style.display = 'none';
   document.getElementById('btnCancel').style.display = 'none';
-  document.getElementById('btnClear').style.display = 'none'; // Esconde Clear
+  document.getElementById('btnClear').style.display = 'none';
   document.getElementById('editorCard').classList.remove('edit-mode');
   document.getElementById('modeBadge').className = 'mode-badge readonly';
   document.getElementById('modeBadge').textContent = 'READ-ONLY';
@@ -678,7 +672,6 @@ function cancelEdit() {
   showToast('Modifications discarded');
 }
 
-/* FUNCIÓN DE BORRADO DE BÚFER */
 function clearCode() {
   const ta = document.getElementById('code');
   if (ta.readOnly) return; 
