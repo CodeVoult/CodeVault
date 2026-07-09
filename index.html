@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>CodeVault — Black Edition</title>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Space+Grotesk:wght@300;400;600;700&display=swap" rel="stylesheet">
+<title>CodeVault — Onyx Black Edition</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
 
 <script>
   // ── VALIDACIÓN DE ACCESO SEGURO ──
@@ -22,13 +22,13 @@
 <style>
 :root {
   --bg: #000000;
-  --surface: #0a0a0a;
-  --surface2: #121212;
-  --border: #1f1f1f;
-  --border2: #2e2e2e;
+  --surface: #070708;
+  --surface-cards: #0c0c0d;
+  --border: #1a1a1c;
+  --border-focus: #333336;
   --text: #ffffff;
-  --muted: #707070;
-  --accent: #ffffff;
+  --muted: #66666e;
+  --code-bg: #040405;
 }
 
 * { margin:0; padding:0; box-sizing:border-box; }
@@ -40,255 +40,286 @@ body {
   font-family: 'Space Grotesk', sans-serif;
   min-height: 100vh;
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
 }
 
 .container {
-  position: relative;
-  max-width: 860px;
+  max-width: 800px;
   margin: 0 auto;
-  padding: 50px 20px 80px;
+  padding: 60px 24px 100px;
 }
 
-/* HEADER STYLE - MONOCHROME */
+/* ── LOGO PREMIUM & HEADER ── */
 header {
-  margin-bottom: 40px;
-  animation: fadeUp 0.6s cubic-bezier(.16,1,.3,1) both;
+  margin-bottom: 50px;
+  text-align: center;
+  animation: dynamicFade 0.5s cubic-bezier(.16,1,.3,1) both;
 }
 
-.logo-wrap {
-  display: flex;
+.logo-container {
+  display: inline-flex;
+  flex-direction: column;
   align-items: center;
   gap: 14px;
-  margin-bottom: 6px;
 }
 
-.logo-icon {
-  width: 38px;
-  height: 38px;
-  background: var(--surface);
-  border: 1px solid var(--border2);
-  border-radius: 8px;
+.logo-badge {
+  width: 56px;
+  height: 56px;
+  background: var(--surface-cards);
+  border: 1px solid var(--border);
+  border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
-  color: var(--text);
-}
-
-.logo {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 30px;
+  font-size: 24px;
   font-weight: 700;
-  letter-spacing: -1px;
   color: var(--text);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+  position: relative;
+  transition: transform 0.3s ease;
 }
 
-.subtitle {
+.logo-badge::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.15), transparent);
+  z-index: -1;
+}
+
+.logo-container:hover .logo-badge {
+  transform: translateY(-2px);
+  border-color: var(--border-focus);
+}
+
+.logo-text {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: var(--muted);
-  letter-spacing: 0.05em;
-  padding-left: 52px;
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -1.5px;
+  color: var(--text);
   text-transform: uppercase;
 }
 
-/* CARDS WITH CLEAN BORDERS */
+.logo-text span {
+  font-weight: 300;
+  color: var(--muted);
+}
+
+.tagline {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+
+/* ── EDITOR CARD ── */
 .editor-card {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 14px;
+  border-radius: 20px;
   overflow: hidden;
-  animation: fadeUp 0.6s 0.1s cubic-bezier(.16,1,.3,1) both;
-  transition: border-color 0.25s ease;
+  box-shadow: 0 30px 70px rgba(0,0,0,0.9);
+  animation: dynamicFade 0.6s 0.1s cubic-bezier(.16,1,.3,1) both;
+  transition: border-color 0.3s ease;
 }
 
-.editor-card:hover, .editor-card:focus-within { 
-  border-color: var(--border2);
+.editor-card:focus-within { 
+  border-color: var(--border-focus);
 }
 
 .topbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 24px;
+  padding: 18px 24px;
   border-bottom: 1px solid var(--border);
-  background: var(--surface2);
+  background: rgba(12, 12, 13, 0.5);
 }
 
 .topbar-left {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
 }
 
-.dots {
+.sys-indicators {
   display: flex;
   gap: 6px;
 }
-.dot { width: 8px; height: 8px; border-radius: 50%; background: #262626; }
-.dot.active { background: #ffffff; }
+.indicator-dot { width: 6px; height: 6px; border-radius: 50%; background: #222224; }
+.indicator-dot.active { background: #ffffff; }
 
 .lang-badge {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
+  font-size: 10px;
   color: var(--text);
-  font-weight: 600;
-  background: #161616;
+  font-weight: 700;
+  background: #121214;
   border: 1px solid var(--border);
-  padding: 2px 10px;
-  border-radius: 4px;
+  padding: 4px 12px;
+  border-radius: 6px;
+  letter-spacing: 0.05em;
 }
 
 .line-count {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 12px;
+  font-size: 11px;
   color: var(--muted);
 }
 
-/* TEXTAREA */
+/* ── WORKSPACE TEXTAREA ── */
 textarea {
   width: 100%;
-  height: 420px;
+  height: 400px;
   background: transparent;
-  color: #e2e8f0;
+  color: #e4e4e7;
   border: none;
   outline: none;
   padding: 24px;
   resize: none;
   font-family: 'JetBrains Mono', monospace;
   font-size: 14px;
-  line-height: 1.8;
+  line-height: 1.7;
   caret-color: var(--text);
 }
 
-textarea::placeholder { color: #3a3a3a; }
-textarea::-webkit-scrollbar { width: 6px; }
-textarea::-webkit-scrollbar-track { background: transparent; }
-textarea::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 10px; }
+textarea::placeholder { color: #333338; }
 
-.actions {
+.actions-panel {
   display: flex;
   gap: 12px;
-  padding: 16px 24px;
+  padding: 18px 24px;
   border-top: 1px solid var(--border);
-  background: var(--surface2);
+  background: rgba(12, 12, 13, 0.5);
 }
 
-/* BUTTONS BLACK & WHITE */
+/* ── PREMIUM MONOCHROME BUTTONS ── */
 .btn {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   border: none;
-  border-radius: 8px;
-  padding: 12px 20px;
+  border-radius: 10px;
+  padding: 12px 24px;
   font-family: 'Space Grotesk', sans-serif;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(.16,1,.3,1);
 }
 
 .btn-primary { 
   background: #ffffff; 
   color: #000000; 
+  font-weight: 700;
 }
 
 .btn-primary:hover { 
-  background: #e5e5e5;
+  background: #e4e4e7;
   transform: translateY(-1px);
 }
 
-.btn-ghost {
-  background: transparent;
-  color: #a3a3a3;
+.btn-secondary {
+  background: var(--surface-cards);
+  color: #d4d4d8;
   border: 1px solid var(--border);
 }
 
-.btn-ghost:hover { 
+.btn-secondary:hover { 
   color: #ffffff; 
-  border-color: #ffffff;
+  border-color: var(--border-focus);
   transform: translateY(-1px);
 }
 
-.btn svg { width: 14px; height: 14px; }
+.btn svg { width: 14px; height: 14px; stroke-width: 2.5; }
 
-/* PANEL DE RESULTADOS */
-.result {
-  margin-top: 24px;
+/* ── RESULTS ARCHITECTURE ── */
+.result-vault {
+  margin-top: 30px;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 14px;
+  border-radius: 20px;
   overflow: hidden;
   display: none;
-  animation: fadeUp 0.4s ease both;
+  animation: dynamicFade 0.4s ease both;
 }
 
 .result-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 24px;
+  padding: 18px 24px;
   border-bottom: 1px solid var(--border);
-  background: var(--surface2);
-  font-size: 12px;
-  color: var(--muted);
-  font-family: 'JetBrains Mono', monospace;
+  background: rgba(12, 12, 13, 0.5);
 }
 
-.status-row {
+.status-container {
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #ffffff;
-  font-weight: 600;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
 }
 
-.status-dot {
-  width: 8px;
-  height: 8px;
+.status-pulse {
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   background: #ffffff;
 }
 
-.result-body { padding: 24px; }
-.info-row { margin-bottom: 20px; }
+.script-id {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--muted);
+}
 
-.row-label {
+.result-body { padding: 24px; }
+.meta-block { margin-bottom: 24px; }
+.meta-block:last-of-type { margin-bottom: 12px; }
+
+.meta-label {
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
   color: var(--muted);
   text-transform: uppercase;
-  margin-bottom: 8px;
-  letter-spacing: 0.05em;
+  margin-bottom: 10px;
+  letter-spacing: 0.08em;
 }
 
-.code-block {
-  background: #050505;
+.display-box {
+  background: var(--code-bg);
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: 12px;
   overflow: hidden;
 }
 
-.code-block-text {
+.display-text {
   font-family: 'JetBrains Mono', monospace;
   font-size: 13px;
-  color: #d4d4d4;
-  padding: 16px;
+  color: #a1a1aa;
+  padding: 18px;
   word-break: break-all;
   line-height: 1.6;
 }
 
-.code-block-copy {
+.btn-copy-inline {
   width: 100%;
-  background: var(--surface2);
+  background: var(--surface-cards);
   border: none;
   border-top: 1px solid var(--border);
   color: var(--muted);
-  padding: 12px;
+  padding: 14px;
   font-family: 'Space Grotesk', sans-serif;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
   display: flex;
@@ -297,52 +328,54 @@ textarea::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 1
   gap: 8px;
 }
 
-.code-block-copy:hover { background: #1a1a1a; color: #ffffff; }
+.btn-copy-inline:hover { background: #121214; color: var(--text); }
 
-.view-link-btn {
+.viewer-trigger {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  margin-top: 4px;
+  gap: 6px;
+  margin-top: 6px;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 12px;
+  font-size: 11px;
   color: var(--muted);
   text-decoration: none;
+  transition: color 0.2s;
 }
-.view-link-btn:hover { color: #ffffff; }
+.viewer-trigger:hover { color: var(--text); }
 
-/* TOAST */
+/* ── SYSTEM TOAST ── */
 .toast {
   position: fixed;
-  bottom: 32px;
+  bottom: 40px;
   left: 50%;
   transform: translateX(-50%) translateY(20px);
   background: #ffffff;
   color: #000000;
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 13px;
-  font-weight: 600;
-  padding: 12px 24px;
-  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 14px 28px;
+  border-radius: 10px;
   pointer-events: none;
   opacity: 0;
-  transition: all 0.3s cubic-bezier(.16,1,.3,1);
+  transition: all 0.4s cubic-bezier(.16,1,.3,1);
   z-index: 1000;
+  letter-spacing: 0.02em;
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(10px); }
+@keyframes dynamicFade {
+  from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 footer {
-  margin-top: 60px;
+  margin-top: 80px;
   text-align: center;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: #404040;
-  letter-spacing: 0.05em;
+  font-size: 10px;
+  color: #333336;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 </style>
@@ -351,93 +384,93 @@ footer {
 
 <div class="container">
   <header>
-    <div class="logo-wrap">
-      <div class="logo-icon">■</div>
-      <div class="logo">CodeVault</div>
+    <div class="logo-container">
+      <div class="logo-badge">⚡</div>
+      <div class="logo-text">CODE<span>VAULT</span></div>
     </div>
-    <div class="subtitle">// Storage Hub &amp; Encryption</div>
+    <div class="tagline">// SECURE SPECIFICATION ENVIRONMENT</div>
   </header>
 
   <div class="editor-card">
     <div class="topbar">
       <div class="topbar-left">
-        <div class="dots">
-          <div class="dot active"></div>
-          <div class="dot"></div>
-          <div class="dot"></div>
+        <div class="sys-indicators">
+          <div class="indicator-dot active"></div>
+          <div class="indicator-dot"></div>
+          <div class="indicator-dot"></div>
         </div>
         <span class="lang-badge">LUA</span>
       </div>
       <span class="line-count" id="lineCount">0 lines</span>
     </div>
 
-    <textarea id="code" placeholder="-- Drop your execution thread here..." spellcheck="false"></textarea>
+    <textarea id="code" placeholder="-- Paste or write your thread here..." spellcheck="false"></textarea>
 
-    <div class="actions">
+    <div class="actions-panel">
       <button class="btn btn-primary" id="btnSaveScript" onclick="saveScript()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17,21 17,13 7,13 7,21"/><polyline points="7,3 7,8 15,8"/></svg>
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17,21 17,13 7,13 7,21"/><polyline points="7,3 7,8 15,8"/></svg>
         Save Script
       </button>
-      <button class="btn btn-ghost" onclick="copyCode()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      <button class="btn btn-secondary" onclick="copyCode()">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
         Copy Code
       </button>
-      <button class="btn btn-ghost" onclick="clearEditor()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3,6 5,6 21,6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+      <button class="btn btn-secondary" onclick="clearEditor()">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><polyline points="3,6 5,6 21,6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
         Clear
       </button>
     </div>
   </div>
 
   <!-- PANELS DE RESULTADOS MONOCHROME -->
-  <div id="result" class="result">
+  <div id="result" class="result-vault">
     <div class="result-header">
-      <div class="status-row">
-        <div class="status-dot"></div>
+      <div class="status-container">
+        <div class="status-pulse"></div>
         <span>SAFE PROTOCOL DEPLOYED</span>
       </div>
-      <span id="scriptIdLabel" style="color: #ffffff; font-family: 'JetBrains Mono';"></span>
+      <span id="scriptIdLabel" class="script-id"></span>
     </div>
     <div class="result-body">
 
       <!-- RAW URL -->
-      <div class="info-row">
-        <div class="row-label">Raw Redirect URL</div>
-        <div class="code-block">
-          <div class="code-block-text" id="rawUrlText"></div>
-          <button class="code-block-copy" id="copyUrlBtn" onclick="copyRawUrl()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      <div class="meta-block">
+        <div class="meta-label">Raw Redirect URL</div>
+        <div class="display-box">
+          <div class="display-text" id="rawUrlText"></div>
+          <button class="btn-copy-inline" id="copyUrlBtn" onclick="copyRawUrl()">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
             Copy Raw URL
           </button>
         </div>
       </div>
 
       <!-- LOADSTRING -->
-      <div class="info-row">
-        <div class="row-label">Executor Loadstring Structure</div>
-        <div class="code-block">
-          <div class="code-block-text" id="loadstringText" style="color: #ffffff;"></div>
-          <button class="code-block-copy" id="copyLsBtn" onclick="copyLoadstring()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      <div class="meta-block">
+        <div class="meta-label">Executor Loadstring Structure</div>
+        <div class="display-box">
+          <div class="display-text" id="loadstringText" style="color: #ffffff; font-weight: 500;"></div>
+          <button class="btn-copy-inline" id="copyLsBtn" onclick="copyLoadstring()">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
             Copy Loadstring
           </button>
         </div>
       </div>
 
       <!-- VIEW URL -->
-      <div class="info-row">
-        <div class="row-label">Public View Link</div>
-        <div class="code-block">
-          <div class="code-block-text" id="viewUrlText"></div>
-          <button class="code-block-copy" id="copyViewBtn" onclick="copyViewUrl()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      <div class="meta-block">
+        <div class="meta-label">Public View Link</div>
+        <div class="display-box">
+          <div class="display-text" id="viewUrlText"></div>
+          <button class="btn-copy-inline" id="copyViewBtn" onclick="copyViewUrl()">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
             Copy View URL
           </button>
         </div>
       </div>
 
-      <a id="viewLink" class="view-link-btn" href="#" target="_blank">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15,3 21,3 21,9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      <a id="viewLink" class="viewer-trigger" href="#" target="_blank">
+        <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15,3 21,3 21,9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
         Launch viewer interface
       </a>
     </div>
@@ -570,7 +603,7 @@ async function saveScript() {
   } catch(e) {
     showToast('⚠ Error connecting to Render');
   } finally {
-    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17,21 17,13 7,13 7,21"/><polyline points="7,3 7,8 15,8"/></svg> Save Script';
+    btn.innerHTML = '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17,21 17,13 7,13 7,21"/><polyline points="7,3 7,8 15,8"/></svg> Save Script';
     btn.disabled = false;
   }
 }
