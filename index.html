@@ -32,9 +32,9 @@
 
   /* Gradientes Cromados Premium */
   --silver-light: linear-gradient(135deg, #ffffff 0%, #e2e8f0 40%, #94a3b8 70%, #cbd5e1 100%);
+  --silver-medium: linear-gradient(135deg, #5a5d64 0%, #27282c 60%, #3a3d45 100%);
   --silver-dark: linear-gradient(135deg, #2e3035 0%, #0f1012 50%, #1e2024 100%);
   --silver-glow: rgba(255, 255, 255, 0.08);
-  --silver-border: rgba(255, 255, 255, 0.25);
   --ease-premium: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -60,7 +60,6 @@ body::before {
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.015'/%3E%3C/svg%3E");
   background-size: 200px;
   opacity: 0.22;
-  window-shadow: none;
 }
 
 .container {
@@ -102,7 +101,6 @@ header {
   box-shadow: 0 10px 30px rgba(0,0,0,0.8);
 }
 
-/* Efecto Bisel de Cromo Puro en Icono */
 .logo-badge::before {
   content: '';
   position: absolute;
@@ -269,7 +267,7 @@ textarea::placeholder { color: #27272a; }
   transform: none;
 }
 
-/* Estilo Dark Chrome / Metal Pulido Oscuro (Ghost) */
+/* Estilo Dark Chrome / Metal Pulido Oscuro (Copy) */
 .btn-secondary {
   background: var(--silver-dark);
   color: #e4e4e7;
@@ -282,6 +280,22 @@ textarea::placeholder { color: #27272a; }
   border-color: rgba(255,255,255,0.3);
   transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.1), 0 0 12px var(--silver-glow);
+}
+
+/* ── BOTÓN CLEAR OPTIMIZADO (Metal Pulido Medio con Alto Contraste) ── */
+.btn-clear-action {
+  background: var(--silver-medium);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  margin-left: auto; /* Empuja el botón de borrar hacia la derecha de forma limpia */
+}
+
+.btn-clear-action:hover {
+  background: linear-gradient(135deg, #71757d 0%, #36383e 60%, #4c505b 100%);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.2);
 }
 
 .btn svg { width: 14px; height: 14px; stroke-width: 2.5; }
@@ -467,14 +481,13 @@ footer {
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
         Copy Code
       </button>
-      <button class="btn btn-secondary" onclick="clearEditor()">
+      <button class="btn btn-clear-action" onclick="clearEditor()">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><polyline points="3,6 5,6 21,6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
         Clear
       </button>
     </div>
   </div>
 
-  <!-- PANELS DE RESULTADOS MONOCHROME -->
   <div id="result" class="result-vault">
     <div class="result-header">
       <div class="status-container">
@@ -485,7 +498,6 @@ footer {
     </div>
     <div class="result-body">
 
-      <!-- RAW URL -->
       <div class="meta-block">
         <div class="meta-label">Raw Redirect URL</div>
         <div class="display-box">
@@ -497,7 +509,6 @@ footer {
         </div>
       </div>
 
-      <!-- LOADSTRING -->
       <div class="meta-block">
         <div class="meta-label">Executor Loadstring Structure</div>
         <div class="display-box">
@@ -509,7 +520,6 @@ footer {
         </div>
       </div>
 
-      <!-- VIEW URL -->
       <div class="meta-block">
         <div class="meta-label">Public View Link</div>
         <div class="display-box">
