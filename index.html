@@ -22,13 +22,20 @@
 <style>
 :root {
   --bg: #000000;
-  --surface: #070708;
-  --surface-cards: #0c0c0d;
-  --border: #1a1a1c;
-  --border-focus: #333336;
+  --surface: #040405;
+  --surface-cards: #08080a;
+  --border: #121215;
+  --border-focus: #1e1e22;
   --text: #ffffff;
-  --muted: #66666e;
-  --code-bg: #040405;
+  --muted: #4e4e56;
+  --code-bg: #020203;
+
+  /* Gradientes Cromados Premium */
+  --silver-light: linear-gradient(135deg, #ffffff 0%, #e2e8f0 40%, #94a3b8 70%, #cbd5e1 100%);
+  --silver-dark: linear-gradient(135deg, #2e3035 0%, #0f1012 50%, #1e2024 100%);
+  --silver-glow: rgba(255, 255, 255, 0.08);
+  --silver-border: rgba(255, 255, 255, 0.25);
+  --ease-premium: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 * { margin:0; padding:0; box-sizing:border-box; }
@@ -41,19 +48,34 @@ body {
   min-height: 100vh;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
+  position: relative;
+}
+
+body::before {
+  content:'';
+  position:fixed;
+  inset:0;
+  z-index:1;
+  pointer-events:none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.015'/%3E%3C/svg%3E");
+  background-size: 200px;
+  opacity: 0.22;
+  window-shadow: none;
 }
 
 .container {
+  position: relative;
+  z-index: 2;
   max-width: 800px;
   margin: 0 auto;
   padding: 60px 24px 100px;
 }
 
-/* ── LOGO PREMIUM & HEADER ── */
+/* ── LOGO REDISEÑADO PREMIUM (MARCA ESTÁTICA) ── */
 header {
   margin-bottom: 50px;
   text-align: center;
-  animation: dynamicFade 0.5s cubic-bezier(.16,1,.3,1) both;
+  animation: fadeUpPremium 0.9s var(--ease-premium) both;
 }
 
 .logo-container {
@@ -61,37 +83,45 @@ header {
   flex-direction: column;
   align-items: center;
   gap: 14px;
+  user-select: none;
+  cursor: default;
 }
 
 .logo-badge {
   width: 56px;
   height: 56px;
-  background: var(--surface-cards);
-  border: 1px solid var(--border);
+  background: var(--bg);
   border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
-  font-weight: 700;
+  font-size: 22px;
   color: var(--text);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.8);
   position: relative;
-  transition: transform 0.3s ease;
+  transition: all 0.5s var(--ease-premium);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.8);
 }
 
+/* Efecto Bisel de Cromo Puro en Icono */
 .logo-badge::before {
   content: '';
   position: absolute;
-  inset: -2px;
-  border-radius: 18px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.15), transparent);
-  z-index: -1;
+  inset: 0;
+  border-radius: 16px;
+  padding: 1px;
+  background: linear-gradient(135deg, #ffffff 0%, #3a3b40 45%, #ffffff 55%, #111215 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
 }
 
-.logo-container:hover .logo-badge {
-  transform: translateY(-2px);
-  border-color: var(--border-focus);
+.logo-badge-inner {
+  background: var(--silver-light);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 800;
+  filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.5));
 }
 
 .logo-text {
@@ -99,13 +129,16 @@ header {
   font-size: 32px;
   font-weight: 700;
   letter-spacing: -1.5px;
-  color: var(--text);
-  text-transform: uppercase;
+  background: linear-gradient(180deg, #ffffff 0%, #a1a1aa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .logo-text span {
   font-weight: 300;
-  color: var(--muted);
+  background: linear-gradient(180deg, #8a8a93 0%, #3f3f46 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .tagline {
@@ -114,7 +147,7 @@ header {
   color: var(--muted);
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  margin-top: 4px;
+  margin-top: 6px;
 }
 
 /* ── EDITOR CARD ── */
@@ -123,13 +156,14 @@ header {
   border: 1px solid var(--border);
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 30px 70px rgba(0,0,0,0.9);
-  animation: dynamicFade 0.6s 0.1s cubic-bezier(.16,1,.3,1) both;
-  transition: border-color 0.3s ease;
+  box-shadow: 0 40px 90px rgba(0,0,0,0.95);
+  animation: fadeUpPremium 1s 0.1s var(--ease-premium) both;
+  transition: border-color 0.5s var(--ease-premium), box-shadow 0.5s var(--ease-premium);
 }
 
 .editor-card:focus-within { 
-  border-color: var(--border-focus);
+  border-color: rgba(255,255,255,0.12);
+  box-shadow: 0 40px 90px rgba(0,0,0,0.95), 0 0 50px rgba(255,255,255,0.02);
 }
 
 .topbar {
@@ -138,7 +172,7 @@ header {
   justify-content: space-between;
   padding: 18px 24px;
   border-bottom: 1px solid var(--border);
-  background: rgba(12, 12, 13, 0.5);
+  background: var(--surface-cards);
 }
 
 .topbar-left {
@@ -151,15 +185,15 @@ header {
   display: flex;
   gap: 6px;
 }
-.indicator-dot { width: 6px; height: 6px; border-radius: 50%; background: #222224; }
-.indicator-dot.active { background: #ffffff; }
+.indicator-dot { width: 7px; height: 7px; border-radius: 50%; background: #1c1c21; }
+.indicator-dot.active { background: #ffffff; box-shadow: 0 0 8px #ffffff; }
 
 .lang-badge {
   font-family: 'JetBrains Mono', monospace;
   font-size: 10px;
-  color: var(--text);
+  color: #a1a1aa;
   font-weight: 700;
-  background: #121214;
+  background: #121215;
   border: 1px solid var(--border);
   padding: 4px 12px;
   border-radius: 6px;
@@ -180,25 +214,25 @@ textarea {
   color: #e4e4e7;
   border: none;
   outline: none;
-  padding: 24px;
+  padding: 26px;
   resize: none;
   font-family: 'JetBrains Mono', monospace;
   font-size: 14px;
-  line-height: 1.7;
+  line-height: 1.75;
   caret-color: var(--text);
 }
 
-textarea::placeholder { color: #333338; }
+textarea::placeholder { color: #27272a; }
 
 .actions-panel {
   display: flex;
   gap: 12px;
   padding: 18px 24px;
   border-top: 1px solid var(--border);
-  background: rgba(12, 12, 13, 0.5);
+  background: var(--surface-cards);
 }
 
-/* ── PREMIUM MONOCHROME BUTTONS ── */
+/* ── BOTONES CON EFECTO DE CROMO/PLATEADO LÍQUIDO ── */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -208,45 +242,60 @@ textarea::placeholder { color: #333338; }
   padding: 12px 24px;
   font-family: 'Space Grotesk', sans-serif;
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(.16,1,.3,1);
+  transition: all 0.4s var(--ease-premium);
+  position: relative;
+  white-space: nowrap;
 }
 
-.btn-primary { 
-  background: #ffffff; 
+/* Estilo Cromo Líquido de la Acción Principal */
+.btn-silver-action { 
+  background: var(--silver-light); 
   color: #000000; 
   font-weight: 700;
+  box-shadow: 0 4px 15px rgba(255,255,255,0.05), inset 0 1px 0 rgba(255,255,255,0.4);
 }
 
-.btn-primary:hover { 
-  background: #e4e4e7;
-  transform: translateY(-1px);
+.btn-silver-action:hover { 
+  background: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255,255,255,0.18), inset 0 1px 0 rgba(255,255,255,0.5);
+  filter: brightness(1.05);
+}
+.btn-silver-action:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
 }
 
+/* Estilo Dark Chrome / Metal Pulido Oscuro (Ghost) */
 .btn-secondary {
-  background: var(--surface-cards);
-  color: #d4d4d8;
-  border: 1px solid var(--border);
+  background: var(--silver-dark);
+  color: #e4e4e7;
+  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: inset 0 1px 1px rgba(255,255,255,0.05);
 }
 
 .btn-secondary:hover { 
   color: #ffffff; 
-  border-color: var(--border-focus);
-  transform: translateY(-1px);
+  border-color: rgba(255,255,255,0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.1), 0 0 12px var(--silver-glow);
 }
 
 .btn svg { width: 14px; height: 14px; stroke-width: 2.5; }
 
 /* ── RESULTS ARCHITECTURE ── */
 .result-vault {
-  margin-top: 30px;
+  margin-top: 32px;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 20px;
   overflow: hidden;
   display: none;
-  animation: dynamicFade 0.4s ease both;
+  box-shadow: 0 30px 70px rgba(0,0,0,0.95);
+  animation: fadeUpPremium 0.6s var(--ease-premium) both;
 }
 
 .result-header {
@@ -255,7 +304,7 @@ textarea::placeholder { color: #333338; }
   justify-content: space-between;
   padding: 18px 24px;
   border-bottom: 1px solid var(--border);
-  background: rgba(12, 12, 13, 0.5);
+  background: var(--surface-cards);
 }
 
 .status-container {
@@ -273,6 +322,7 @@ textarea::placeholder { color: #333338; }
   height: 6px;
   border-radius: 50%;
   background: #ffffff;
+  box-shadow: 0 0 8px #ffffff;
 }
 
 .script-id {
@@ -307,39 +357,40 @@ textarea::placeholder { color: #333338; }
   color: #a1a1aa;
   padding: 18px;
   word-break: break-all;
-  line-height: 1.6;
+  line-height: 1.65;
 }
 
 .btn-copy-inline {
   width: 100%;
-  background: var(--surface-cards);
+  background: var(--silver-dark);
   border: none;
   border-top: 1px solid var(--border);
-  color: var(--muted);
+  color: #a1a1aa;
   padding: 14px;
   font-family: 'Space Grotesk', sans-serif;
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.4s var(--ease-premium);
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
 }
 
-.btn-copy-inline:hover { background: #121214; color: var(--text); }
+.btn-copy-inline:hover { background: #131418; border-top-color: rgba(255,255,255,0.15); color: var(--text); }
 
 .viewer-trigger {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  margin-top: 6px;
+  margin-top: 10px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
   color: var(--muted);
   text-decoration: none;
-  transition: color 0.2s;
+  transition: color 0.3s var(--ease-premium);
 }
 .viewer-trigger:hover { color: var(--text); }
 
@@ -354,19 +405,20 @@ textarea::placeholder { color: #333338; }
   font-family: 'Space Grotesk', sans-serif;
   font-size: 12px;
   font-weight: 700;
-  padding: 14px 28px;
+  padding: 12px 26px;
   border-radius: 10px;
   pointer-events: none;
   opacity: 0;
-  transition: all 0.4s cubic-bezier(.16,1,.3,1);
+  transition: all 0.5s var(--ease-premium);
   z-index: 1000;
   letter-spacing: 0.02em;
+  box-shadow: 0 25px 50px rgba(0,0,0,0.85);
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-@keyframes dynamicFade {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+@keyframes fadeUpPremium {
+  from { opacity: 0; transform: translateY(20px); filter: blur(4px); }
+  to { opacity: 1; transform: translateY(0); filter: blur(0); }
 }
 
 footer {
@@ -374,7 +426,7 @@ footer {
   text-align: center;
   font-family: 'JetBrains Mono', monospace;
   font-size: 10px;
-  color: #333336;
+  color: #1c1c21;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -385,7 +437,7 @@ footer {
 <div class="container">
   <header>
     <div class="logo-container">
-      <div class="logo-badge">⚡</div>
+      <div class="logo-badge"><span class="logo-badge-inner">⚡</span></div>
       <div class="logo-text">CODE<span>VAULT</span></div>
     </div>
     <div class="tagline">// SECURE SPECIFICATION ENVIRONMENT</div>
@@ -401,13 +453,13 @@ footer {
         </div>
         <span class="lang-badge">LUA</span>
       </div>
-      <span class="line-count" id="lineCount">0 lines</span>
+      <span class="line-count" id="lineCount">1 line</span>
     </div>
 
     <textarea id="code" placeholder="-- Paste or write your thread here..." spellcheck="false"></textarea>
 
     <div class="actions-panel">
-      <button class="btn btn-primary" id="btnSaveScript" onclick="saveScript()">
+      <button class="btn btn-silver-action" id="btnSaveScript" onclick="saveScript()">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17,21 17,13 7,13 7,21"/><polyline points="7,3 7,8 15,8"/></svg>
         Save Script
       </button>
@@ -637,7 +689,7 @@ function copyCode() {
 
 function clearEditor() {
   codeEl.value = '';
-  document.getElementById('lineCount').textContent = '0 lines';
+  document.getElementById('lineCount').textContent = '1 line';
   document.getElementById('result').style.display = 'none';
   showToast('Workspace reset');
 }
