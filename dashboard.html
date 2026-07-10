@@ -2,451 +2,651 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>CodeVault — Premium Executive Dashboard</title>
-<!-- Font ultra premium de alta definición y legibilidad perfecta -->
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=300;400;500;600;700;800&family=Space+Grotesk:wght=400;500;600;700&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CodeVault — Ultra Executive Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght=300;400;500;600;700&family=Geist:wght=300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
   --bg: #000000;
-  --surface: #050506;
-  --surface2: #0b0b0d;
-  --surface3: #111114;
-  --border: #131317;
-  --border2: #22222a;
+  --surface: #060607;
+  --surface2: #0c0c0e;
+  --border: #141416;
+  --border2: #222225;
   --text: #ffffff;
-  --muted: #4e4e59;
-  --accent-dim: #92929a;
-  --danger-bg: #0f0a0a;
-  --danger-border: #2c1616;
-  --danger-text: #ff4a4a;
-  --discord-blue: #5865F2;
-  --discord-hover: #4752c4;
-  --ease-premium: cubic-bezier(.15, .85, .2, 1);
-  --silver-glow: 0 0 25px rgba(255,255,255,0.08);
+  --muted: #4a4a52;
+  --accent-dim: #8e8e93;
+  --danger-bg: #0f0f11;
+  --ease-premium: cubic-bezier(.16, 1, .3, 1);
+  --silver-glow: 0 0 25px rgba(255,255,255,0.15);
 }
 
-* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+* { margin:0; padding:0; box-sizing:border-box; }
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Geist', sans-serif;
   min-height: 100vh;
   overflow-x: hidden;
   position: relative;
-  padding-bottom: 92px; /* Espacio exacto para el navbar inferior fluido */
+  padding-bottom: 90px; /* Espacio para la barra de navegación flotante inferior */
 }
 
-/* Lienzo de micro-partículas cinéticas */
 #canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
 body::before {
   content:''; position:fixed; inset:0; z-index:1; pointer-events:none;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.02'/%3E%3C/svg%3E");
-  background-size: 180px; opacity: 0.35;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.015'/%3E%3C/svg%3E");
+  background-size: 200px; opacity: 0.3;
 }
 
-.container { position: relative; z-index: 2; max-width: 1200px; margin: 0 auto; padding: 20px 16px; }
+.container { position: relative; z-index: 2; max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
 
-/* HEADER PREMIUM ESTILO JNKIE - DEEP BLACK ABSOLUTO */
+/* HEADER PREMIUM */
 header {
   display: flex; justify-content: space-between; align-items: center;
-  margin-bottom: 24px; animation: initFade 0.8s var(--ease-premium) both;
-  background: rgba(5, 5, 6, 0.82); padding: 12px 18px; border-radius: 16px;
-  border: 1px solid var(--border); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); gap: 12px;
+  margin-bottom: 24px; animation: initialFadeUp 0.8s var(--ease-premium) both;
+  background: rgba(6, 6, 7, 0.75); padding: 14px 20px; border-radius: 14px;
+  border: 1px solid var(--border); backdrop-filter: blur(16px); gap: 12px;
 }
-.logo-wrap { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text); }
-.logo-icon {
-  width: 36px; height: 36px; background: var(--surface2); border: 1px solid var(--border2);
-  border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 14px; color: var(--text);
-  transition: all 0.5s var(--ease-premium); box-shadow: var(--silver-glow);
-}
-.logo-wrap:hover .logo-icon { transform: rotate(180deg) scale(1.05); border-color: var(--text); }
+.logo-wrap { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--text); }
 
-/* Efecto Plateado Cromado Líquido */
+/* IMAGEN DE LOGO CONFIGURABLE */
+.logo-img {
+  width: 36px; height: 36px; object-fit: contain;
+  filter: drop-shadow(0 0 8px rgba(255,255,255,0.4));
+  transition: transform 0.4s var(--ease-premium);
+}
+.logo-wrap:hover .logo-img { transform: scale(1.1) rotate(5deg); }
+
 .logo {
-  font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700; letter-spacing: -0.8px;
-  background: linear-gradient(75deg, #444 0%, #fff 40%, #fff 60%, #444 100%);
+  font-family: 'Geist Mono', monospace; font-size: 21px; font-weight: 700; letter-spacing: -1.2px;
+  background: linear-gradient(75deg, #444 0%, #fff 45%, #fff 55%, #444 100%);
   background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  animation: shineSilver 4s linear infinite;
+  animation: silverShine 4.5s linear infinite;
+  text-shadow: 0 0 12px rgba(255,255,255,0.05);
 }
 
-/* BARRA DE BÚSQUEDA INTEGRADA */
-.search-box-container { position: relative; flex: 1; max-width: 320px; }
+/* BARRA DE BÚSQUEDA */
+.search-box-container { position: relative; flex: 1; max-width: 280px; }
 .search-box-container input {
-  width: 100%; background: var(--surface2); border: 1px solid var(--border); padding: 11px 14px 11px 38px;
-  border-radius: 10px; color: #fff; font-size: 13.5px; font-family: 'Plus Jakarta Sans'; transition: all 0.3s var(--ease-premium);
+  width: 100%; background: var(--surface2); border: 1px solid var(--border); padding: 10px 12px 10px 36px;
+  border-radius: 8px; color: #fff; font-size: 13px; font-family: 'Geist'; transition: all 0.3s var(--ease-premium);
 }
-.search-box-container input:focus { border-color: var(--text); outline: none; background: #0f0f12; box-shadow: 0 0 0 1px var(--text); }
-.search-box-container::before { content: '🔍'; position: absolute; left: 14px; top: 12px; font-size: 11px; opacity: 0.3; }
+.search-box-container input:focus { border-color: var(--text); outline: none; background: #101012; box-shadow: 0 0 0 1px var(--text), var(--silver-glow); }
+.search-box-container::before { content: '🔍'; position: absolute; left: 12px; top: 11px; font-size: 11px; opacity: 0.25; }
 
-/* ENGRANAJE POLIGONAL TEXTURIZADO EN PLATA EN REEMPLAZO DEL MENÚ ANTERIOR */
-.settings-nav-btn {
-  background: var(--surface2); border: 1px solid var(--border); color: var(--text);
-  width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-  font-size: 16px; cursor: pointer; transition: all 0.4s var(--ease-premium);
+.header-right { display: flex; gap: 14px; align-items: center; }
+
+.user-avatar-btn {
+  width: 36px; height: 36px; border-radius: 50%; object-fit: cover;
+  background: var(--surface2); border: 1px solid var(--border); cursor: pointer;
+  transition: all 0.3s var(--ease-premium);
 }
-.settings-nav-btn:hover { border-color: var(--text); transform: rotate(45deg) scale(1.04); box-shadow: var(--silver-glow); }
+.user-avatar-btn:hover { border-color: var(--text); transform: scale(1.04); box-shadow: var(--silver-glow); }
 
-/* GRID PRINCIPAL */
-.dashboard-layout { display: grid; grid-template-columns: 280px 1fr; gap: 24px; animation: initFade 0.9s 0.05s var(--ease-premium) both; }
+/* ICONO DE AJUSTES EN VEZ DE TRES RAYAS (Efecto Platino Líquido) */
+.menu-trigger-btn {
+  background: transparent; border: none; color: var(--text); font-size: 20px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; width: 36px; height: 36px;
+  border-radius: 50%; border: 1px solid var(--border); background: var(--surface2);
+  transition: all 0.3s var(--ease-premium);
+}
+.menu-trigger-btn:hover { border-color: var(--text); background: #ffffff; color: #000000; box-shadow: var(--silver-glow); transform: rotate(45deg); }
 
-/* SIDEBAR - CARPETAS */
-.sidebar { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 20px; display: flex; flex-direction: column; gap: 16px; height: max-content; }
-.sidebar h3 { font-family: 'Space Grotesk', sans-serif; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.12em; font-weight: 600; }
-.folder-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+/* LAYOUT GENERAL DE LAS SECCIONES */
+.dashboard-layout { display: grid; grid-template-columns: 290px 1fr; gap: 24px; animation: initialFadeUp 0.9s 0.05s var(--ease-premium) both; }
+.dashboard-section { display: none; }
+.dashboard-section.active-section { display: block; }
 
-/* RENDER DE CARPETAS DE ALTA RESPUESTA TÁCTIL */
+/* SECCIÓN LATERAL DE CARPETAS */
+.sidebar { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 20px; box-shadow: 0 20px 45px rgba(0,0,0,0.5); height: max-content; }
+.sidebar h3 { font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.15em; font-weight: 600; margin-bottom: 2px; }
+.folder-list { list-style: none; display: flex; flex-direction: column; gap: 4px; }
+
 .folder-item {
-  position: relative; padding: 12px 14px; background: transparent; border-radius: 10px; 
+  position: relative; padding: 12px 14px 12px 18px; background: transparent; border-radius: 8px; 
   cursor: pointer; display: flex; justify-content: space-between; align-items: center; 
-  font-size: 14px; transition: all 0.2s var(--ease-premium);
+  font-size: 13.5px; transition: all 0.25s var(--ease-premium);
 }
 .folder-item::before {
-  content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%) scaleY(0.3);
-  width: 2.5px; height: 16px; background: var(--text); opacity: 0; transition: all 0.25s var(--ease-premium);
+  content: ''; position: absolute; left: 4px; top: 50%; transform: translateY(-50%) scaleY(0.3);
+  width: 2px; height: 14px; background: var(--text); opacity: 0; transition: all 0.3s var(--ease-premium);
 }
 .folder-item:hover { background: var(--surface2); }
 .folder-item:hover span { color: var(--text); }
-.folder-item.active { background: var(--surface2); }
-.folder-item.active::before { opacity: 1; transform: translateY(-50%) scaleY(1); }
-.folder-item span { display: flex; align-items: center; gap: 10px; width: 100%; user-select: none; color: var(--accent-dim); transition: color 0.2s var(--ease-premium); font-weight: 500; }
-.folder-item.active span { color: var(--text); font-weight: 600; }
+.folder-item.active { background: #0c0c0e; border: 1px solid rgba(255,255,255,0.05); }
+.folder-item.active::before { opacity: 1; transform: translateY(-50%) scaleY(1); box-shadow: 0 0 8px #fff; }
+.folder-item span { display: flex; align-items: center; gap: 10px; width: 100%; user-select: none; color: var(--accent-dim); transition: color 0.25s var(--ease-premium); }
+.folder-item.active span { color: var(--text); font-weight: 500; }
 
-.delete-btn { background: transparent; color: var(--muted); border: none; cursor: pointer; font-size: 11px; padding: 6px 8px; border-radius: 6px; transition: all 0.2s; opacity: 0; }
+.delete-btn { background: transparent; color: var(--muted); border: none; cursor: pointer; font-size: 12px; padding: 6px 10px; border-radius: 6px; transition: all 0.2s; opacity: 0; }
 .folder-item:hover .delete-btn { opacity: 1; }
-.delete-btn:hover { color: var(--danger-text); background: var(--danger-bg); }
+.delete-btn:hover { color: var(--text); background: var(--danger-bg); }
 
-/* CONTENEDOR PRINCIPAL */
-.main-content { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 24px; min-height: 480px; }
-.content-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; border-bottom: 1px solid var(--border); padding-bottom: 16px; }
-.script-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+/* CONTENEDOR PRINCIPAL CONTENIDO */
+.main-content { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 24px; min-height: 465px; box-shadow: 0 20px 45px rgba(0,0,0,0.5); }
+.content-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; border-bottom: 1px solid var(--border); padding-bottom: 16px; gap: 10px; }
+.script-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 16px; }
+.script-grid.animate-in { animation: contentStaggerIn 0.5s var(--ease-premium) both; }
 
-/* ANIMACIÓN ACELERADA DE ENTRADA INTERNA */
-.script-grid.animate-in { animation: staggerIn 0.4s var(--ease-premium) both; }
-
-/* SECCIÓN LOCK DE DISCORD INTEGRADO (SISTEMA JNKIE) */
-.discord-gate-panel {
-  background: var(--surface2); border: 1px solid var(--border2); border-radius: 16px; padding: 24px;
-  margin-bottom: 24px; display: flex; flex-direction: column; gap: 16px; box-shadow: var(--silver-glow);
+/* SECCIÓN INICIO HOME */
+.home-welcome-box {
+  background: radial-gradient(circle at top left, #0c0c0e 0%, #060607 100%);
+  border: 1px solid var(--border); border-radius: 16px; padding: 40px; text-align: center;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.8); animation: contentStaggerIn 0.6s var(--ease-premium) both;
 }
-.gate-header { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 16px; font-family: 'Space Grotesk', sans-serif; }
-.gate-body { font-size: 13.5px; color: var(--accent-dim); line-height: 1.6; }
-.gate-steps { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 6px; }
-.gate-card { background: var(--surface3); border: 1px solid var(--border); padding: 16px; border-radius: 12px; position: relative; }
-.step-index { font-family: 'Space Grotesk'; font-size: 11px; background: var(--border2); color: var(--text); padding: 2px 8px; border-radius: 6px; position: absolute; top: 16px; right: 16px; font-weight: 700; }
-.step-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
-.step-desc { font-size: 12.5px; color: var(--muted); margin-bottom: 12px; }
+.home-welcome-box h2 { font-family: 'Geist Mono'; font-weight: 700; font-size: 28px; letter-spacing: -1px; margin-bottom: 12px; background: linear-gradient(to right, #fff, #666); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.home-welcome-box p { color: var(--accent-dim); font-size: 14px; max-width: 500px; margin: 0 auto 32px auto; line-height: 1.6; }
 
-/* CARDS DE COPIADO / CONTROL DE SCRIPTS */
+/* BADGE ULTRA PREMIUM BETA */
+.premium-beta-badge {
+  display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border2); padding: 6px 14px; border-radius: 20px; font-family: 'Geist Mono';
+  font-size: 11px; color: #fff; font-weight: 600; margin-bottom: 24px; letter-spacing: 0.05em;
+  text-shadow: 0 0 10px rgba(255,255,255,0.2); animation: pulseGlow 3s infinite alternate;
+}
+
+/* SISTEMA OBLIGATORIO DE DISCORD */
+.discord-gate-container {
+  max-width: 440px; margin: 0 auto; background: #000; border: 1px solid var(--border2);
+  border-radius: 12px; padding: 24px; display: flex; flex-direction: column; align-items: center; gap: 16px;
+}
+.discord-gate-title { font-family: 'Geist Mono'; font-size: 13px; color: #fff; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; }
+.discord-gate-desc { font-size: 12px; color: var(--muted); text-align: center; line-height: 1.5; }
+
+/* NAV FLOTANTE INFERIOR CON ANIMACIONES METÁLICAS */
+.bottom-nav-bar {
+  position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px);
+  background: rgba(6, 6, 7, 0.85); border: 1px solid var(--border);
+  backdrop-filter: blur(24px); padding: 8px; border-radius: 20px;
+  display: flex; gap: 6px; z-index: 999; box-shadow: 0 30px 60px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.05);
+  animation: slideInNav 0.8s 0.2s var(--ease-premium) both;
+}
+.nav-tab-btn {
+  background: transparent; border: none; color: var(--accent-dim); padding: 12px 24px;
+  font-family: 'Geist', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer;
+  border-radius: 14px; display: flex; align-items: center; gap: 10px; transition: all 0.3s var(--ease-premium);
+  position: relative;
+}
+.nav-tab-btn:hover { color: var(--text); background: rgba(255,255,255,0.02); }
+.nav-tab-btn.active-tab {
+  color: #000000; background: #ffffff; font-weight: 700;
+  box-shadow: 0 10px 25px rgba(255,255,255,0.2), var(--silver-glow);
+}
+
+/* CARDS DE SCRIPTS */
 .script-card {
-  background: var(--surface2); border: 1px solid var(--border); border-radius: 14px;
-  padding: 20px; display: flex; flex-direction: column; justify-content: space-between; min-height: 165px; transition: all 0.3s var(--ease-premium);
+  background: var(--surface2); border: 1px solid var(--border); border-radius: 12px;
+  padding: 20px; display: flex; flex-direction: column; justify-content: space-between; min-height: 160px; transition: all 0.3s var(--ease-premium);
 }
-.script-card:hover { border-color: var(--text); transform: translateY(-3px); box-shadow: 0 12px 30px rgba(0,0,0,0.6); }
-.script-card h4 { font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; }
-.script-card p { font-size: 11.5px; color: var(--muted); margin-top: 4px; font-family: monospace; letter-spacing: 0.5px; }
-.card-actions { display: flex; gap: 8px; margin-top: 20px; }
+.script-card:hover { border-color: var(--text); transform: translateY(-4px); box-shadow: 0 16px 36px rgba(0,0,0,0.7), var(--silver-glow); }
+.script-card h4 { font-family: 'Geist Mono', monospace; font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; }
+.script-card p { font-family: 'Geist Mono', monospace; color: var(--muted); font-size: 11px; margin-top: 4px; }
+.card-actions { display: flex; gap: 8px; margin-top: 16px; }
 
-/* BOTONERÍA MAESTRA */
-.btn {
-  display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: none; border-radius: 10px;
-  padding: 12px 18px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.25s var(--ease-premium);
-  position: relative; overflow: hidden;
+/* PANELS INTERNOS / MENU AJUSTES Y CUENTAS */
+.hamburger-sidebar {
+  position: fixed; top: 0; right: -340px; width: 320px; height: 100vh;
+  background: #040405; border-left: 1px solid var(--border); z-index: 1000;
+  padding: 32px 24px; display: flex; flex-direction: column;
+  transition: transform 0.45s cubic-bezier(.16, 1, .3, 1); box-shadow: -30px 0 60px rgba(0,0,0,0.9);
 }
+.hamburger-sidebar.open { transform: translateX(-340px); }
+.menu-top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; }
+.menu-top-title { font-family: 'Geist Mono'; font-size: 11px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; }
+
+.close-menu-btn {
+  width: 36px; height: 36px; background: var(--surface2); border: 1px solid var(--border);
+  color: var(--text); font-size: 13px; border-radius: 50%; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; transition: all 0.25s var(--ease-premium);
+}
+.close-menu-btn:hover { border-color: var(--text); transform: scale(1.05); background: #fff; color: #00; }
+
+.menu-links-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+.menu-link-item {
+  width: 100%; text-align: left; background: var(--surface); border: 1px solid var(--border); color: var(--text);
+  padding: 14px 16px; font-family: 'Geist', sans-serif; font-size: 14px; font-weight: 500;
+  cursor: pointer; border-radius: 10px; display: flex; align-items: center; gap: 12px; transition: all 0.3s var(--ease-premium);
+}
+.menu-link-item:hover { background: var(--surface2); border-color: var(--text); transform: translateX(4px); box-shadow: var(--silver-glow); }
+
+/* SECCIÓN MÓDULO DE IDIOMAS */
+.lang-section { border-top: 1px solid var(--border); padding-top: 20px; margin-top: 10px; margin-bottom: 20px; display: flex; flex-direction: column; gap: 10px; }
+.lang-section h3 { font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.15em; }
+.lang-switch-container { display: grid; grid-template-columns: 1fr 1fr; background: var(--surface2); padding: 4px; border-radius: 10px; border: 1px solid var(--border); }
+.lang-btn { background: transparent; border: none; color: var(--muted); padding: 10px; font-family: 'Geist Mono', monospace; font-size: 12px; font-weight: 600; cursor: pointer; border-radius: 7px; transition: all 0.25s var(--ease-premium); }
+.lang-btn.active-lang { background: var(--surface); color: var(--text); border: 1px solid var(--border); box-shadow: 0 4px 14px rgba(0,0,0,0.6); }
+
+/* ACORDEÓN DE CUENTAS VINCULADAS */
+.account-section { display: flex; flex-direction: column; gap: 6px; }
+.account-toggle-hdr { display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 6px 0; user-select: none; }
+.account-toggle-hdr h3 { font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.15em; }
+.account-chevron { font-size: 10px; color: var(--muted); transition: transform 0.3s var(--ease-premium); }
+.account-toggle-hdr:hover h3, .account-toggle-hdr:hover .account-chevron { color: var(--text); }
+.account-collapse-wrapper { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.35s var(--ease-premium); overflow: hidden; }
+.account-collapse-wrapper.expanded { grid-template-rows: 1fr; }
+.account-collapse-inner { min-height: 0; display: flex; flex-direction: column; gap: 6px; padding: 4px 0; }
+#accountProfilesList { display: flex; flex-direction: column; gap: 6px; max-height: 160px; overflow-y: auto; padding-right: 2px; }
+.account-item-btn { width: 100%; text-align: left; background: transparent; border: 1px solid transparent; color: var(--accent-dim); font-family: 'Geist', sans-serif; font-size: 13px; padding: 12px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: all 0.2s; }
+.account-item-btn:hover { background: var(--surface2); color: var(--text); }
+.account-item-btn.active-acc { border-color: var(--border2); background: rgba(255,255,255,0.02); color: #fff; font-weight: 600; }
+.account-badge-current { font-size: 9px; background: var(--text); color: #000; padding: 3px 6px; border-radius: 4px; font-weight: bold; margin-left: auto; font-family: 'Geist Mono'; }
+
+/* MODAL LOADER */
+.loader-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.97); backdrop-filter: blur(20px); z-index: 9999; display: none; align-items: center; justify-content: center; flex-direction: column; gap: 20px; }
+.cyber-spinner { width: 38px; height: 38px; border: 2px solid var(--border); border-top-color: var(--text); border-radius: 50%; animation: spin 0.65s linear infinite; }
+.loader-text { font-family: 'Geist Mono', monospace; font-size: 12px; color: var(--accent-dim); letter-spacing: 0.05em; }
+
+/* BOTONES */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: none; border-radius: 8px; padding: 12px 18px; font-family: 'Geist', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s var(--ease-premium); }
 .btn-primary { background: var(--text); color: #000000; }
-.btn-primary:hover { background: #e6e6ea; transform: translateY(-1px); }
-
-/* Destello de Reflejo de Plata */
-.btn-primary::after, .btn-discord-action::after {
-  content: ''; position: absolute; top: 0; left: -150%; width: 60%; height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
-  transform: skewX(-25deg); animation: flash 5s infinite linear;
-}
-@keyframes flash { 0% { left: -150%; } 25% { left: 150%; } 100% { left: 150%; } }
-
-.btn-discord-action { background: var(--discord-blue); color: white; width: 100%; }
-.btn-discord-action:hover { background: var(--discord-hover); transform: translateY(-1px); }
-.btn-discord-success { background: #1e703c; color: white; width: 100%; }
-
+.btn-primary:hover { background: #e1e1e6; transform: translateY(-1px); box-shadow: 0 12px 24px rgba(255,255,255,0.15), var(--silver-glow); }
 .btn-ghost { background: transparent; color: var(--accent-dim); border: 1px solid var(--border); }
 .btn-ghost:hover { color: var(--text); border-color: var(--text); background: rgba(255,255,255,0.01); }
+.btn-discord { background: #5865F2; color: #fff; }
+.btn-discord:hover { background: #4752C4; transform: translateY(-1px); box-shadow: 0 12px 24px rgba(88,101,242,0.3); }
+.btn-verify { background: #ffffff; color: #000000; border: 1px solid #ffffff; }
+.btn-verify:hover { background: transparent; color: #ffffff; box-shadow: var(--silver-glow); }
 .btn-danger { background: transparent; color: var(--muted); border: 1px solid var(--border); }
-.btn-danger:hover { color: var(--danger-text); border-color: var(--danger-border); background: var(--danger-bg); }
+.btn-danger:hover { color: var(--text); border-color: var(--text); background: var(--danger-bg); }
 
-/* VISTAS DE PANELES MODULARES */
-.view-panel { display: none; }
-.view-panel.active-panel { display: block; }
-
-/* BARRA DE NAVEGACIÓN INFERIOR FLUIDA (TIPO APLICACIÓN MÓVIL PREMIUM) */
-.bottom-nav-bar {
-  position: fixed; bottom: 0; left: 0; right: 0; height: 72px;
-  background: rgba(4, 4, 5, 0.88); border-top: 1px solid var(--border);
-  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); z-index: 999; display: flex; justify-content: space-around; align-items: center;
-  padding: 0 12px; box-shadow: 0 -12px 40px rgba(0,0,0,0.8);
-}
-.nav-tab-item {
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  color: var(--muted); background: transparent; border: none; cursor: pointer;
-  font-family: 'Plus Jakarta Sans', sans-serif; font-size: 11px; font-weight: 500; gap: 4px;
-  width: 80px; height: 100%; transition: all 0.25s var(--ease-premium); position: relative;
-}
-.nav-tab-item svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform 0.25s var(--ease-premium); }
-
-/* Estado Activo Fluido Líquido */
-.nav-tab-item.active-tab { color: var(--text); font-weight: 700; }
-.nav-tab-item.active-tab svg { transform: translateY(-3px); stroke: var(--text); }
-.nav-tab-item::after {
-  content: ''; position: absolute; bottom: 12px; width: 4px; height: 4px;
-  background: var(--text); border-radius: 50%; opacity: 0; transform: scale(0);
-  transition: all 0.25s var(--ease-premium); box-shadow: 0 0 10px #ffffff;
-}
-.nav-tab-item.active-tab::after { opacity: 1; transform: scale(1); }
-
-/* TOAST INMERSIVO */
-.toast {
-  position: fixed; bottom: 88px; left: 50%; transform: translateX(-50%) translateY(20px);
-  background: var(--text); color: #000000; font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 13px; font-weight: 700; padding: 12px 24px; border-radius: 10px;
-  pointer-events: none; opacity: 0; transition: all 0.3s var(--ease-premium); z-index: 1000; box-shadow: 0 15px 35px rgba(0,0,0,0.5);
-}
+.toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%) translateY(30px); background: var(--text); color: #000000; font-family: 'Geist', sans-serif; font-size: 13px; font-weight: 600; padding: 12px 22px; border-radius: 8px; pointer-events: none; opacity: 0; transition: all 0.35s var(--ease-premium); z-index: 1000; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
 .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
-
-/* MINI MINI CARD PERFIL */
-.profile-card-center {
-  background: var(--surface); border: 1px solid var(--border); padding: 32px 24px; border-radius: 20px;
-  display: flex; flex-direction: column; gap: 20px; align-items: center; text-align: center; max-width: 400px; margin: 40px auto;
-}
-.profile-avatar-frame { width: 90px; height: 90px; border-radius: 50%; object-fit: cover; border: 2px solid var(--border2); padding: 4px; background: var(--bg); }
 
 @media (max-width: 768px) {
   .container { padding: 16px 12px; }
-  header { padding: 10px 14px; margin-bottom: 16px; }
-  .logo { font-size: 20px; }
-  .search-box-container { max-width: 160px; }
-  .dashboard-layout { grid-template-columns: 1fr; gap: 16px; }
-  .sidebar { display: none; } /* En móvil las carpetas corren directo automatizadas bajo barra nativa */
-  .main-content { padding: 18px; min-height: 360px; }
+  header { padding: 12px 14px; margin-bottom: 20px; }
+  .logo { font-size: 19px; }
+  .search-box-container { max-width: 140px; }
+  .search-box-container input { padding: 8px 10px 8px 28px; font-size: 12px; }
+  .search-box-container::before { left: 10px; top: 9px; font-size: 10px; }
+  
+  .dashboard-layout { grid-template-columns: 1fr; gap: 20px; }
+  .sidebar { padding: 18px; gap: 14px; }
+  .main-content { padding: 20px; min-height: 380px; }
+  .folder-item { padding: 12px 12px 12px 16px; }
+  .delete-btn { opacity: 1; }
+  .bottom-nav-bar { width: calc(100% - 32px); justify-content: space-around; padding: 6px; }
+  .nav-tab-btn { padding: 10px 14px; font-size: 12px; gap: 6px; }
 }
 
-@keyframes initFade { from { opacity:0; transform: translateY(15px); filter: blur(4px); } to { opacity:1; transform: translateY(0); filter: blur(0); } }
-@keyframes staggerIn { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
-@keyframes shineSilver { 0% { background-position: -100% 0; } 100% { background-position: 100% 0; } }
+/* KEYFRAMES */
+@keyframes initialFadeUp { from { opacity:0; transform: translateY(20px); filter: blur(6px); } to { opacity:1; transform: translateY(0); filter: blur(0); } }
+@keyframes contentStaggerIn { from { opacity:0; transform: translateY(14px); filter: blur(3px); } to { opacity:1; transform: translateY(0); filter: blur(0); } }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes silverShine { 0% { background-position: -100% 0; } 100% { background-position: 100% 0; } }
+@keyframes slideInNav { from { transform: translateX(-50%) translateY(100px); opacity: 0; } to { transform: translateX(-50%) translateY(0); opacity: 1; } }
+@keyframes pulseGlow { from { box-shadow: 0 0 10px rgba(255,255,255,0.02); border-color: var(--border2); } to { box-shadow: 0 0 20px rgba(255,255,255,0.1); border-color: #444; } }
 </style>
 </head>
 <body>
 
 <canvas id="canvas"></canvas>
 
+<!-- LOADER OVERLAY -->
+<div id="loaderOverlay" class="loader-overlay">
+  <div class="cyber-spinner"></div>
+  <div id="loaderText" class="loader-text">> DECRYPTING VAULT INSTANCE...</div>
+</div>
+
 <div class="container">
   <header>
     <a class="logo-wrap" href="#">
-      <div class="logo-icon">⬡</div>
+      <!-- Espacio listo para colocar tu imagen jnkie.png o similar cambiando el src -->
+      <img class="logo-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ffffff'%3E%3Cpath d='M12 2L2 22h20L12 2zm0 3.99L19.53 19H4.47L12 5.99z'/%3E%3C/svg%3E" alt="Logo">
       <div class="logo">CodeVault</div>
     </a>
     
     <div class="search-box-container">
-      <input type="text" id="dashboardSearch" placeholder="Buscar scripts..." oninput="renderScripts()">
+      <input type="text" id="dashboardSearch" placeholder="Search..." oninput="renderScripts()">
     </div>
     
     <div class="header-right">
-      <!-- Engranaje plateado que salta directo al ecosistema externo de ajustes -->
-      <button class="settings-nav-btn" title="Configuración Global" onclick="window.location.href='ajustes.html'">⚙️</button>
+      <img id="headerUserAvatar" class="user-avatar-btn" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%234a4a52'%3E%3Cpath d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/%3E%3C/svg%3E" alt="Avatar" onclick="toggleHamburgerMenu(true)">
+      <!-- Nuevo botón de engranaje líquido ultra responsivo en vez de las 3 líneas -->
+      <button class="menu-trigger-btn" onclick="toggleHamburgerMenu(true)">⚙️</button>
     </div>
   </header>
 
-  <!-- CONTROL DE FLUJO DE PANELES ACTIVOS -->
-  
-  <!-- PANEL DE INICIO: VERIFICACIÓN INICIAL (ESTILO JNKIE) -->
-  <div id="panelInicio" class="view-panel view-panel.active-panel">
-    <div class="main-content" style="min-height: auto; margin-bottom: 24px;">
-      <h2 style="font-family:'Space Grotesk'; font-size: 22px; font-weight: 700; margin-bottom: 6px;">Pipeline de Desarrollo</h2>
-      <p style="color: var(--accent-dim); font-size: 14px; margin-bottom: 24px;">Valida tu instancia para habilitar la inyección remota y creación de scripts.</p>
+  <!-- SECCIÓN 1: INICIO (HOME) -->
+  <div id="sectionHome" class="dashboard-section active-section">
+    <div class="home-welcome-box">
+      <div class="premium-beta-badge">✦ PREMIUM BETA COMING SOON</div>
+      <h2>Welcome to CodeVault core</h2>
+      <p>Secure encryption backend, dynamic modification layouts, and script integrity cloud vault management tool.</p>
       
-      <div class="discord-gate-panel">
-        <div class="gate-header">🛡️ Verificación de Rol del Servidor Requerida</div>
-        <div class="gate-body">Para proteger la infraestructura de falsificaciones externas de scripts, es mandatorio confirmar tu enlace con la comunidad de soporte oficial.</div>
-        
-        <div class="gate-steps">
-          <div class="gate-card">
-            <span class="step-index">01</span>
-            <div class="step-title">Vincular Servidor</div>
-            <div class="step-desc">Establece la conexión de pasarela con el canal oficial de NexMods.</div>
-            <button class="btn btn-discord-action" onclick="joinDiscordServer()">Unirse a la Comunidad</button>
-          </div>
-          
-          <div class="gate-card">
-            <span class="step-index">02</span>
-            <div class="step-title">Validar Token de Acceso</div>
-            <div class="step-desc">Refresca el estado para leer tus credenciales y desbloquear los repositorios.</div>
-            <button class="btn btn-discord-success" onclick="verifyDiscordStatus()">✓ Comprobar Sincronización</button>
-          </div>
+      <!-- CONTENEDOR FILTRO DE COMUNIDAD DE DISCORD -->
+      <div id="discordGate" class="discord-gate-container">
+        <div class="discord-gate-title">🔑 Community Access Verification</div>
+        <div class="discord-gate-desc">You must join our official Discord server to unlock your terminal development functions and scripts manager.</div>
+        <div style="display: flex; gap: 10px; width: 100%;">
+          <button class="btn btn-discord" style="flex: 1;" onclick="openDiscordCommunity()">Join Discord</button>
+          <button class="btn btn-verify" style="flex: 1;" onclick="verifyDiscordStatus()">Verify Join</button>
         </div>
       </div>
 
-      <button id="gateMasterCreateBtn" class="btn btn-primary" style="opacity: 0.3; cursor: not-allowed; width: 100%; padding: 14px; font-size:14px;" onclick="switchPanel('scripts')">
-        🔒 Acceder a Mis Scripts (Bloqueado)
+      <!-- BOTÓN DE ACCIÓN FLUIDO (SE ACTIVA TRAS DISCORD) -->
+      <button id="homeCreateScriptBtn" class="btn btn-primary" style="display: none; padding: 16px 32px; font-size: 14px;" onclick="switchTab('scripts')">
+        🚀 Go to My Scripts Workspace
       </button>
     </div>
   </div>
 
-  <!-- PANEL DE REPOSITORIO DE SCRIPTS (DASHBOARD REDISEÑADO) -->
-  <div id="panelScripts" class="view-panel">
+  <!-- SECCIÓN 2: MIS SCRIPTS (WORKSPACE ORIGINAL PRESERVADO AL TOPE) -->
+  <div id="sectionScripts" class="dashboard-section">
     <div class="dashboard-layout">
       <div class="sidebar">
-        <h3>📂 Repositorios</h3>
+        <h3 id="lblFolders">📂 Folders</h3>
         <ul id="folderList" class="folder-list"></ul>
-        <button class="btn btn-ghost" style="width: 100%; margin-top: 6px; font-size: 12px;" onclick="createNewFolder()">+ Nueva Carpeta</button>
+        <button id="btnNewFolder" class="btn btn-ghost" style="width: 100%;" onclick="createNewFolder()">+ New Folder</button>
       </div>
 
       <div class="main-content">
         <div class="content-header">
-          <h3 id="currentFolderName" style="font-family:'Space Grotesk'; font-size:14px; color:var(--accent-dim); font-weight:500;">Selecciona una carpeta del sistema</h3>
-          <button id="newScriptBtn" class="btn btn-primary" style="display: none; padding: 8px 14px; font-size: 12px;" onclick="goToEditorForNewScript()">+ Crear Script</button>
+          <h3 id="currentFolderName" style="font-family:'Geist Mono'; font-size:13px; color:var(--muted); font-weight:500;">Select a folder layout</h3>
+          <button id="newScriptBtn" class="btn btn-primary" style="display: none; padding: 8px 14px; font-size: 12px;" onclick="goToEditorForNewScript()">+ Add Script</button>
         </div>
         <div id="scriptGrid" class="script-grid"></div>
       </div>
     </div>
   </div>
 
-  <!-- PANEL DE PERFIL RÁPIDO -->
-  <div id="panelPerfil" class="view-panel">
-    <div class="profile-card-center">
-      <img id="profileCardAvatar" class="profile-avatar-frame" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%234e4e59'%3E%3Cpath d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/%3E%3C/svg%3E" alt="Avatar">
-      <div>
-        <h3 id="profileNameDisplay" style="font-family:'Space Grotesk'; font-size: 20px; font-weight: 700;">Desarrollador</h3>
-        <p id="profileUserTag" style="font-family: monospace; font-size: 12px; color: var(--muted); margin-top: 2px;">@vault.user</p>
-      </div>
-      <button class="btn btn-primary" style="width: 100%;" onclick="window.location.href='profile.html'">Configurar Perfil</button>
+  <!-- SECCIÓN 3: PERFIL (ACCESO RÁPIDO DENTRO DEL CONTENEDOR) -->
+  <div id="sectionProfile" class="dashboard-section">
+    <div class="home-welcome-box" style="text-align: left; max-width: 600px; margin: 0 auto;">
+      <h2 style="font-size: 22px; margin-bottom: 20px;">👤 Profile Management</h2>
+      <p style="margin: 0 0 20px 0;">Configure your instance security keys, local cloud identity variables, and platform credentials.</p>
+      <button class="btn btn-primary" onclick="window.location.href='profile.html'">⚙️ Launch Extended Profile Editor</button>
     </div>
   </div>
 
 </div>
 
-<!-- NAV BAR INFERIOR DE RESPUESTA LÍQUIDA -->
-<nav class="bottom-nav-bar">
-  <button id="tabInicio" class="nav-tab-item active-tab" onclick="switchPanel('inicio')">
-    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-    Inicio
-  </button>
-  <button id="tabScripts" class="nav-tab-item" onclick="switchPanel('scripts')">
-    <svg viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
-    Scripts
-  </button>
-  <button id="tabPerfil" class="nav-tab-item" onclick="switchPanel('perfil')">
-    <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-    Perfil
-  </button>
-</nav>
+<!-- NAV FLOTANTE INFERIOR -->
+<div class="bottom-nav-bar" id="bottomNavBar">
+  <button id="tabHome" class="nav-tab-btn active-tab" onclick="switchTab('home')">🏠 <span>Inicio</span></button>
+  <button id="tabScripts" class="nav-tab-btn" onclick="switchTab('scripts')">💻 <span>Mis scripts</span></button>
+  <button id="tabProfile" class="nav-tab-btn" onclick="switchTab('profile')">👤 <span>Perfil</span></button>
+</div>
+
+<!-- HUB LATERAL DERECHO (AJUSTES) -->
+<div id="hamburgerMenu" class="hamburger-sidebar">
+  <div class="menu-top-nav">
+    <div id="lblNavHub" class="menu-top-title">Navigation Hub</div>
+    <button class="close-menu-btn" onclick="toggleHamburgerMenu(false)">✕</button>
+  </div>
+  
+  <div class="menu-links-group">
+    <!-- Redirección directa al archivo de Ajustes solicitado -->
+    <button id="lnkSettings" class="menu-link-item" onclick="window.location.href='Ajustes.html'">🛠️ Ajustes de la Página</button>
+    <button id="lnkProfile" class="menu-link-item" onclick="window.location.href='profile.html'">⚙️ Edit My Profile</button>
+  </div>
+
+  <div class="lang-section">
+    <h3 id="lblLanguage">🌐 Language</h3>
+    <div class="lang-switch-container">
+      <button id="langBtnEs" class="lang-btn" onclick="setLanguage('es')">ES</button>
+      <button id="langBtnEn" class="lang-btn" onclick="setLanguage('en')">EN</button>
+    </div>
+  </div>
+  
+  <div class="account-section">
+    <div class="account-toggle-hdr" onclick="toggleAccountCollapse()">
+      <h3 id="lblLinkedProfiles">👤 Linked Vault Profiles</h3>
+      <span id="accountChevron" class="account-chevron">▼</span>
+    </div>
+    
+    <div id="accountCollapseWrapper" class="account-collapse-wrapper">
+      <div class="account-collapse-inner">
+        <div id="accountProfilesList"></div>
+        <button id="btnLinkProfile" class="btn btn-ghost" style="width:100%; font-size:11px; padding:8px 12px;" onclick="linkAnotherProfile()">+ Link Another Profile</button>
+      </div>
+    </div>
+  </div>
+  
+  <button id="btnLogout" class="menu-link-item" style="color: var(--text); margin-top: auto; border: 1px solid var(--border); background: var(--danger-bg);" onclick="logout()">➔ Log Out Account</button>
+</div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-/* Partículas de Fondo Estilo Espacio Profundo */
+/* SISTEMA ANTIBORRADO SEGURO (Persistencia Avanzada mediante Claves Estables) */
+function initSecureStorage() {
+  const users = localStorage.getItem("vault_users");
+  if (!users) {
+    const defaultData = {};
+    const fallbackUser = localStorage.getItem("logged_user") || "DeveloperDev";
+    defaultData[fallbackUser] = {
+      displayName: "Developer Admin",
+      profilePic: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ffffff'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/%3E%3C/svg%3E"
+    };
+    localStorage.setItem("vault_users", JSON.stringify(defaultData));
+    if(!localStorage.getItem("logged_user")) {
+      localStorage.setItem("logged_user", fallbackUser);
+    }
+  }
+  if (!localStorage.getItem("vault_folders")) localStorage.setItem("vault_folders", JSON.stringify([]));
+  if (!localStorage.getItem("vault_scripts")) localStorage.setItem("vault_scripts", JSON.stringify([]));
+}
+initSecureStorage();
+
+/* Partículas Premium */
 const canvas = document.getElementById('canvas'); const ctx = canvas.getContext('2d'); let W, H;
 function resize() { W = canvas.width = innerWidth; H = canvas.height = innerHeight; } resize(); addEventListener('resize', resize);
 class Particle {
   constructor() { this.reset(true); }
   reset(init) {
     this.x = Math.random() * W; this.y = init ? Math.random() * H : H + 10;
-    this.vx = (Math.random() - 0.5) * 0.1; this.vy = -(Math.random() * 0.15 + 0.04);
-    this.r = Math.random() * 0.8 + 0.4; this.alpha = Math.random() * 0.2 + 0.05; this.life = 0; this.maxLife = Math.random() * 500 + 300;
+    this.vx = (Math.random() - 0.5) * 0.15; this.vy = -(Math.random() * 0.18 + 0.05);
+    this.r = Math.random() * 1.0 + 0.4; this.alpha = Math.random() * 0.2 + 0.05; this.life = 0; this.maxLife = Math.random() * 600 + 300;
   }
   update() { this.x += this.vx; this.y += this.vy; this.life++; if (this.life > this.maxLife || this.y < -10) this.reset(false); }
   draw() { const p = this.life / this.maxLife; const fade = p < 0.1 ? p/0.1 : p > 0.8 ? 1-(p-0.8)/0.2 : 1; ctx.beginPath(); ctx.arc(this.x, this.y, this.r, 0, Math.PI*2); ctx.fillStyle = 'rgba(255,255,255,' + (this.alpha * fade) + ')'; ctx.fill(); }
 }
-const particles = Array.from({length:25}, () => new Particle());
+const particles = Array.from({length:40}, () => new Particle());
 (function animate() {
   ctx.clearRect(0,0,W,H);
   particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate);
 })();
 
-/* PROTECCIÓN DE PERSISTENCIA ATÓMICA DE DATOS LOCALSTORAGE */
-if (!localStorage.getItem("vault_folders")) localStorage.setItem("vault_folders", JSON.stringify([]));
-if (!localStorage.getItem("vault_scripts")) localStorage.setItem("vault_scripts", JSON.stringify([]));
-if (!localStorage.getItem("vault_users")) localStorage.setItem("vault_users", JSON.stringify({}));
+/* Diccionario de Localización */
+const translations = {
+  es: {
+    lblFolders: "📂 Carpetas",
+    btnNewFolder: "+ Nueva Carpeta",
+    defaultFolderLayout: "Selecciona una carpeta del sistema",
+    addScript: "+ Añadir Script",
+    lblNavHub: "Centro de Navegación",
+    lnkProfile: "⚙️ Editar mi Perfil",
+    lblLanguage: "🌐 Idioma",
+    lblLinkedProfiles: "👤 Perfiles Vinculados",
+    btnLinkProfile: "+ Vincular otro Perfil",
+    btnLogout: "➔ Cerrar Sesión",
+    searchPlaceholder: "Buscar...",
+    confirmDeleteFolder: "¿Eliminar carpeta y todo su contenido?",
+    confirmDeleteScript: "¿Eliminar este script?",
+    toastScriptDeleted: "✓ Script eliminado",
+    promptFolderName: "Introduce el nombre de la carpeta:",
+    decryptText: "> DESENCRIPTANDO INSTANCIA DEL VAULT...",
+    decoupleText: "> DESACOPLANDO INSTANCIA..."
+  },
+  en: {
+    lblFolders: "📂 Folders",
+    btnNewFolder: "+ New Folder",
+    defaultFolderLayout: "Select a folder layout",
+    addScript: "+ Add Script",
+    lblNavHub: "Navigation Hub",
+    lnkProfile: "⚙️ Edit My Profile",
+    lblLanguage: "🌐 Language",
+    lblLinkedProfiles: "👤 Linked Vault Profiles",
+    btnLinkProfile: "+ Link Another Profile",
+    btnLogout: "➔ Log Out Account",
+    searchPlaceholder: "Search...",
+    confirmDeleteFolder: "Delete folder and content?",
+    confirmDeleteScript: "Delete this script?",
+    toastScriptDeleted: "✓ Script deleted",
+    promptFolderName: "Enter folder name:",
+    decryptText: "> DECRYPTING VAULT INSTANCE...",
+    decoupleText: "> DECOUPLING INSTANCE..."
+  }
+};
 
-let activeUser = localStorage.getItem("logged_user") || "dev_user";
-localStorage.setItem("logged_user", activeUser);
+let currentLang = localStorage.getItem("vault_lang") || "es";
+let currentFolderId = null;
+const activeUser = localStorage.getItem("logged_user");
 
-// Crear perfil dummy de respaldo si no existe para prevenir crashes de renderizado
-let usersObj = JSON.parse(localStorage.getItem("vault_users"));
-if (!usersObj[activeUser]) {
-  usersObj[activeUser] = { displayName: "Jorge Díaz", profilePic: "" };
-  localStorage.setItem("vault_users", JSON.stringify(usersObj));
+function applyLanguage() {
+  const t = translations[currentLang];
+  document.getElementById("lblFolders").innerText = t.lblFolders;
+  document.getElementById("btnNewFolder").innerText = t.btnNewFolder;
+  document.getElementById("newScriptBtn").innerText = t.addScript;
+  document.getElementById("lblNavHub").innerText = t.lblNavHub;
+  document.getElementById("lnkProfile").innerText = t.lnkProfile;
+  document.getElementById("lblLanguage").innerText = t.lblLanguage;
+  document.getElementById("lblLinkedProfiles").innerText = t.lblLinkedProfiles;
+  document.getElementById("btnLinkProfile").innerText = t.btnLinkProfile;
+  document.getElementById("btnLogout").innerText = t.btnLogout;
+  document.getElementById("dashboardSearch").placeholder = t.searchPlaceholder;
+  document.getElementById("loaderText").innerText = t.decryptText;
+  
+  if(!currentFolderId) {
+    document.getElementById("currentFolderName").innerText = t.defaultFolderLayout;
+  }
+  document.getElementById("langBtnEs").classList.toggle("active-lang", currentLang === "es");
+  document.getElementById("langBtnEn").classList.toggle("active-lang", currentLang === "en");
 }
 
-let currentFolderId = null;
-let isDiscordVerified = localStorage.getItem("vault_discord_verified") === "true";
-
-function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2000); }
-
-/* SISTEMA TABS NATIVO MOBILE */
-function switchPanel(target) {
-  document.querySelectorAll('.view-panel').forEach(p => { p.classList.remove('active-panel'); p.style.display = 'none'; });
-  document.querySelectorAll('.nav-tab-item').forEach(t => t.classList.remove('active-tab'));
-  
-  if (target === 'inicio') {
-    document.getElementById('panelInicio').style.display = 'block';
-    document.getElementById('panelInicio').classList.add('active-panel');
-    document.getElementById('tabInicio').classList.add('active-tab');
-  } else if (target === 'scripts') {
-    document.getElementById('panelScripts').style.display = 'block';
-    document.getElementById('panelScripts').classList.add('active-panel');
-    document.getElementById('tabScripts').classList.add('active-tab');
-    renderFolders();
-    renderScripts();
-  } else if (target === 'perfil') {
-    document.getElementById('panelPerfil').style.display = 'block';
-    document.getElementById('panelPerfil').classList.add('active-panel');
-    document.getElementById('tabPerfil').classList.add('active-tab');
-    loadProfilePreview();
+function setLanguage(lang) {
+  currentLang = lang;
+  localStorage.setItem("vault_lang", lang);
+  applyLanguage();
+  if(currentFolderId) {
+    const folders = JSON.parse(localStorage.getItem("vault_folders")) || [];
+    const targeted = folders.find(f => f.id === currentFolderId);
+    if(targeted) document.getElementById("currentFolderName").innerText = `📁 ${targeted.name}`;
   }
 }
 
-/* COMPROBACIONES DE DISCORD (ESTILO JNKIE INTERFAZ) */
-function joinDiscordServer() {
-  window.open("https://discord.gg/Q3un39bEgE", "_blank"); // Cambia por tu link si es necesario
-  showToast("Abriendo invitación de Discord...");
+/* SISTEMA FLUIDO INTERNO DE SECCIONES (TABS) */
+function switchTab(sectionId) {
+  document.querySelectorAll('.dashboard-section').forEach(section => {
+    section.classList.remove('active-section');
+  });
+  document.querySelectorAll('.nav-tab-btn').forEach(btn => {
+    btn.classList.remove('active-tab');
+  });
+
+  if (sectionId === 'home') {
+    document.getElementById('sectionHome').classList.add('active-section');
+    document.getElementById('tabHome').classList.add('active-tab');
+  } else if (sectionId === 'scripts') {
+    document.getElementById('sectionScripts').classList.add('active-section');
+    document.getElementById('tabScripts').classList.add('active-tab');
+  } else if (sectionId === 'profile') {
+    document.getElementById('sectionProfile').classList.add('active-section');
+    document.getElementById('tabProfile').classList.add('active-tab');
+  }
+}
+
+/* INTERRUPTOR INTEGRADO DE ACCESO A DISCORD */
+function openDiscordCommunity() {
+  window.open("https://discord.gg/Q3un39bEgE", "_blank"); 
+  localStorage.setItem("vault_discord_joined", "true");
 }
 
 function verifyDiscordStatus() {
-  isDiscordVerified = true;
-  localStorage.setItem("vault_discord_verified", "true");
-  syncGateUI();
-  showToast("✓ Estado sincronizado: Acceso Permitido");
-}
-
-function syncGateUI() {
-  const masterBtn = document.getElementById("gateMasterCreateBtn");
-  if (isDiscordVerified) {
-    masterBtn.style.opacity = "1";
-    masterBtn.style.cursor = "pointer";
-    masterBtn.innerText = "Acceder a Mis Scripts (Desbloqueado)";
-    masterBtn.onclick = () => switchPanel('scripts');
+  if (localStorage.getItem("vault_discord_joined") === "true") {
+    showToast("✓ Servidor verificado. ¡Acceso concedido!");
+    document.getElementById("discordGate").style.display = "none";
+    document.getElementById("homeCreateScriptBtn").style.display = "inline-flex";
   } else {
-    masterBtn.style.opacity = "0.3";
-    masterBtn.style.cursor = "not-allowed";
-    masterBtn.innerText = "🔒 Acceder a Mis Scripts (Bloqueado)";
-    masterBtn.onclick = null;
+    showToast("❌ Primero debes unirte al servidor de Discord.");
   }
 }
 
-function loadProfilePreview() {
+function checkDiscordGateOnLoad() {
+  if (localStorage.getItem("vault_discord_joined") === "true") {
+    document.getElementById("discordGate").style.display = "none";
+    document.getElementById("homeCreateScriptBtn").style.display = "inline-flex";
+  }
+}
+
+function toggleAccountCollapse() {
+  const wrapper = document.getElementById("accountCollapseWrapper");
+  const chevron = document.getElementById("accountChevron");
+  const isExpanded = wrapper.classList.toggle("expanded");
+  chevron.style.transform = isExpanded ? "rotate(180deg)" : "rotate(0deg)";
+}
+
+function verifyAccountIntegrity() {
   const users = JSON.parse(localStorage.getItem("vault_users")) || {};
-  const data = users[activeUser];
-  if (data) {
-    document.getElementById("profileNameDisplay").innerText = data.displayName || activeUser;
-    document.getElementById("profileUserTag").innerText = `@${activeUser}`;
-    if (data.profilePic) document.getElementById("profileCardAvatar").src = data.profilePic;
+  if (!activeUser || !users[activeUser]) {
+    const availableUsers = Object.keys(users);
+    if (availableUsers.length > 0) {
+      localStorage.setItem("logged_user", availableUsers[0]);
+      window.location.reload(); 
+      return false;
+    } else {
+      localStorage.removeItem("logged_user");
+      // Fallback para evitar errores en producción pública:
+      initSecureStorage();
+    }
+  }
+  return true;
+}
+
+if (!verifyAccountIntegrity()) {
+  console.log("> Re-asentando integridad.");
+}
+
+function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2200); }
+function toggleHamburgerMenu(open) { document.getElementById("hamburgerMenu").classList.toggle("open", open); }
+function logout() { localStorage.removeItem("logged_user"); location.reload(); }
+function linkAnotherProfile() { showToast("Acceso simulado a registro."); }
+
+function loadUserAvatarHeader() {
+  if (activeUser) {
+    const usersObj = JSON.parse(localStorage.getItem("vault_users")) || {};
+    const currentUserData = usersObj[activeUser];
+    const avatarImg = document.getElementById("headerUserAvatar");
+    if (currentUserData && currentUserData.profilePic) {
+      avatarImg.src = currentUserData.profilePic;
+    }
   }
 }
 
-/* GESTIÓN DE REPOSITORIOS Y CARPETAS */
+function renderAccountProfiles() {
+  const usersObj = JSON.parse(localStorage.getItem("vault_users")) || {};
+  const container = document.getElementById("accountProfilesList");
+  container.innerHTML = "";
+
+  Object.keys(usersObj).forEach(user => {
+    const isCurrent = user === activeUser;
+    const btn = document.createElement("button");
+    btn.className = `account-item-btn ${isCurrent ? 'active-acc' : ''}`;
+    const displayAlias = (usersObj[user] && usersObj[user].displayName) ? usersObj[user].displayName : user;
+    
+    btn.innerHTML = `👤 <span>${displayAlias}</span> ${isCurrent ? '<span class="account-badge-current">ACTIVE</span>' : ''}`;
+    if(!isCurrent) { btn.onclick = () => switchAccountSimulation(user); }
+    container.appendChild(btn);
+  });
+}
+
+function switchAccountSimulation(targetUser) {
+  toggleHamburgerMenu(false);
+  const overlay = document.getElementById("loaderOverlay");
+  const loaderText = document.getElementById("loaderText");
+  overlay.style.display = "flex";
+  loaderText.textContent = translations[currentLang].decoupleText;
+  setTimeout(() => {
+    localStorage.setItem("logged_user", targetUser);
+    location.reload();
+  }, 800);
+}
+
 function renderFolders() {
   const folders = JSON.parse(localStorage.getItem("vault_folders")) || [];
   const listElement = document.getElementById("folderList"); listElement.innerHTML = "";
   const userFolders = folders.filter(f => f.username === activeUser);
-  
   userFolders.forEach(folder => {
     const li = document.createElement("li");
     li.className = `folder-item ${currentFolderId === folder.id ? 'active' : ''}`;
@@ -456,45 +656,49 @@ function renderFolders() {
 }
 
 function createNewFolder() {
-  const name = prompt("Introduce el nombre de la nueva carpeta:"); if(!name || !name.trim()) return;
+  const name = prompt(translations[currentLang].promptFolderName); if(!name || !name.trim()) return;
   const folders = JSON.parse(localStorage.getItem("vault_folders")) || [];
   folders.push({ id: "fold_" + Date.now(), name: name.trim(), username: activeUser });
   localStorage.setItem("vault_folders", JSON.stringify(folders)); renderFolders();
 }
 
 function deleteFolder(id, event) {
-  event.stopPropagation(); if(!confirm("¿Deseas destruir esta carpeta y todos sus scripts vinculados?")) return;
+  event.stopPropagation(); if(!confirm(translations[currentLang].confirmDeleteFolder)) return;
   let folders = JSON.parse(localStorage.getItem("vault_folders")) || [];
   localStorage.setItem("vault_folders", JSON.stringify(folders.filter(f => f.id !== id)));
   let scripts = JSON.parse(localStorage.getItem("vault_scripts")) || [];
   localStorage.setItem("vault_scripts", JSON.stringify(scripts.filter(s => s.folderId !== id)));
-  if(currentFolderId === id) { currentFolderId = null; document.getElementById("currentFolderName").innerText = "Selecciona una carpeta del sistema"; document.getElementById("newScriptBtn").style.display = "none"; }
+  if(currentFolderId === id) { currentFolderId = null; document.getElementById("currentFolderName").innerText = translations[currentLang].defaultFolderLayout; document.getElementById("newScriptBtn").style.display = "none"; }
   renderFolders(); renderScripts();
 }
 
 function selectFolder(id, name) {
   currentFolderId = id; document.getElementById("currentFolderName").innerText = `📁 ${name}`;
   document.getElementById("newScriptBtn").style.display = "inline-flex"; 
-  renderFolders(); renderScripts();
+  renderFolders(); 
+  renderScripts();
 }
 
 function renderScripts() {
-  const grid = document.getElementById("scriptGrid"); grid.innerHTML = ""; if(!currentFolderId) return;
+  const grid = document.getElementById("scriptGrid"); 
+  if(!grid) return;
+  grid.innerHTML = ""; 
+  if(!currentFolderId) return;
 
   grid.classList.remove("animate-in");
   void grid.offsetWidth; 
   grid.classList.add("animate-in");
 
   const scripts = JSON.parse(localStorage.getItem("vault_scripts")) || [];
-  const query = document.getElementById("dashboardSearch").value.toLowerCase().trim();
-  const filtered = scripts.filter(s => s.folderId === currentFolderId && (s.title.toLowerCase().includes(query) || s.id.toLowerCase().includes(query)));
+  const searchVal = document.getElementById("dashboardSearch").value.toLowerCase().trim();
+  const folderScripts = scripts.filter(s => s.folderId === currentFolderId && (s.title.toLowerCase().includes(searchVal) || s.id.toLowerCase().includes(searchVal)));
   
-  filtered.forEach(script => {
+  folderScripts.forEach(script => {
     const card = document.createElement("div"); card.className = "script-card";
     card.innerHTML = `<div><h4>${script.title}</h4><p>ID: ${script.id}</p></div>
       <div class="card-actions">
-        <button class="btn btn-ghost" style="padding:8px; font-size:11px; width:50%;" onclick="viewScript('${script.id}')">Editar</button>
-        <button class="btn btn-danger" style="padding:8px; font-size:11px; width:50%;" onclick="deleteScript('${script.id}')">Eliminar</button>
+        <button class="btn btn-ghost" style="padding:8px; font-size:11px; width:50%;" onclick="viewScript('${script.id}')">Edit</button>
+        <button class="btn btn-danger" style="padding:8px; font-size:11px; width:50%;" onclick="deleteScript('${script.id}')">Delete</button>
       </div>`;
     grid.appendChild(card);
   });
@@ -505,23 +709,28 @@ function goToEditorForNewScript() {
   localStorage.setItem("last_active_folder", currentFolderId);
   window.location.href = `index.html?from=dashboard&folderId=${currentFolderId}`;
 }
+
 function viewScript(id) { window.location.href = `view.html?id=${id}`; }
+
 function deleteScript(id) {
-  if(!confirm("¿Seguro que quieres borrar este script del servidor?")) return;
+  if(!confirm(translations[currentLang].confirmDeleteScript)) return;
   let scripts = JSON.parse(localStorage.getItem("vault_scripts")) || [];
   localStorage.setItem("vault_scripts", JSON.stringify(scripts.filter(s => s.id !== id)));
-  renderScripts(); showToast("✓ Script eliminado satisfactoriamente");
+  renderScripts(); showToast(translations[currentLang].toastScriptDeleted);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  syncGateUI();
-  switchPanel('inicio');
-  
+  applyLanguage();
+  loadUserAvatarHeader();
+  renderFolders(); 
+  renderAccountProfiles();
+  checkDiscordGateOnLoad();
+
   const restoreFolderId = localStorage.getItem("last_active_folder");
   if(restoreFolderId) {
     const folders = JSON.parse(localStorage.getItem("vault_folders")) || [];
     const targeted = folders.find(f => f.id === restoreFolderId);
-    if(targeted) { switchPanel('scripts'); selectFolder(targeted.id, targeted.name); }
+    if(targeted) { selectFolder(targeted.id, targeted.name); }
     localStorage.removeItem("last_active_folder");
   }
 });
