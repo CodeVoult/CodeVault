@@ -116,8 +116,3 @@ function copyCode() {
     if (typeof showToast === 'function') showToast('Code copied'); 
   });
 }
-
-Este es el scripts.js 
-
-
-Pásamelo completo
